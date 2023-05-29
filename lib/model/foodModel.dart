@@ -17,7 +17,7 @@ class Food {
     required this.qty,
   });
 
-  Food.fromMap(DocumentSnapshot<Object> data) {
+  Food.fromMap(DocumentSnapshot<Object?> data) {
     foodID = data['foodID'];
     foodName = data['foodName'];
     foodImageURL = data['foodImageURL'];
