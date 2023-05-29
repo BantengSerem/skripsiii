@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "244750530500",
+    "project_id": "thesis-203b6",
+    "storage_bucket": "thesis-203b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244750530500:android:55c063f135241da2339691",
+        "android_client_info": {
+          "package_name": "com.example.skripsiii"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkCjh3PdYUQ99L0A0VARYVjiPqNS96-Ig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
