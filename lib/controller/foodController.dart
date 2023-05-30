@@ -91,16 +91,18 @@ class FoodController extends GetxController {
     });
   }
 
-  void deleteStream() {
+  void deleteStream(String restaurantID) {
     streamList.last.cancel();
     streamList.removeLast();
-    getLastDocSnapshots();
+    getLastDocSnapshots(restaurantID);
     print('streamList : ${streamList}');
   }
 
-  void getLastDocSnapshots() async {
+  void getLastDocSnapshots(String restaurantID) async {
     var query = fireStoreInstance
-        .collection('testList')
+        .collection('restaurant')
+        .doc(restaurantID)
+        .collection('foodList')
         .doc(listItem.last.foodID.toString());
     currDoc = await query.get();
   }
@@ -131,7 +133,7 @@ class FoodController extends GetxController {
     var index = streamList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStream();
+      if (event.size == 0) return deleteStream(data['restaurantID']);
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
