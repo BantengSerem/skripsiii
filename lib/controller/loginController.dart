@@ -11,10 +11,9 @@ class LoginController extends GetxController {
   final fireStoreInstance = FirebaseFirestore.instance;
   late final GoogleSignInAuthentication googleSignInAuthentication;
 
-  // late final GoogleSignInAccount? googleSignInAccount;
   late final GoogleSignIn googleSignIn =
-      GoogleSignIn(scopes: <String>["email"]);
-  late final GoogleSignInAccount? _googleUser;
+  GoogleSignIn(scopes: <String>["email"]);
+  late GoogleSignInAccount? _googleUser;
 
   Future<bool> checkLogin() async {
     bool res = await DatabaseHelper.instance.checkLogin();
@@ -27,6 +26,7 @@ class LoginController extends GetxController {
 
   Future<void> logout() async {
     await DatabaseHelper.instance.logoutUser();
+    await firebaseLogOut();
     // Get.offAll(() => LoginPage(), binding: HomeBinding());
   }
 
@@ -34,7 +34,7 @@ class LoginController extends GetxController {
       {required String email, required String password}) async {
     try {
       UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -52,22 +52,22 @@ class LoginController extends GetxController {
     var member = await fireStoreInstance
         .collection('member')
         .where('email', isEqualTo: data['email'])
-        .where('password', isEqualTo: data['password'])
+    // .where('password', isEqualTo: data['password'])
         .get();
 
     var shop = await fireStoreInstance
         .collection('shop')
         .where('email', isEqualTo: data['email'])
-        .where('password', isEqualTo: data['password'])
+    // .where('password', isEqualTo: data['password'])
         .get();
 
     if (member.docs.isNotEmpty) {
       Member m = Member.fromJson(member.docs[0].data());
       var map = {
         'userID': m.memberID,
-        'password': m.password,
+        // 'password': m.password,
         'email': m.email,
-        'role' : 'member',
+        'role': 'member',
       };
       await DatabaseHelper.instance.loginUser(map);
       return m;
@@ -78,9 +78,9 @@ class LoginController extends GetxController {
       print(s.password);
       var map = {
         'userID': s.shopID,
-        'password': s.password,
+        // 'password': s.password,
         'email': s.email,
-        'role' : 'shop',
+        'role': 'shop',
       };
       await DatabaseHelper.instance.loginUser(map);
       return s;
@@ -88,20 +88,66 @@ class LoginController extends GetxController {
     return null;
   }
 
+  Future<void> registerMember(Map<String, dynamic> data) async {
+    await fireStoreInstance
+        .collection('member')
+        .doc(data['uid'])
+        .set({
+      'email': data['email'],
+      'memberID': data['uid'],
+    })
+        .then((value) => print('success registering new member'))
+        .onError((error, stackTrace) {
+      print('error while registering new member : $error');
+    });
+  }
+
+  Future<void> registerShop(Map<String, dynamic> data) async {
+    await fireStoreInstance
+        .collection('shop')
+        .doc(data['uid'])
+        .set({
+      'email': data['email'],
+      'shopID': data['uid'],
+    })
+        .then((value) => print('success registering new user'))
+        .onError((error, stackTrace) {
+      print('error while registering new user : $error');
+    });
+  }
+
+  Future<UserCredential?> registerUserToFirebase(
+      {required String email, required String password}) async {
+    try {
+      UserCredential userCredential =
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Authentication successful, return the UserCredential object
+      return userCredential;
+    } catch (e) {
+      // Handle any errors that occur during authentication
+      print('Sign-in with email and password failed: $e');
+      return null;
+    }
+  }
+
   Future<UserParent?> getUserData(UserCredential userCredential) async {
     User? user = userCredential.user;
     var member = await fireStoreInstance
         .collection('member')
         .where('email', isEqualTo: user?.email.toString())
-        .where('password', isEqualTo: '')
-        .where('uid', isEqualTo: user?.uid.toString())
+    // .where('password', isEqualTo: '')
+    // .where('uid', isEqualTo: user?.uid.toString())
         .get();
 
     var shop = await fireStoreInstance
         .collection('shop')
         .where('email', isEqualTo: user?.email.toString())
-        .where('password', isEqualTo: '')
-        .where('uid', isEqualTo: user?.uid.toString())
+    // .where('password', isEqualTo: '')
+    // .where('uid', isEqualTo: user?.uid.toString())
         .get();
     if (member.docs.isNotEmpty) {
       Member m = Member.fromJson(member.docs[0].data());
@@ -125,14 +171,14 @@ class LoginController extends GetxController {
     return null;
   }
 
-  Future<UserCredential?> googleLogin() async {
+  Future<UserParent?> googleLogin() async {
     _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
       print(error);
     });
 
     print('_googleUser : ${_googleUser != null}');
     final GoogleSignInAuthentication googleAuth =
-        await _googleUser!.authentication;
+    await _googleUser!.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
@@ -141,7 +187,10 @@ class LoginController extends GetxController {
     );
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    UserCredential userCredential =
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    // userCredential.user?.uid;
+    return await getUserData(userCredential);
     // if (googleSignInAccount != null) {
     //   googleSignInAuthentication = await googleSignInAccount!.authentication;
     //
@@ -207,9 +256,10 @@ class LoginController extends GetxController {
     // }
   }
 
-  Future<void> googleLogOut() async {
+  Future<void> firebaseLogOut() async {
     await FirebaseAuth.instance.signOut();
     await googleSignIn.signOut();
+    _googleUser = null;
   }
 
   void test() {
