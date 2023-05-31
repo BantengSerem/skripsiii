@@ -56,15 +56,13 @@ class HomePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                var userCred = await loginController.googleLogin();
-                var user = await loginController.getUserData(userCred!);
-                print('user : $user');
+                await loginController.googleLogin();
               },
               child: const Text('google login'),
             ),
             ElevatedButton(
               onPressed: () async {
-                var userCred = await loginController.googleLogOut();
+                var userCred = await loginController.firebaseLogOut();
               },
               child: const Text('google logout'),
             ),
