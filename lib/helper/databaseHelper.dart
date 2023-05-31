@@ -31,7 +31,6 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE user(
         email TEXT(100),
-        password TEXT(100),
         userID TEXT(100),
         role TEXT(10)
       )''');
@@ -56,11 +55,10 @@ class DatabaseHelper {
   loginUser(Map<String, dynamic> user) async {
     final db = await database;
     var res = await db.rawInsert(
-        "INSERT INTO user (email,userid,password,role)"
-        "VALUES (?,?,?,?)",
+        "INSERT INTO user (email,userid,role)"
+        "VALUES (?,?,?)",
         [
           user['email'],
-          user['password'],
           user['userID'],
           user['role'],
         ]);
