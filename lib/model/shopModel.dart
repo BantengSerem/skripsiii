@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skripsiii/model/userModel.dart';
 
 enum SellingTime {
-  M30,
-  M15,
-  M60,
-  M45,
+  m30,
+  m15,
+  m60,
+  m45,
 }
 
 class Shop extends User {
@@ -29,24 +29,40 @@ class Shop extends User {
     required this.ratingAVG,
     required this.sellingTime,
     required this.shopID,
-  });
+  }) : super(email: email, password: password);
 
-  Shop.fromMap(DocumentSnapshot<Object> data) {
-    email = data['email'];
-    password = data['password'];
-    shopID = data['memberID'];
-    shopName = data['shopName'];
-    contacts = data['contacts'];
-    ratingAVG = data['ratingAVG'];
-    closingTime = data['closingTime'];
-    sellingTime = data['sellingTime'];
+  // factory Shop.fromMap(DocumentSnapshot<Object> data) {
+  //   email = data['email']!;
+  //   password = data['password'] ?? '';
+  //   shopID = data['shopID'] ?? '';
+  //   shopName = data['shopName'] ?? '';
+  //   contacts = data['contacts'] ?? '';
+  //   ratingAVG = data['ratingAVG'] ?? 0.0;
+  //   closingTime = data['closingTime'] ?? DateTime;
+  //   sellingTime = data['sellingTime'] ?? SellingTime.m30;
+  // }
+
+  factory Shop.fromJson(Map<String, dynamic> json) => Shop(
+    email: json['email'],
+    password: json['password'] ?? '',
+    shopID: json['shopID'] ?? '',
+    shopName: json['shopName'] ?? '',
+    contacts: json['contacts'] ?? '',
+    ratingAVG: json['ratingAVG'] ?? 0.0,
+    closingTime: json['closingTime'] ?? DateTime.now(),
+    sellingTime: json['sellingTime'] ?? SellingTime.m30,
+  );
+
+  @override
+  String toString() {
+    return 'Shop: { email: $email, password: $password, shopID: $shopID, shopName: $shopName, contacts: $contacts, ratingAVG: $ratingAVG, closingTime: $closingTime, sellingTime: $sellingTime }';
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'email' : email,
-      'password' : password,
-      'shopName' : shopName,
+      'email': email,
+      'password': password,
+      'shopName': shopName,
     };
   }
 }
