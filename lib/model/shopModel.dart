@@ -8,7 +8,7 @@ enum SellingTime {
   m45,
 }
 
-class Shop extends User {
+class Shop extends UserParent {
   // @override
   // late final String email;
   // @override

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skripsiii/model/userModel.dart';
 
-class Member extends User {
+class Member extends UserParent {
   late final String memberID;
   late final String username;
   late final String name;

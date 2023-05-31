@@ -1,6 +1,6 @@
-abstract class User {
+abstract class UserParent {
   late final String email;
   late final String password;
 
-  User({required this.email, required this.password});
+  UserParent({required this.email, required this.password});
 }

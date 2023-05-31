@@ -12,7 +12,28 @@
           "package_name": "com.example.skripsiii"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "244750530500-2rjco0pv8qitdsc6upb8eur9mjv8j8s8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.skripsiii",
+            "certificate_hash": "dfd6b32c01c68e266908b673da0ae5ee5a69435e"
+          }
+        },
+        {
+          "client_id": "244750530500-ppn4ldb5n44jckuivno0q8157j3a2o3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.skripsiii",
+            "certificate_hash": "6c5321fe679cb85080376781b4fea0249833beb9"
+          }
+        },
+        {
+          "client_id": "244750530500-nish17dfe3v2b11p1tlo13270up4f1la.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAkCjh3PdYUQ99L0A0VARYVjiPqNS96-Ig"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244750530500-nish17dfe3v2b11p1tlo13270up4f1la.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
