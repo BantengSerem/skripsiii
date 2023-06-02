@@ -165,7 +165,7 @@ class LoginController extends GetxController {
         'password': s.password,
         'email': s.email,
       };
-      await DatabaseHelper.instance.loginUser(map); 
+      await DatabaseHelper.instance.loginUser(map);
       return s;
     }
     return null;
