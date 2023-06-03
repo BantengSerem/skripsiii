@@ -29,6 +29,8 @@ class FoodController extends GetxController {
   }
 
   Future<String?> dataToStorage(Map<String, dynamic> data) async {
+    fireStoreInstance.collection('locations').add(data);
+
     var name = data['file'].name;
     Reference reference = FirebaseStorage.instance
         .ref()
@@ -64,11 +66,118 @@ class FoodController extends GetxController {
       'detailNotes': data['detailNotes'],
       'price': data['price'],
       'qty': data['qty'],
+      'location': data['location'],
     }).whenComplete(() {
       debugPrint('adding new data is successful');
     }).catchError((error) {
       debugPrint('error : $error');
     });
+  }
+
+  // On progress, don't change
+  Map<String, double> getLatLongRange({double radius = 1}) {
+    // double latRange = radius / 6371.0 * (180 / pi);
+    // double lonRange =
+    //     radius / (6371.0 * cos(latitude * pi / 180)) * (180 / pi);
+    return {};
+  }
+
+  Map<String, double> getLatLongFilter({
+    double latRange = 0.009,
+    double lonRange = 0.014,
+    required double latitude,
+    required double longitude,
+  }) {
+    double minLat = latitude - latRange;
+    double maxLat = latitude + latRange;
+    double minLon = longitude - lonRange;
+    double maxLon = longitude + lonRange;
+
+    return {
+      'minLat': minLat,
+      'maxLat': maxLat,
+      'minLon': minLon,
+      'maxLon': maxLon,
+    };
+  }
+
+  Future<void> getFilteredFoodList(Map<String, dynamic> data) async {
+    late Query query;
+    if (firstTime) {
+      query = fireStoreInstance
+          .collection('restaurant')
+          .doc(data['restaurantID'])
+          .collection('foodList')
+          .orderBy('date', descending: false)
+          .where('latitude', isGreaterThanOrEqualTo: data['minLat'])
+          .where('latitude', isLessThanOrEqualTo: data['maxLat'])
+          .where('longitude', isGreaterThanOrEqualTo: data['minLon'])
+          .where('longitude', isLessThanOrEqualTo: data['maxLon'])
+          .limit(10);
+
+      firstTime = false;
+    } else if (currDoc != null) {
+      query = fireStoreInstance
+          .collection('restaurant')
+          .doc(data['restaurantID'])
+          .collection('foodList')
+          .orderBy('date', descending: false)
+          .where('latitude', isGreaterThanOrEqualTo: data['minLat'])
+          .where('latitude', isLessThanOrEqualTo: data['maxLat'])
+          .where('longitude', isGreaterThanOrEqualTo: data['minLon'])
+          .where('longitude', isLessThanOrEqualTo: data['maxLon'])
+          .limit(10)
+          .startAfterDocument(currDoc!);
+    } else {
+      return;
+    }
+
+    var index = streamList.length + 1;
+
+    var snapshot = query.snapshots().listen((event) {
+      if (event.size == 0) return deleteStream(data['restaurantID']);
+
+      event.docChanges.asMap().forEach((key, value) {
+        switch (value.type) {
+          case DocumentChangeType.added:
+            // if (addData == false) addData = true;
+            debugPrint("added : ${Food.fromMap(value.doc).foodID}");
+            // When a data is deleted in the database it will trigger
+            // changes (type = added) to retrieve more data and then it
+            // retrieves data after the last one of this snapshot initial
+            // retrieve thus, there'll be duplication inside the list
+            // so it has to be removed
+            listItem.removeWhere(
+                (element) => element.foodID == Food.fromMap(value.doc).foodID);
+            listItem.add(Food.fromMap(value.doc));
+            break;
+          case DocumentChangeType.modified:
+            debugPrint("modified : ${Food.fromMap(value.doc).foodID}");
+            int i = listItem.indexWhere(
+                (element) => element.foodID == Food.fromMap(value.doc).foodID);
+            listItem[i] = Food.fromMap(value.doc);
+            break;
+          case DocumentChangeType.removed:
+            // if (removeData == false) removeData = true;
+            debugPrint("removed : ${Food.fromMap(value.doc).foodID}");
+            listItem.removeWhere(
+                (element) => element.foodID == Food.fromMap(value.doc).foodID);
+            break;
+        }
+      });
+      listItem.sort((a, b) => b.foodID.compareTo(a.foodID));
+
+      debugPrint(
+          'index : $index, streamList.length : ${streamList.length}, event.size : ${event.size}');
+      if (index == streamList.length && event.size == 10) {
+        currDoc = event.docs.last;
+        debugPrint(
+            'change the currDoc on stream : $index, with the streamList.length : ${streamList.length}');
+      } else if (index == streamList.length && event.size < 10) {
+        currDoc = null;
+      }
+    });
+    streamList.add(snapshot);
   }
 
   Future<void> updateFoodData(Map<String, dynamic> data) async {
@@ -84,6 +193,7 @@ class FoodController extends GetxController {
       'detailNotes': data['detailNotes'],
       'price': data['price'],
       'qty': data['qty'],
+      'location': data['location'],
     }).whenComplete(() {
       debugPrint('updating data is successful');
     }).catchError((error) {
