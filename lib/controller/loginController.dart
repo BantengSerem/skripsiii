@@ -178,15 +178,16 @@ class LoginController extends GetxController {
         print(error);
       });
 
-      print('_googleUser : ${_googleUser != null}');
-      final GoogleSignInAuthentication googleAuth =
-          await _googleUser!.authentication;
+    print('_googleUser : ${_googleUser != null}');
+    final GoogleSignInAuthentication googleAuth =
+        await _googleUser!.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
 
       // Once signed in, return the UserCredential
       UserCredential userCredential =

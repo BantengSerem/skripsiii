@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
+import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/view/homePage.dart';
+import 'package:skripsiii/view/welcomePage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,10 +32,13 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/',
-          page: () => HomePage(),
+          page: () => WelcomePage(),
           // binding: HomeBinding(),
         ),
       ],
+      routes: {
+        loginRoute: (context) => HomePage(),
+      },
       initialBinding: HomeBinding(),
     );
   }
