@@ -12,7 +12,7 @@ class LoginController extends GetxController {
   late final GoogleSignInAuthentication googleSignInAuthentication;
 
   late final GoogleSignIn googleSignIn =
-  GoogleSignIn(scopes: <String>["email"]);
+      GoogleSignIn(scopes: <String>["email"]);
   late GoogleSignInAccount? _googleUser;
 
   Future<bool> checkLogin() async {
@@ -34,7 +34,7 @@ class LoginController extends GetxController {
       {required String email, required String password}) async {
     try {
       UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -52,13 +52,13 @@ class LoginController extends GetxController {
     var member = await fireStoreInstance
         .collection('member')
         .where('email', isEqualTo: data['email'])
-    // .where('password', isEqualTo: data['password'])
+        // .where('password', isEqualTo: data['password'])
         .get();
 
     var shop = await fireStoreInstance
         .collection('shop')
         .where('email', isEqualTo: data['email'])
-    // .where('password', isEqualTo: data['password'])
+        // .where('password', isEqualTo: data['password'])
         .get();
 
     if (member.docs.isNotEmpty) {
@@ -93,13 +93,13 @@ class LoginController extends GetxController {
         .collection('member')
         .doc(data['uid'])
         .set({
-      'email': data['email'],
-      'memberID': data['uid'],
-    })
+          'email': data['email'],
+          'memberID': data['uid'],
+        })
         .then((value) => print('success registering new member'))
         .onError((error, stackTrace) {
-      print('error while registering new member : $error');
-    });
+          print('error while registering new member : $error');
+        });
   }
 
   Future<void> registerShop(Map<String, dynamic> data) async {
@@ -107,20 +107,20 @@ class LoginController extends GetxController {
         .collection('shop')
         .doc(data['uid'])
         .set({
-      'email': data['email'],
-      'shopID': data['uid'],
-    })
+          'email': data['email'],
+          'shopID': data['uid'],
+        })
         .then((value) => print('success registering new user'))
         .onError((error, stackTrace) {
-      print('error while registering new user : $error');
-    });
+          print('error while registering new user : $error');
+        });
   }
 
   Future<UserCredential?> registerUserToFirebase(
       {required String email, required String password}) async {
     try {
       UserCredential userCredential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -139,15 +139,15 @@ class LoginController extends GetxController {
     var member = await fireStoreInstance
         .collection('member')
         .where('email', isEqualTo: user?.email.toString())
-    // .where('password', isEqualTo: '')
-    // .where('uid', isEqualTo: user?.uid.toString())
+        // .where('password', isEqualTo: '')
+        // .where('uid', isEqualTo: user?.uid.toString())
         .get();
 
     var shop = await fireStoreInstance
         .collection('shop')
         .where('email', isEqualTo: user?.email.toString())
-    // .where('password', isEqualTo: '')
-    // .where('uid', isEqualTo: user?.uid.toString())
+        // .where('password', isEqualTo: '')
+        // .where('uid', isEqualTo: user?.uid.toString())
         .get();
     if (member.docs.isNotEmpty) {
       Member m = Member.fromJson(member.docs[0].data());
@@ -172,13 +172,17 @@ class LoginController extends GetxController {
   }
 
   Future<UserParent?> googleLogin() async {
-    _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
-      print(error);
-    });
+    try {
+      _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
+        print(error);
+      });
+    } catch (e) {
+      return null;
+    }
 
     print('_googleUser : ${_googleUser != null}');
     final GoogleSignInAuthentication googleAuth =
-    await _googleUser!.authentication;
+        await _googleUser!.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
@@ -188,7 +192,7 @@ class LoginController extends GetxController {
 
     // Once signed in, return the UserCredential
     UserCredential userCredential =
-    await FirebaseAuth.instance.signInWithCredential(credential);
+        await FirebaseAuth.instance.signInWithCredential(credential);
     // userCredential.user?.uid;
     return await getUserData(userCredential);
     // if (googleSignInAccount != null) {
