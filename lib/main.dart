@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/view/homePage.dart';
+import 'package:skripsiii/view/loginPage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
 Future<void> main() async {
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       routes: {
-        loginRoute: (context) => HomePage(),
+        loginRoute: (context) => LoginPage(),
+        homeRoute: (context) => HomePage()
       },
       initialBinding: HomeBinding(),
     );

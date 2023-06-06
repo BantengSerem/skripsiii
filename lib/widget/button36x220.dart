@@ -11,7 +11,7 @@ class Button36x220 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 36,
       width: 220,
       child: ElevatedButton(

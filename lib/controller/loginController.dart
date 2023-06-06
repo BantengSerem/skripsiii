@@ -6,6 +6,7 @@ import 'package:skripsiii/helper/databaseHelper.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/model/userModel.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginController extends GetxController {
   final fireStoreInstance = FirebaseFirestore.instance;
@@ -38,7 +39,7 @@ class LoginController extends GetxController {
         email: email,
         password: password,
       );
-
+      devtools.log(userCredential.toString());
       // Authentication successful, return the UserCredential object
       return userCredential;
     } catch (e) {
