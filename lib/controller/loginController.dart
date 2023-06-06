@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:skripsiii/helper/databaseHelper.dart';
@@ -177,25 +178,27 @@ class LoginController extends GetxController {
       _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
         print(error);
       });
-    } catch (e) {
-      return null;
-    }
 
     print('_googleUser : ${_googleUser != null}');
     final GoogleSignInAuthentication googleAuth =
         await _googleUser!.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    // Once signed in, return the UserCredential
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    // userCredential.user?.uid;
-    return await getUserData(userCredential);
+
+      // Once signed in, return the UserCredential
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      // userCredential.user?.uid;
+      return await getUserData(userCredential);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
     // if (googleSignInAccount != null) {
     //   googleSignInAuthentication = await googleSignInAccount!.authentication;
     //
