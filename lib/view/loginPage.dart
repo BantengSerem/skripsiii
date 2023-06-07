@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
@@ -41,7 +42,9 @@ class _LoginPageState extends State<LoginPage> {
         MemberController().member = x;
       } else if (x.runtimeType == Shop) {
         ShopController().shop = x;
-      } else {
+      }
+      // TODO user is not finished to fill all required data
+      else {
         return false;
       }
 
@@ -49,6 +52,21 @@ class _LoginPageState extends State<LoginPage> {
       return true;
     }
     return false;
+  }
+
+  Future<bool> googleLogin() async {
+    var x = await loginController.googleLogin();
+    if (x.runtimeType == Member) {
+      MemberController().member = x;
+    } else if (x.runtimeType == Shop) {
+      ShopController().shop = x;
+    }
+    // TODO user is not finished to fill all required data
+    else {
+      return false;
+    }
+
+    return true;
   }
 
   Future<bool?> _showExitDialog(BuildContext context) async {
@@ -74,96 +92,144 @@ class _LoginPageState extends State<LoginPage> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
+          backgroundColor: Colors.red,
           body: Center(
             child: Obx(
               () {
                 if (pageVM.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return LoadingAnimationWidget.threeArchedCircle(
+                    color: Colors.lightBlue,
+                    size: 50,
+                  );
                 } else {
-                  return Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 44,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  hintText: 'Enter Email',
-                                ),
-                                enableSuggestions: false,
-                                autocorrect: false,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (value) =>
-                                    EmailValidator.validate(value!)
-                                        ? null
-                                        : 'Invalid Email',
-                                onSaved: (newValue) => _email = newValue,
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Form(
+                        key: _formKey,
+                        autovalidateMode: AutovalidateMode.always,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 44,
                               ),
-                              const SizedBox(
-                                height: 20,
+                            ),
+                            const SizedBox(
+                              height: 50,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter Email',
+                                    ),
+                                    enableSuggestions: false,
+                                    autocorrect: false,
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) =>
+                                        EmailValidator.validate(value!)
+                                            ? null
+                                            : 'Invalid Email',
+                                    onSaved: (newValue) => _email = newValue,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter Password',
+                                    ),
+                                    obscureText: true,
+                                    enableSuggestions: false,
+                                    autocorrect: false,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          value.length < 4) {
+                                        return 'Please enter password';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (newValue) => _password = newValue,
+                                  ),
+                                ],
                               ),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  hintText: 'Enter Password',
-                                ),
-                                obscureText: true,
-                                enableSuggestions: false,
-                                autocorrect: false,
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 4) {
-                                    return 'Please enter password';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (newValue) => _password = newValue,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Button36x220(
-                          text: 'Login',
-                          func: () async {
-                            pageVM.loading();
-                            final form = _formKey.currentState;
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            Button36x220(
+                              text: 'Login',
+                              func: () async {
+                                pageVM.loading();
+                                final form = _formKey.currentState;
 
-                            if (form!.validate()) {
-                              form.save();
-                              bool a = await submitCommand();
-                              if (mounted) {
-                                if (a) {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    homeRoute,
-                                    (route) => false,
-                                  );
-                                } else {
-                                  await _showExitDialog(context);
+                                if (form!.validate()) {
+                                  form.save();
+                                  bool a = await submitCommand();
+                                  if (mounted) {
+                                    if (a) {
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                        homeRoute,
+                                        (route) => false,
+                                      );
+                                    } else {
+                                      await _showExitDialog(context);
+                                    }
+                                  }
                                 }
-                              }
+                                pageVM.doneLoading();
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      const Text('continue with google'),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton.icon(
+                        style: const ButtonStyle(
+                          shadowColor:
+                              MaterialStatePropertyAll<Color>(Colors.black),
+                          backgroundColor:
+                              MaterialStatePropertyAll<Color>(Colors.white),
+                        ),
+                        onPressed: () async {
+                          pageVM.loading();
+                          var u = await googleLogin();
+                          if (mounted) {
+                            if (u) {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                homeRoute,
+                                (route) => false,
+                              );
+                            } else {
+                              await _showExitDialog(context);
                             }
-                            pageVM.doneLoading();
-                          },
-                        )
-                      ],
-                    ),
+                          }
+                          pageVM.doneLoading();
+                        },
+                        icon: const Icon(Icons.abc_rounded),
+                        label: const Text(
+                          'Sing in with Google',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 }
               },

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:skripsiii/constants/route.dart';
+import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/loginPage.dart';
 import 'package:skripsiii/widget/button36x220.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -28,10 +30,11 @@ class WelcomePage extends StatelessWidget {
             Button36x220(
               text: 'Login',
               func: () {
-                Navigator.pushNamed(
-                  context,
-                  loginRoute,
-                );
+                Navigator.push(
+                    context,
+                    SlideFadeTransition(
+                      child: const LoginPage(),
+                    ));
               },
             ),
             const SizedBox(
