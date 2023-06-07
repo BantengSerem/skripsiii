@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
 import 'package:skripsiii/controller/loginController.dart';
-import 'package:skripsiii/view/homePage.dart';
+import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/controller/shopContoller.dart';
 
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
     // TODO: implement dependencies
-    // Get.lazyPut<LoginController>(() => LoginController(), fenix: true);
     Get.put<LoginController>(LoginController(), permanent: true);
+    Get.lazyPut<MemberController>(() => MemberController(), fenix: true);
+    Get.lazyPut<ShopController>(() => ShopController(), fenix: true);
   }
 }
 

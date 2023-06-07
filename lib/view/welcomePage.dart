@@ -28,9 +28,9 @@ class WelcomePage extends StatelessWidget {
             Button36x220(
               text: 'Login',
               func: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
+                Navigator.pushNamed(
+                  context,
                   loginRoute,
-                  (route) => false,
                 );
               },
             ),
@@ -40,10 +40,10 @@ class WelcomePage extends StatelessWidget {
             Button36x220(
               text: 'Register',
               func: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  loginRoute,
-                  (route) => false,
-                );
+                // Navigator.pushNamed(
+                //   context,
+                //   loginRoute,
+                // );
               },
             ),
           ],

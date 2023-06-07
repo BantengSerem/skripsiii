@@ -50,7 +50,7 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<UserParent?> manualLogin(Map<String, dynamic> data) async {
+  Future<dynamic> manualLogin(Map<String, dynamic> data) async {
     var member = await fireStoreInstance
         .collection('member')
         .where('email', isEqualTo: data['email'])
@@ -136,7 +136,7 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<UserParent?> getUserData(UserCredential userCredential) async {
+  Future<dynamic> getUserData(UserCredential userCredential) async {
     User? user = userCredential.user;
     var member = await fireStoreInstance
         .collection('member')
@@ -173,7 +173,7 @@ class LoginController extends GetxController {
     return null;
   }
 
-  Future<UserParent?> googleLogin() async {
+  Future<dynamic> googleLogin() async {
     try {
       _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
         print(error);

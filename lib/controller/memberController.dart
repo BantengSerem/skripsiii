@@ -4,8 +4,8 @@ import 'package:location/location.dart';
 import 'package:skripsiii/model/memberModel.dart';
 
 
-class memberController extends GetxController{
-  late Member _member;
+class MemberController extends GetxController{
+  late Member member;
   final Location location = Location();
 
   late bool _serviceEnabled;

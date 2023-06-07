@@ -15,7 +15,9 @@ class Button36x220 extends StatelessWidget {
       height: 36,
       width: 220,
       child: ElevatedButton(
-        onPressed: func,
+        onPressed: () async{
+          func();
+        },
         child: Text(text),
       ),
     );
