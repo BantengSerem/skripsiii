@@ -5,7 +5,7 @@ import 'package:skripsiii/model/memberModel.dart';
 
 
 class MemberController extends GetxController{
-  late Member member;
+  late Rx<Member> member = Member.blank().obs;
   final Location location = Location();
 
   late bool _serviceEnabled;

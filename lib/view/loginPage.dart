@@ -25,23 +25,26 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
   final LoginPageVM pageVM = Get.put<LoginPageVM>(LoginPageVM());
+  final MemberController memberController = Get.find<MemberController>();
+  final ShopController shopController = Get.find<ShopController>();
 
   String? _email;
   String? _password;
 
   Future<bool> submitCommand() async {
-    Map<String, dynamic> map = {
-      "email": _email,
-      'password': _password,
-    };
     var userCred = await loginController.signInWithEmailPassword(
         email: _email!, password: _password!);
     if (userCred != null) {
+      Map<String, dynamic> map = {
+        "email": _email,
+        'password': _password,
+        'userid': userCred.user!.uid,
+      };
       var x = await loginController.manualLogin(map);
       if (x.runtimeType == Member) {
-        MemberController().member = x;
+        memberController.member.value = x;
       } else if (x.runtimeType == Shop) {
-        ShopController().shop = x;
+        shopController.shop.value = x;
       }
       // TODO user is not finished to fill all required data
       else {
@@ -57,9 +60,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> googleLogin() async {
     var x = await loginController.googleLogin();
     if (x.runtimeType == Member) {
-      MemberController().member = x;
+      memberController.member.value = x;
     } else if (x.runtimeType == Shop) {
-      ShopController().shop = x;
+      shopController.shop.value = x;
     }
     // TODO user is not finished to fill all required data
     else {
@@ -181,6 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                                         (route) => false,
                                       );
                                     } else {
+                                      // TODO show error since user not found
                                       await _showExitDialog(context);
                                     }
                                   }
@@ -211,10 +215,11 @@ class _LoginPageState extends State<LoginPage> {
                           if (mounted) {
                             if (u) {
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                homeRoute,
+                                botNavRoute,
                                 (route) => false,
                               );
                             } else {
+                              // TODO have to complete filling data first (role)
                               await _showExitDialog(context);
                             }
                           }
@@ -251,3 +256,93 @@ class LoginPageVM extends GetxController {
     isLoading.value = false;
   }
 }
+
+
+// import 'package:flutter/material.dart';
+
+/// Flutter code sample for [PageStorage].
+
+void main() => runApp(const PageStorageExampleApp());
+
+class PageStorageExampleApp extends StatelessWidget {
+  const PageStorageExampleApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Widget> pages = const <Widget>[
+    ColorBoxPage(
+      key: PageStorageKey<String>('pageOne'),
+    ),
+    ColorBoxPage(
+      key: PageStorageKey<String>('pageTwo'),
+    ),
+  ];
+  int currentTab = 0;
+  final PageStorageBucket _bucket = PageStorageBucket();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Persistence Example'),
+      ),
+      body: PageStorage(
+        bucket: _bucket,
+        child: pages[currentTab],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentTab,
+        onTap: (int index) {
+          setState(() {
+            currentTab = index;
+          });
+        },
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'page 1',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'page2',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ColorBoxPage extends StatelessWidget {
+  const ColorBoxPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemExtent: 250.0,
+      itemBuilder: (BuildContext context, int index) => Container(
+        padding: const EdgeInsets.all(10.0),
+        child: Material(
+          color: index.isEven ? Colors.cyan : Colors.deepOrange,
+          child: Center(
+            child: Text(index.toString()),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

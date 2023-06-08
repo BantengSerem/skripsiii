@@ -5,11 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
 import 'package:skripsiii/constants/route.dart';
-import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
+
 import 'package:skripsiii/view/registerPage.dart';
-import 'package:skripsiii/view/registerInfoMemberPage.dart';
+
+import 'package:skripsiii/view/splashScreen.dart';
+
 import 'package:skripsiii/view/welcomePage.dart';
 
 Future<void> main() async {
@@ -36,13 +39,20 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: WelcomePage(),
-      // initialRoute: getCurrentUser() != null ? homeRoute : welcomeRoute,
+
+      initialRoute: splashScrRoute,
+      // initialRoute: getCurrentUser() != null ? botNavRoute : welcomeRoute,
+
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => HomePage(),
+
         registerRoute: (context) => RegisterPage(),
+
+        botNavRoute: (context) => BottomNavigationPage(),
+        splashScrRoute : (context) => const SplashScreenPage(),
+
       },
       initialBinding: HomeBinding(),
     );
