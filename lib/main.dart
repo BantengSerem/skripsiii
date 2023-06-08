@@ -8,6 +8,8 @@ import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
+import 'package:skripsiii/view/registerPage.dart';
+import 'package:skripsiii/view/registerInfoMemberPage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
 Future<void> main() async {
@@ -34,11 +36,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: getCurrentUser() != null ? homeRoute : welcomeRoute,
+      home: WelcomePage(),
+      // initialRoute: getCurrentUser() != null ? homeRoute : welcomeRoute,
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => HomePage(),
+        registerRoute: (context) => RegisterPage(),
       },
       initialBinding: HomeBinding(),
     );
