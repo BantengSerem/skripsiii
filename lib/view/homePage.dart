@@ -6,75 +6,114 @@ class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
+  final HomeVM pageVM = Get.put(HomeVM());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
-      body: Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                // Map<String, dynamic> map = {
-                //   'email': '321@test.com',
-                //   'password': '321',
-                // };
-                Map<String, dynamic> map = {
-                  'email': 'member123@test.com',
-                  'password': '123456',
-                };
-                await loginController.signInWithEmailPassword(
-                    email: 'member123@test.com', password: '123456');
-                var u = await loginController.manualLogin(map);
-                print(u);
-                // print('${u?.password} ${u?.email}');
-              },
-              child: const Text('login'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  height: 50,
+                  // alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextField(
+                    controller: pageVM.searchBarTextController,
+                    textAlignVertical: TextAlignVertical.center,
+                    cursorColor: Colors.blueGrey,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.black),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.black),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onTap: () {
+                      pageVM.openSeachBar();
+                    },
+                    autofillHints: const ['nasi padang', 'burger', 'soto ayam'],
+                    onTapOutside: (_) {
+                      pageVM.closeSearchbar();
+                      FocusScope.of(context).unfocus();
+                    },
+                    onSubmitted: (submitted) {
+                      pageVM.closeSearchbar();
+                    },
+                    enableSuggestions: true,
+                  ),
+                ),
+                Obx(
+                  () => pageVM.searchBarOpen.value
+                      ? Container(
+                          height: 100,
+                          color: Colors.red,
+                        )
+                      : Container(
+                          color: Colors.red,
+                          // margin: const EdgeInsets.symmetric(horizontal: 20),
+                          height: 150,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 60,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const [
+                                    Text('Selling Now'),
+                                    Text('View All'),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 20,
+                                  itemBuilder: (context, idx) => Container(
+                                    height: 30,
+                                    width: 60,
+                                    color: Colors.greenAccent,
+                                    margin: const EdgeInsets.all(5),
+                                    child: Text('item $idx'),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () async {
-                await loginController.logout();
-              },
-              child: const Text('logout'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await loginController.checkLogin();
-              },
-              child: const Text('check login'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await loginController.getUser();
-              },
-              child: const Text('get user'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await loginController.googleLogin();
-              },
-              child: const Text('google login'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                var userCred = await loginController.firebaseLogOut();
-              },
-              child: const Text('google logout'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                loginController.test();
-              },
-              child: const Text('test google login'),
-            ),
-          ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class HomeVM extends GetxController {
+  RxBool searchBarOpen = false.obs;
+  final TextEditingController searchBarTextController = TextEditingController();
+
+  void openSeachBar() {
+    searchBarOpen.value = true;
+  }
+
+  void closeSearchbar() {
+    searchBarOpen.value = false;
   }
 }

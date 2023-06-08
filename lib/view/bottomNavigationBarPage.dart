@@ -21,8 +21,8 @@ class BottomNavigationPage extends StatelessWidget {
     const TestPage2(
       key: PageStorageKey('page 2}'),
     ),
-    const TestPage3(
-      key: PageStorageKey('page 3}'),
+    TestPage3(
+      key: const PageStorageKey('page 3}'),
     ),
   ];
   final PageStorageBucket bucket = PageStorageBucket();
