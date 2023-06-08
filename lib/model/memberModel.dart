@@ -7,6 +7,15 @@ class Member extends UserParent {
   late final String name;
   late final String contacts;
 
+  Member.blank({
+    String password = '',
+    String email = '',
+    this.memberID = '',
+    this.username = '',
+    this.name = '',
+    this.contacts = '',
+  }) : super(password: '', email: '');
+
   Member({
     required String email,
     required String password,

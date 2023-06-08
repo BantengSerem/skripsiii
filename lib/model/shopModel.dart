@@ -20,6 +20,18 @@ class Shop extends UserParent {
   late final DateTime closingTime;
   late final SellingTime sellingTime;
 
+  Shop.blank({
+    String password = '',
+    String email = '',
+    this.shopName = '',
+    this.contacts = '',
+    DateTime? closingTime,
+    this.ratingAVG = 0.0,
+    this.sellingTime = SellingTime.m15,
+    this.shopID = '',
+  })  : closingTime = closingTime ?? DateTime.now(),
+        super(email: email, password: password);
+
   Shop({
     required String password,
     required String email,
@@ -43,15 +55,15 @@ class Shop extends UserParent {
   // }
 
   factory Shop.fromJson(Map<String, dynamic> json) => Shop(
-    email: json['email'],
-    password: json['password'] ?? '',
-    shopID: json['shopID'] ?? '',
-    shopName: json['shopName'] ?? '',
-    contacts: json['contacts'] ?? '',
-    ratingAVG: json['ratingAVG'] ?? 0.0,
-    closingTime: json['closingTime'] ?? DateTime.now(),
-    sellingTime: json['sellingTime'] ?? SellingTime.m30,
-  );
+        email: json['email'],
+        password: json['password'] ?? '',
+        shopID: json['shopID'] ?? '',
+        shopName: json['shopName'] ?? '',
+        contacts: json['contacts'] ?? '',
+        ratingAVG: json['ratingAVG'] ?? 0.0,
+        closingTime: json['closingTime'] ?? DateTime.now(),
+        sellingTime: json['sellingTime'] ?? SellingTime.m30,
+      );
 
   @override
   String toString() {

@@ -41,6 +41,7 @@ class DatabaseHelper {
     var res = await db.rawQuery('''
     SELECT * FROM user
     ''');
+    print(res.length);
     print(res.isNotEmpty);
     return res.isNotEmpty;
   }
@@ -52,10 +53,33 @@ class DatabaseHelper {
     // return res.map((e) => UserModel.fromJson(e)).toList();
   }
 
+  getUserEmailRoleAndUid() async {
+    final db = await database;
+    var res = await db.rawQuery("SELECT * FROM user");
+    var a = res.toList()[0];
+    return {
+      'userID': a['userID'],
+      'email': a['email'],
+      'role': a['role'],
+    };
+  }
+
+  updateRole(String role, String userid) async {
+    final db = await database;
+    var res = await db.rawInsert(
+        "UPDATE user SET role = ?"
+        "WHERE userID = ?",
+        [
+          role,
+          userid,
+        ]);
+    return res;
+  }
+
   loginUser(Map<String, dynamic> user) async {
     final db = await database;
     var res = await db.rawInsert(
-        "INSERT INTO user (email,userid,role)"
+        "INSERT INTO user (email,userID,role)"
         "VALUES (?,?,?)",
         [
           user['email'],

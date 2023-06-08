@@ -9,73 +9,89 @@ import 'package:skripsiii/view/testpage3.dart';
 class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({Key? key}) : super(key: key);
 
-  final BotomNavController pageVM =
-      Get.put<BotomNavController>(BotomNavController());
+  final HomeVM homeVM = Get.put(HomeVM());
+
+  final BottomNavController pageVM =
+      Get.put<BottomNavController>(BottomNavController());
+
   final List<Widget> pages = [
     HomePage(
-      key: const PageStorageKey('Page1'),
+      key: const PageStorageKey<String>('HomePage'),
     ),
     const TestPage1(
-      key: PageStorageKey('page 1}'),
+      key: PageStorageKey<String>('TestPage1'),
     ),
     const TestPage2(
-      key: PageStorageKey('page 2}'),
+      key: PageStorageKey<String>('TestPage2'),
     ),
     TestPage3(
-      key: const PageStorageKey('page 3}'),
+      key: const PageStorageKey<String>('TestPage3'),
     ),
   ];
   final PageStorageBucket bucket = PageStorageBucket();
 
   @override
   Widget build(BuildContext context) {
+    print('build whole botNav page');
     return Scaffold(
-      body: Obx(
-          () => PageStorage(bucket: bucket, child: pages[pageVM.idx.value])),
+      body: Obx(() {
+        print('rebuild body');
+        return PageStorage(bucket: bucket, child: pages[pageVM.idx.value]);
+      }),
       bottomNavigationBar: SafeArea(
         child: Obx(
-          () => SalomonBottomBar(
-            currentIndex: pageVM.idx.value,
-            onTap: (i) {
-              pageVM.changeIdx(i);
-            },
-            items: [
-              /// Home
-              SalomonBottomBarItem(
-                icon: const Icon(Icons.home),
-                title: const Text("Home"),
-                selectedColor: Colors.purple,
+          () {
+            print('rebuld bottom nav');
+            return Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.blueAccent, width: 2),
+                ),
               ),
+              child: SalomonBottomBar(
+                currentIndex: pageVM.idx.value,
+                onTap: (i) {
+                  pageVM.changeIdx(i);
+                },
+                items: [
+                  /// Home
+                  SalomonBottomBarItem(
+                    icon: const Icon(Icons.home),
+                    title: const Text("Home"),
+                    selectedColor: Colors.purple,
+                  ),
 
-              /// Likes
-              SalomonBottomBarItem(
-                icon: const Icon(Icons.favorite_border),
-                title: const Text("Likes"),
-                selectedColor: Colors.pink,
-              ),
+                  /// Likes
+                  SalomonBottomBarItem(
+                    icon: const Icon(Icons.favorite_border),
+                    title: const Text("Likes"),
+                    selectedColor: Colors.pink,
+                  ),
 
-              /// Search
-              SalomonBottomBarItem(
-                icon: const Icon(Icons.search),
-                title: const Text("Search"),
-                selectedColor: Colors.orange,
-              ),
+                  /// Search
+                  SalomonBottomBarItem(
+                    icon: const Icon(Icons.search),
+                    title: const Text("Search"),
+                    selectedColor: Colors.orange,
+                  ),
 
-              /// Profile
-              SalomonBottomBarItem(
-                icon: const Icon(Icons.person),
-                title: const Text("Profile"),
-                selectedColor: Colors.teal,
+                  /// Profile
+                  SalomonBottomBarItem(
+                    icon: const Icon(Icons.person),
+                    title: const Text("Profile"),
+                    selectedColor: Colors.teal,
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class BotomNavController extends GetxController {
+class BottomNavController extends GetxController {
   RxInt idx = 0.obs;
 
   void changeIdx(int i) {

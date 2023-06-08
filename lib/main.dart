@@ -8,6 +8,7 @@ import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
+import 'package:skripsiii/view/splashScreen.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
 Future<void> main() async {
@@ -34,12 +35,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: getCurrentUser() != null ? botNavRoute : welcomeRoute,
+      initialRoute: splashScrRoute,
+      // initialRoute: getCurrentUser() != null ? botNavRoute : welcomeRoute,
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => HomePage(),
         botNavRoute: (context) => BottomNavigationPage(),
+        splashScrRoute : (context) => const SplashScreenPage(),
       },
       initialBinding: HomeBinding(),
     );

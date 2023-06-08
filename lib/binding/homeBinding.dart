@@ -12,7 +12,6 @@ class HomeBinding implements Bindings {
     Get.lazyPut<MemberController>(() => MemberController(), fenix: true);
     Get.lazyPut<ShopController>(() => ShopController(), fenix: true);
     Get.lazyPut<FoodController>(() => FoodController(), fenix: true);
-
   }
 }
 

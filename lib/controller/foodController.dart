@@ -34,7 +34,7 @@ class FoodController extends GetxController {
     var name = data['file'].name;
     Reference reference = FirebaseStorage.instance
         .ref()
-        .child(data['restaurantID'])
+        .child(data['shopID'])
         .child('foodIMG')
         .child(name);
     try {
@@ -55,8 +55,8 @@ class FoodController extends GetxController {
 
   Future<void> addNewFoodData(Map<String, dynamic> data) async {
     await fireStoreInstance
-        .collection('restaurant')
-        .doc(data['restaurantID'])
+        .collection('shop')
+        .doc(data['shopID'])
         .collection('foodList')
         .doc(data['foodID'])
         .set({
@@ -101,12 +101,28 @@ class FoodController extends GetxController {
     };
   }
 
+  Future<void> test() async {
+    var res = await fireStoreInstance
+        .collection('shop')
+        .where('shopName', isGreaterThanOrEqualTo: '23')
+        // .where('shopName', isLessThanOrEqualTo: 'shop')
+        .limit(10)
+        .get();
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+    });
+    // var l = res.docs.map((doc) {
+    //   return Food.fromMap(doc);
+    // }).toList();
+    // print(l);
+  }
+
   Future<void> getFilteredFoodList(Map<String, dynamic> data) async {
     late Query query;
     if (firstTime) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .where('latitude', isGreaterThanOrEqualTo: data['minLat'])
@@ -118,8 +134,8 @@ class FoodController extends GetxController {
       firstTime = false;
     } else if (currDoc != null) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .where('latitude', isGreaterThanOrEqualTo: data['minLat'])
@@ -135,7 +151,7 @@ class FoodController extends GetxController {
     var index = streamList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStream(data['restaurantID']);
+      if (event.size == 0) return deleteStream(data['shopID']);
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -182,8 +198,8 @@ class FoodController extends GetxController {
 
   Future<void> updateFoodData(Map<String, dynamic> data) async {
     await fireStoreInstance
-        .collection('restaurant')
-        .doc(data['restaurantID'])
+        .collection('shop')
+        .doc(data['shopID'])
         .collection('foodList')
         .doc(data['foodID'])
         .update({
@@ -201,17 +217,17 @@ class FoodController extends GetxController {
     });
   }
 
-  void deleteStream(String restaurantID) {
+  void deleteStream(String shopID) {
     streamList.last.cancel();
     streamList.removeLast();
-    getLastDocSnapshots(restaurantID);
+    getLastDocSnapshots(shopID);
     print('streamList : ${streamList}');
   }
 
-  void getLastDocSnapshots(String restaurantID) async {
+  void getLastDocSnapshots(String shopID) async {
     var query = fireStoreInstance
-        .collection('restaurant')
-        .doc(restaurantID)
+        .collection('shop')
+        .doc(shopID)
         .collection('foodList')
         .doc(listItem.last.foodID.toString());
     currDoc = await query.get();
@@ -221,8 +237,8 @@ class FoodController extends GetxController {
     late Query query;
     if (firstTime) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .limit(10);
@@ -230,8 +246,8 @@ class FoodController extends GetxController {
       firstTime = false;
     } else if (currDoc != null) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .limit(10)
@@ -243,7 +259,7 @@ class FoodController extends GetxController {
     var index = streamList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStream(data['restaurantID']);
+      if (event.size == 0) return deleteStream(data['shopID']);
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
