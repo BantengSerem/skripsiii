@@ -92,7 +92,6 @@ class _LoginPageState extends State<LoginPage> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-          backgroundColor: Colors.red,
           body: Center(
             child: Obx(
               () {
@@ -223,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         icon: const Icon(Icons.abc_rounded),
                         label: const Text(
-                          'Sing in with Google',
+                          'Sign in with Google',
                           style: TextStyle(
                             color: Colors.black,
                           ),
