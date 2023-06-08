@@ -212,7 +212,7 @@ class _LoginPageState extends State<LoginPage> {
                           if (mounted) {
                             if (u) {
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                homeRoute,
+                                botNavRoute,
                                 (route) => false,
                               );
                             } else {

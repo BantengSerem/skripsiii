@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
 import 'package:skripsiii/constants/route.dart';
-import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
@@ -34,11 +34,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: getCurrentUser() != null ? homeRoute : welcomeRoute,
+      initialRoute: getCurrentUser() != null ? botNavRoute : welcomeRoute,
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => HomePage(),
+        botNavRoute: (context) => BottomNavigationPage(),
       },
       initialBinding: HomeBinding(),
     );
