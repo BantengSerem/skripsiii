@@ -7,6 +7,7 @@ import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
+import 'package:skripsiii/widget/sellingItemCard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -101,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   // color: Colors.red,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
-                  height: 250,
+                  height: 280,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Column(
                     children: [
@@ -130,18 +131,13 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      Expanded(
+                      Container(
+                        height: 220,
                         child: ListView.builder(
                           key: const Key('sellingNow'),
                           scrollDirection: Axis.horizontal,
                           itemCount: 20,
-                          itemBuilder: (context, idx) => Container(
-                            height: 30,
-                            width: 60,
-                            color: Colors.greenAccent,
-                            margin: const EdgeInsets.all(5),
-                            child: Text('item $idx'),
-                          ),
+                          itemBuilder: (context, idx) => SellingItemCard(),
                         ),
                       ),
                     ],
@@ -150,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   // color: Colors.red,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
-                  height: 250,
+                  height: 300,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Column(
                     children: [
@@ -221,6 +217,7 @@ class _HomePageState extends State<HomePage> {
 class HomeVM extends GetxController {
   // RxBool searchBarOpen = false.obs;
   final TextEditingController searchBarTextController = TextEditingController();
+
   // final FoodController foodController = Get.find<FoodController>();
 
   RxBool isLoadingSellingNow = false.obs;
@@ -229,8 +226,6 @@ class HomeVM extends GetxController {
   Future<void> init() async {
     isLoadingSellingNow.value = true;
     isLoadingSellingSoon.value = true;
-
-
 
     isLoadingSellingNow.value = false;
     isLoadingSellingSoon.value = false;
@@ -268,6 +263,7 @@ class HomeVM extends GetxController {
 class SearchFood extends SearchDelegate<dynamic> {
   // final FoodController foodController = Get.find<FoodController>();
   final ShopController shopController = Get.find<ShopController>();
+
   // Timer? _timer;
 
   @override

@@ -15,17 +15,17 @@ class BottomNavigationPage extends StatelessWidget {
       Get.put<BottomNavController>(BottomNavController());
 
   final List<Widget> pages = [
-    HomePage(
-      key: const PageStorageKey<String>('HomePage'),
+    const HomePage(
+      key: PageStorageKey<String>('HomePage'),
     ),
     const TestPage1(
       key: PageStorageKey<String>('TestPage1'),
     ),
-    const TestPage2(
-      key: PageStorageKey<String>('TestPage2'),
-    ),
-    TestPage3(
-      key: const PageStorageKey<String>('TestPage3'),
+    // const TestPage2(
+    //   key: PageStorageKey<String>('TestPage2'),
+    // ),
+    const TestPage3(
+      key: PageStorageKey<String>('TestPage3'),
     ),
   ];
   final PageStorageBucket bucket = PageStorageBucket();
@@ -54,28 +54,16 @@ class BottomNavigationPage extends StatelessWidget {
                   pageVM.changeIdx(i);
                 },
                 items: [
-                  /// Home
                   SalomonBottomBarItem(
                     icon: const Icon(Icons.home),
                     title: const Text("Home"),
                     selectedColor: Colors.purple,
                   ),
-
-                  /// Likes
                   SalomonBottomBarItem(
-                    icon: const Icon(Icons.favorite_border),
-                    title: const Text("Likes"),
+                    icon: const Icon(Icons.history_rounded),
+                    title: const Text("History"),
                     selectedColor: Colors.pink,
                   ),
-
-                  /// Search
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.search),
-                    title: const Text("Search"),
-                    selectedColor: Colors.orange,
-                  ),
-
-                  /// Profile
                   SalomonBottomBarItem(
                     icon: const Icon(Icons.person),
                     title: const Text("Profile"),

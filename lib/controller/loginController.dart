@@ -101,19 +101,6 @@ class LoginController extends GetxController {
     return null;
   }
 
-  Future<void> registerMember(Map<String, dynamic> data) async {
-    await fireStoreInstance
-        .collection('member')
-        .doc(data['uid'])
-        .set({
-          'email': data['email'],
-          'memberID': data['uid'],
-        })
-        .then((value) => print('success registering new member'))
-        .onError((error, stackTrace) {
-          print('error while registering new member : $error');
-        });
-  }
 
   Future<void> registerShop(Map<String, dynamic> data) async {
     await fireStoreInstance

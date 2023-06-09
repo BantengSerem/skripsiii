@@ -189,12 +189,11 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Colors.white,
-          title: const Center(
-            child: Text(
-              'Register',
-              style: TextStyle(color: Colors.black),
-            ),
+          title: const Text(
+            'Register',
+            style: TextStyle(color: Colors.black),
           ),
         ),
         body: Center(

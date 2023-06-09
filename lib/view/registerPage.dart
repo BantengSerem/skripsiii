@@ -83,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (value) =>
                           value != null ? null : 'Please select a role',
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 200,
                     ),
                     Button36x220(
