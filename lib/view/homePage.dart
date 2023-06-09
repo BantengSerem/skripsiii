@@ -35,69 +35,51 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Container(
-                  height: 50,
-                  color: Colors.blueGrey,
-                  // alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextField(
-                    controller: pageVM.searchBarTextController,
-                    textAlignVertical: TextAlignVertical.center,
-                    cursorColor: Colors.blueGrey,
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      // color: Colors.yellow,
+                      height: 60,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Welcome, ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
+                          ),
+                          Obx(
+                            () => Text(
+                              memberController.member.value.username,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    onTap: () async {
-                      // FocusScope.of(context).unfocus();
-                      var a = await showSearch(
-                          context: context, delegate: SearchFood());
-                      print('result : $a');
-                      pageVM.getSearch(a);
-                      // pageVM.openSeachBar();
-                    },
-                    autofillHints: const ['nasi padang', 'burger', 'soto ayam'],
-                    onTapOutside: (_) {
-                      // pageVM.closeSearchbar();
-                      FocusScope.of(context).unfocus();
-                    },
-                    onSubmitted: (submitted) {
-                      // pageVM.closeSearchbar();
-                    },
-                    enableSuggestions: true,
-                  ),
-                ),
-                Container(
-                  // color: Colors.yellow,
-                  height: 60,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Welcome, ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                        ),
+                    Container(
+                      height: 50,
+                      color: Colors.blueGrey,
+                      // alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // FocusScope.of(context).unfocus();
+                          var a = await showSearch(
+                              context: context, delegate: SearchFood());
+                          print('result : $a');
+                          pageVM.getSearch(a);
+                          // pageVM.openSeachBar();
+                        },
+                        child: const Text('Search'),
                       ),
-                      Obx(
-                        () => Text(
-                          memberController.member.value.username,
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   // color: Colors.red,
@@ -139,9 +121,7 @@ class _HomePageState extends State<HomePage> {
                           itemCount: 20,
                           itemBuilder: (context, idx) => SellingItemCard(
                             data: {},
-                            func: () async{
-
-                            },
+                            func: () async {},
                           ),
                         ),
                       ),
@@ -188,9 +168,7 @@ class _HomePageState extends State<HomePage> {
                           itemCount: 20,
                           itemBuilder: (context, idx) => SellingItemCard(
                             data: {},
-                            func: () async{
-
-                            },
+                            func: () async {},
                           ),
                         ),
                       ),

@@ -156,86 +156,86 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
             ],
           ),
         ),
-        // Step(
-        //   state: _activeStepIndex == 2
-        //       ? StepState.editing
-        //       : _activeStepIndex > 2
-        //           ? StepState.complete
-        //           : StepState.indexed,
-        //   title: const Text('Address'),
-        //   content: Column(
-        //     children: [
-        //       TextFormField(
-        //         decoration: const InputDecoration(hintText: 'Address'),
-        //         onSaved: (newValue) => _address = newValue,
-        //       ),
-        //       const SizedBox(
-        //         height: 10,
-        //       ),
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           SizedBox(
-        //             width: 140,
-        //             child: TextFormField(
-        //               decoration: const InputDecoration(hintText: 'City'),
-        //               onSaved: (newValue) => _city = newValue,
-        //             ),
-        //           ),
-        //           const SizedBox(
-        //             width: 28,
-        //           ),
-        //           SizedBox(
-        //             width: 140,
-        //             child: TextFormField(
-        //               decoration: const InputDecoration(hintText: 'Province'),
-        //               onSaved: (newValue) => _province = newValue,
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //       const SizedBox(
-        //         height: 10,
-        //       ),
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           SizedBox(
-        //             width: 140,
-        //             child: TextFormField(
-        //               decoration: const InputDecoration(hintText: 'Country'),
-        //               onSaved: (newValue) => _country = newValue,
-        //             ),
-        //           ),
-        //           const SizedBox(
-        //             width: 28,
-        //           ),
-        //           SizedBox(
-        //             width: 140,
-        //             child: TextFormField(
-        //               keyboardType: TextInputType.number,
-        //               inputFormatters: <TextInputFormatter>[
-        //                 FilteringTextInputFormatter.digitsOnly
-        //               ],
-        //               decoration:
-        //                   const InputDecoration(hintText: 'Postal Code'),
-        //               validator: (value) {
-        //                 if (value == null) {
-        //                   return 'Please enter postal code';
-        //                 }
-        //                 return null;
-        //               },
-        //               onSaved: (newValue) => _postalCode = newValue,
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //       const SizedBox(
-        //         height: 10,
-        //       ),
-        //     ],
-        //   ),
-        // )
+        Step(
+          state: _activeStepIndex == 2
+              ? StepState.editing
+              : _activeStepIndex > 2
+                  ? StepState.complete
+                  : StepState.indexed,
+          title: const Text('Address'),
+          content: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'Address'),
+                onSaved: (newValue) => _address = newValue,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 140,
+                    child: TextFormField(
+                      decoration: const InputDecoration(hintText: 'City'),
+                      onSaved: (newValue) => _city = newValue,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 28,
+                  ),
+                  SizedBox(
+                    width: 140,
+                    child: TextFormField(
+                      decoration: const InputDecoration(hintText: 'Province'),
+                      onSaved: (newValue) => _province = newValue,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 140,
+                    child: TextFormField(
+                      decoration: const InputDecoration(hintText: 'Country'),
+                      onSaved: (newValue) => _country = newValue,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 28,
+                  ),
+                  SizedBox(
+                    width: 140,
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      decoration:
+                          const InputDecoration(hintText: 'Postal Code'),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please enter postal code';
+                        }
+                        return null;
+                      },
+                      onSaved: (newValue) => _postalCode = newValue,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        )
       ];
 
   @override
