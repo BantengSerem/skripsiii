@@ -24,10 +24,10 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  getCurrentUser() {
-    var user = FirebaseAuth.instance.currentUser;
-    return user;
-  }
+  // getCurrentUser() {
+  //   var user = FirebaseAuth.instance.currentUser;
+  //   return user;
+  // }
 
   // This widget is the root of your application.
   @override
@@ -47,12 +47,9 @@ class MyApp extends StatelessWidget {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => HomePage(),
-
         registerRoute: (context) => RegisterPage(),
-
         botNavRoute: (context) => BottomNavigationPage(),
-        splashScrRoute : (context) => const SplashScreenPage(),
-
+        splashScrRoute: (context) => const SplashScreenPage(),
       },
       initialBinding: HomeBinding(),
     );

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/view/welcomePage.dart';
 
-class TestPage3 extends StatelessWidget {
-  TestPage3({Key? key}) : super(key: key);
+class TestPage3 extends StatefulWidget {
+  const TestPage3({Key? key}) : super(key: key);
+
+  @override
+  State<TestPage3> createState() => _TestPage3State();
+}
+
+class _TestPage3State extends State<TestPage3> {
   final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
   final FoodController foodController = Get.find<FoodController>();
@@ -39,6 +47,10 @@ class TestPage3 extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 await loginController.logout();
+                if (mounted) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
+                }
               },
               child: const Text('logout'),
             ),
@@ -97,5 +109,3 @@ class TestPage3 extends StatelessWidget {
     );
   }
 }
-
-// SnbHf89VLIeyzF84C5OHxMj0vZA2

@@ -11,6 +11,7 @@ import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/homePage.dart';
+import 'package:skripsiii/view/registerPage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
 class SplashScreenPage extends StatefulWidget {
@@ -50,12 +51,12 @@ class SplashScreenPageState extends State<SplashScreenPage> {
         if (res != null && ch) {
           var data = await loginController.getUserEmailRoleAndUid();
           // TODO redirect to "rolePage", make sure user to choose their role
-          // if(data['role'] == null) return
+          if (data['role'] == null) return const RegisterPage();
           if (data['role'] == 'member') {
             var m = await loginController.getMemberData(data['email']);
             print("this is splash for member : $m");
             memberController.member.value = m;
-          } else if(data['role'] == 'shop'){
+          } else if (data['role'] == 'shop') {
             var s = await loginController.getShopData(data['email']);
             print("this is splash for shop : $s");
             shopController.shop.value = s;

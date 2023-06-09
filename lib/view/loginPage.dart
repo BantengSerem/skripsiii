@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _email;
   String? _password;
 
-  Future<bool> submitCommand() async {
+  Future<int> submitCommand() async {
     var userCred = await loginController.signInWithEmailPassword(
         email: _email!, password: _password!);
     if (userCred != null) {
@@ -47,29 +47,29 @@ class _LoginPageState extends State<LoginPage> {
         shopController.shop.value = x;
       }
       // TODO user is not finished to fill all required data
-      else {
-        return false;
+      else if (x == null) {
+        return 2;
       }
-
-      // print(x.toString());
-      return true;
+      return 1;
     }
-    return false;
+    return 0;
   }
 
-  Future<bool> googleLogin() async {
+  Future<int> googleLogin() async {
     var x = await loginController.googleLogin();
     if (x.runtimeType == Member) {
       memberController.member.value = x;
     } else if (x.runtimeType == Shop) {
       shopController.shop.value = x;
+    } else if (x == null) {
+      return 2;
     }
     // TODO user is not finished to fill all required data
     else {
-      return false;
+      return 0;
     }
 
-    return true;
+    return 1;
   }
 
   Future<bool?> _showExitDialog(BuildContext context) async {
@@ -175,12 +175,18 @@ class _LoginPageState extends State<LoginPage> {
 
                                 if (form!.validate()) {
                                   form.save();
-                                  bool a = await submitCommand();
+                                  var a = await submitCommand();
                                   if (mounted) {
-                                    if (a) {
+                                    if (a == 1) {
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil(
-                                        homeRoute,
+                                        botNavRoute,
+                                        (route) => false,
+                                      );
+                                    } else if (a == 2) {
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                        registerRoute,
                                         (route) => false,
                                       );
                                     } else {
@@ -213,9 +219,14 @@ class _LoginPageState extends State<LoginPage> {
                           pageVM.loading();
                           var u = await googleLogin();
                           if (mounted) {
-                            if (u) {
+                            if (u == 1) {
                               Navigator.of(context).pushNamedAndRemoveUntil(
                                 botNavRoute,
+                                (route) => false,
+                              );
+                            } else if (u == 2) {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                registerRoute,
                                 (route) => false,
                               );
                             } else {
@@ -256,7 +267,6 @@ class LoginPageVM extends GetxController {
     isLoading.value = false;
   }
 }
-
 
 // import 'package:flutter/material.dart';
 
@@ -345,4 +355,3 @@ class ColorBoxPage extends StatelessWidget {
     );
   }
 }
-

@@ -91,6 +91,13 @@ class LoginController extends GetxController {
       await DatabaseHelper.instance.loginUser(map);
       return s;
     }
+
+    // TODO command this line so user can change user and don't stuck on the register page
+    // var map = {
+    //   'userID': data['uid'],
+    //   'email': data['email'],
+    // };
+    // await DatabaseHelper.instance.loginUser(map);
     return null;
   }
 
@@ -170,18 +177,18 @@ class LoginController extends GetxController {
     return s;
   }
 
-  Future<dynamic> getUserData(String? email) async {
-    // User? user = userCredential.user;
+  Future<dynamic> getUserData(UserCredential userCredential) async {
+    User? user = userCredential.user;
     var member = await fireStoreInstance
         .collection('member')
-        .where('email', isEqualTo: email)
+        .where('email', isEqualTo: user?.email)
         // .where('password', isEqualTo: '')
         // .where('uid', isEqualTo: user?.uid.toString())
         .get();
 
     var shop = await fireStoreInstance
         .collection('shop')
-        .where('email', isEqualTo: email)
+        .where('email', isEqualTo: user?.email)
         // .where('password', isEqualTo: '')
         // .where('uid', isEqualTo: user?.uid.toString())
         .get();
@@ -204,6 +211,13 @@ class LoginController extends GetxController {
       await DatabaseHelper.instance.loginUser(map);
       return s;
     }
+
+    // TODO command this line so user can change user and don't stuck on the register page
+    // var map = {
+    //   'userID': user?.uid,
+    //   'email': user?.email,
+    // };
+    // await DatabaseHelper.instance.loginUser(map);
     return null;
   }
 
@@ -227,7 +241,7 @@ class LoginController extends GetxController {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
       // userCredential.user?.uid;
-      return await getUserData(userCredential.user!.email);
+      return await getUserData(userCredential);
     } catch (e) {
       debugPrint(e.toString());
       return null;
