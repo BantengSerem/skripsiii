@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/testPage2.dart';
 import 'package:skripsiii/view/testpage1.dart';
@@ -10,6 +11,7 @@ class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({Key? key}) : super(key: key);
 
   final HomeVM homeVM = Get.put(HomeVM());
+  final HistoryPageVM historyVM = Get.put(HistoryPageVM());
 
   final BottomNavController pageVM =
       Get.put<BottomNavController>(BottomNavController());
@@ -18,8 +20,8 @@ class BottomNavigationPage extends StatelessWidget {
     const HomePage(
       key: PageStorageKey<String>('HomePage'),
     ),
-    const TestPage1(
-      key: PageStorageKey<String>('TestPage1'),
+    const HistoryPage(
+      key: PageStorageKey<String>('HistoryPage'),
     ),
     // const TestPage2(
     //   key: PageStorageKey<String>('TestPage2'),

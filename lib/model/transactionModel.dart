@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Transaction {
+class TransactionModel {
   late final String transactionID;
   late final String memberID;
   late final String shopID;
   late final DateTime date;
   late final List<Map<String, dynamic>> foodList;
 
-  Transaction({
+  TransactionModel({
     required this.transactionID,
     required this.memberID,
     required this.shopID,
@@ -15,7 +15,7 @@ class Transaction {
     required this.foodList,
   });
 
-  Transaction.fromMap(DocumentSnapshot<Object> data){
+  TransactionModel.fromMap(DocumentSnapshot<Object?> data){
    transactionID = data['transactionID'];
    memberID = data['memberID'];
    shopID = data['shopID'];

@@ -74,33 +74,6 @@ class FoodController extends GetxController {
     });
   }
 
-  // On progress, don't change
-  Map<String, double> getLatLongRange({double radius = 1}) {
-    // double latRange = radius / 6371.0 * (180 / pi);
-    // double lonRange =
-    //     radius / (6371.0 * cos(latitude * pi / 180)) * (180 / pi);
-    return {};
-  }
-
-  Map<String, double> getLatLongFilter({
-    double latRange = 0.009,
-    double lonRange = 0.014,
-    required double latitude,
-    required double longitude,
-  }) {
-    double minLat = latitude - latRange;
-    double maxLat = latitude + latRange;
-    double minLon = longitude - lonRange;
-    double maxLon = longitude + lonRange;
-
-    return {
-      'minLat': minLat,
-      'maxLat': maxLat,
-      'minLon': minLon,
-      'maxLon': maxLon,
-    };
-  }
-
   Future<void> test() async {
     var res = await fireStoreInstance
         .collection('shop')

@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   // color: Colors.red,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
                   height: 280,
@@ -131,22 +131,27 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         height: 220,
                         child: ListView.builder(
                           key: const Key('sellingNow'),
                           scrollDirection: Axis.horizontal,
                           itemCount: 20,
-                          itemBuilder: (context, idx) => SellingItemCard(),
+                          itemBuilder: (context, idx) => SellingItemCard(
+                            data: {},
+                            func: () async{
+
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   // color: Colors.red,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
-                  height: 300,
+                  height: 280,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Column(
                     children: [
@@ -175,17 +180,17 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      Expanded(
+                      SizedBox(
+                        height: 220,
                         child: ListView.builder(
-                          key: Key('sellingSoon'),
+                          key: const Key('sellingNow'),
                           scrollDirection: Axis.horizontal,
                           itemCount: 20,
-                          itemBuilder: (context, idx) => Container(
-                            height: 30,
-                            width: 60,
-                            color: Colors.greenAccent,
-                            margin: const EdgeInsets.all(5),
-                            child: Text('item $idx'),
+                          itemBuilder: (context, idx) => SellingItemCard(
+                            data: {},
+                            func: () async{
+
+                            },
                           ),
                         ),
                       ),

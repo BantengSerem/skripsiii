@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class SellingItemCard extends StatelessWidget {
-  const SellingItemCard({Key? key}) : super(key: key);
+  const SellingItemCard({Key? key, required this.func, required this.data}) : super(key: key);
+  final Function() func;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async{
+        func();
         print('item kepencet');
       },
       child: Container(
