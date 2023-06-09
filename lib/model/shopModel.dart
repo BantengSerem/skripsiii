@@ -1,13 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skripsiii/model/userModel.dart';
 
-enum SellingTime {
-  m30,
-  m15,
-  m60,
-  m45,
-}
-
 class Shop extends UserParent {
   // @override
   // late final String email;
@@ -18,7 +11,7 @@ class Shop extends UserParent {
   late final String contacts;
   late final double ratingAVG;
   late final DateTime closingTime;
-  late final SellingTime sellingTime;
+  late final DateTime sellingTime;
 
   Shop.blank({
     String password = '',
@@ -27,9 +20,10 @@ class Shop extends UserParent {
     this.contacts = '',
     DateTime? closingTime,
     this.ratingAVG = 0.0,
-    this.sellingTime = SellingTime.m15,
+    DateTime? sellingTime,
     this.shopID = '',
   })  : closingTime = closingTime ?? DateTime.now(),
+        sellingTime = sellingTime ?? DateTime.now(),
         super(email: email, password: password);
 
   Shop({
@@ -62,7 +56,7 @@ class Shop extends UserParent {
         contacts: json['contacts'] ?? '',
         ratingAVG: json['ratingAVG'] ?? 0.0,
         closingTime: json['closingTime'] ?? DateTime.now(),
-        sellingTime: json['sellingTime'] ?? SellingTime.m30,
+        sellingTime: json['sellingTime'] ?? DateTime.now(),
       );
 
   @override

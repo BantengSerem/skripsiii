@@ -23,3 +23,4 @@ class TransactionModel {
    foodList = data['foodList'];
   }
 }
+

@@ -31,9 +31,19 @@ class ShopController extends GetxController {
     await Future.delayed(
       const Duration(seconds: 2),
     );
+    await fireStoreInstance
+        .collection('shop')
+        .where('shopName', isGreaterThanOrEqualTo: query)
+        .where('sellingTime', isLessThanOrEqualTo: DateTime.now())
+        .orderBy('sellingTime', descending: true)
+        .limit(10)
+        .get();
+
     return await fireStoreInstance
         .collection('shop')
         .where('shopName', isGreaterThanOrEqualTo: query)
+        .where('sellingTime', isLessThanOrEqualTo: DateTime.now())
+        .orderBy('sellingTime', descending: true)
         .limit(10)
         .get();
   }
