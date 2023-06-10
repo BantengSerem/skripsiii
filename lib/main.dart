@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
+import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
 
@@ -50,10 +51,11 @@ class MyApp extends StatelessWidget {
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
-        homeRoute: (context) => const HomePage(),
+        homeRoute: (context) =>  HomePage(),
         registerRoute: (context) => const RegisterPage(),
         botNavRoute: (context) => BottomNavigationPage(),
         splashScrRoute: (context) => const SplashScreenPage(),
+        // browseRoute: (context) => BrowseRestaurantPage(title: title),
       },
       initialBinding: HomeBinding(),
     );

@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
-import 'package:skripsiii/view/testPage2.dart';
-import 'package:skripsiii/view/testpage1.dart';
 import 'package:skripsiii/view/testpage3.dart';
 
 class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({Key? key}) : super(key: key);
 
-  final HomeVM homeVM = Get.put(HomeVM());
-  final HistoryPageVM historyVM = Get.put(HistoryPageVM());
+  // final HomeVM homeVM = Get.put(HomeVM());
+  // final HistoryPageVM historyVM = Get.put(HistoryPageVM());
 
   final BottomNavController pageVM =
-      Get.put<BottomNavController>(BottomNavController());
+      Get.put<BottomNavController>(BottomNavController(), permanent: false);
 
   final List<Widget> pages = [
-    const HomePage(
+    HomePage(
       key: PageStorageKey<String>('HomePage'),
+    ),
+    const FindFoodPage(
+      key: PageStorageKey<String>('FindFoodPage'),
     ),
     const HistoryPage(
       key: PageStorageKey<String>('HistoryPage'),
@@ -60,6 +62,11 @@ class BottomNavigationPage extends StatelessWidget {
                     icon: const Icon(Icons.home),
                     title: const Text("Home"),
                     selectedColor: Colors.purple,
+                  ),
+                  SalomonBottomBarItem(
+                    icon: const Icon(Icons.food_bank_outlined),
+                    title: const Text("Find Food"),
+                    selectedColor: Colors.red,
                   ),
                   SalomonBottomBarItem(
                     icon: const Icon(Icons.history_rounded),

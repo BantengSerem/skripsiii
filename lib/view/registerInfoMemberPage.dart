@@ -42,14 +42,6 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
     var form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
-      Member m = Member(
-        email: _email!,
-        password: _password!,
-        memberID: '',
-        username: _username!,
-        name: _name!,
-        contacts: _phone!,
-      );
 
       // Map<String, dynamic> data = {
       //   'email': _email,
@@ -66,11 +58,22 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
       // devtools.log(data.toString());
       // registerController.addMemberDetail(data);
 
-      var userCred = await registerController.registerMember(m);
+      var userCred =
+          await registerController.registerMember(_email!, _password!);
       if (userCred != null) {
+        Member m = Member(
+          email: _email!,
+          password: _password!,
+          memberID: userCred.user!.uid.toString(),
+          username: _username!,
+          name: _name!,
+          contacts: _phone!,
+        );
         bool a = await registerController.addMemberToFirebase(m);
         if (a) {
           memberController.member.value = m;
+          print(
+              'memberController.member.value : ${memberController.member.value}');
         }
         return a;
         // Map<String, dynamic> map = {
@@ -264,12 +267,14 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                     _activeStepIndex += 1;
                   });
                 } else {
-                  await submitCommand();
-                  if (mounted) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      botNavRoute,
-                      (route) => false,
-                    );
+                  var a = await submitCommand();
+                  if (a) {
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        botNavRoute,
+                        (route) => false,
+                      );
+                    }
                   }
                 }
               },

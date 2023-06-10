@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class SellingItemCard extends StatelessWidget {
-  const SellingItemCard({Key? key, required this.func, required this.data}) : super(key: key);
+  const SellingItemCard({Key? key, required this.func, required this.data})
+      : super(key: key);
   final Function() func;
   final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async{
+      onTap: () async {
         func();
         print('item kepencet');
       },
@@ -28,15 +29,16 @@ class SellingItemCard extends StatelessWidget {
                 'https://kbu-cdn.com/dk/wp-content/uploads/rendang-daging-sapi-pedas.jpg',
                 fit: BoxFit.cover,
               ),
-            ),const SizedBox(
+            ),
+            const SizedBox(
               height: 5,
             ),
-            const Text(
-              'restaurant',
+            Text(
+              data['shopName'],
               textAlign: TextAlign.start,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 17,
               ),
             ),
@@ -64,15 +66,13 @@ class SellingItemCard extends StatelessWidget {
                   ],
                 ),
               ],
-            ),const SizedBox(
+            ),
+            const SizedBox(
               height: 5,
             ),
             const Text(
               'Open',
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 15
-              ),
+              style: TextStyle(color: Colors.green, fontSize: 15),
             ),
           ],
         ),
