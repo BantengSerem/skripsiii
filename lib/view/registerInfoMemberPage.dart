@@ -49,9 +49,11 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
     var form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
+
       var uuid = const Uuid();
       String _memberId = uuid.v4();
       String _addressId = uuid.v4();
+
       // Map<String, dynamic> data = {
       //   'email': _email,
       //   'password': _password,
@@ -82,12 +84,23 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
         poscode: _postalCode!,
       );
 
-      var userCred = await registerController.registerMember(m);
+      var userCred =
+          await registerController.registerMember(_email!, _password!);
       if (userCred != null) {
+        Member m = Member(
+          email: _email!,
+          password: _password!,
+          memberID: userCred.user!.uid.toString(),
+          username: _username!,
+          name: _name!,
+          contacts: _phone!,
+        );
         bool a = await registerController.addMemberToFirebase(m);
         await registerController.addAddressToFirebase(x);
         if (a) {
           memberController.member.value = m;
+          print(
+              'memberController.member.value : ${memberController.member.value}');
         }
         devtools.log('Submitted');
         return a;
@@ -307,12 +320,14 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                     _activeStepIndex += 1;
                   });
                 } else {
-                  await submitCommand();
-                  if (mounted) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      botNavRoute,
-                      (route) => false,
-                    );
+                  var a = await submitCommand();
+                  if (a) {
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        botNavRoute,
+                        (route) => false,
+                      );
+                    }
                   }
                 }
               },

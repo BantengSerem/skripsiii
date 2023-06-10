@@ -1,101 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:skripsiii/controller/loginController.dart';
+import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/controller/shopContoller.dart';
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
-
-  @override
-  State<HistoryPage> createState() => _HistoryPageState();
-}
-
-class _HistoryPageState extends State<HistoryPage> {
-  final HistoryPageVM pageVM = Get.find<HistoryPageVM>();
+class HistoryPage extends StatelessWidget {
+  HistoryPage({Key? key}) : super(key: key);
+  final LoginController loginController = Get.find<LoginController>();
+  final MemberController memberController = Get.find<MemberController>();
+  final ShopController shopController = Get.find<ShopController>();
 
   @override
   Widget build(BuildContext context) {
+    HistoryPageVM pageVM = Get.put(HistoryPageVM());
     return Scaffold(
       appBar: AppBar(
         title: const Text('History'),
+        backgroundColor: Colors.blue,
+        elevation: 0,
       ),
       body: Column(
         children: [
-          Obx(
-            () => Container(
+          Material(
+            elevation: 5,
+            child: Container(
+              color: Colors.blue,
               height: 50,
-              // color: Colors.red,
               child: Row(
                 children: [
                   const SizedBox(
-                    width: 10,
+                    width: 25,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      if (pageVM.currButton.value != 0) {
-                        pageVM.buttonPressed(0);
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: pageVM.activeButton[0]
-                          ? const MaterialStatePropertyAll<Color>(Colors.black)
-                          : const MaterialStatePropertyAll<Color>(
-                              Colors.black26),
-                    ),
-                    child: Text(
-                      'All',
-                      style: TextStyle(
-                        color: pageVM.activeButton[0]
-                            ? Colors.white
-                            : Colors.black,
+                  Obx(
+                    () => TextButton(
+                      onPressed: () {
+                        if (pageVM.currButton.value != 0) {
+                          pageVM.buttonPressed(0);
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: pageVM.activeButton[0]
+                            ? const MaterialStatePropertyAll<Color>(
+                                Colors.black)
+                            : const MaterialStatePropertyAll<Color>(
+                                Colors.black26),
+                      ),
+                      child: Text(
+                        'Buy',
+                        style: TextStyle(
+                          color: pageVM.activeButton[0]
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(
-                    width: 10,
+                    width: 15,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      if (pageVM.currButton.value != 1) {
-                        pageVM.buttonPressed(1);
-                      }
-                      pageVM.activeButton[1];
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: pageVM.activeButton[1]
-                          ? const MaterialStatePropertyAll<Color>(Colors.black)
-                          : const MaterialStatePropertyAll<Color>(
-                              Colors.black26),
-                    ),
-                    child: Text(
-                      'Buy',
-                      style: TextStyle(
-                        color: pageVM.activeButton[1]
-                            ? Colors.white
-                            : Colors.black,
+                  Obx(
+                    () => TextButton(
+                      onPressed: () {
+                        if (pageVM.currButton.value != 1) {
+                          pageVM.buttonPressed(1);
+                        }
+                        pageVM.activeButton[1];
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: pageVM.activeButton[1]
+                            ? const MaterialStatePropertyAll<Color>(
+                                Colors.black)
+                            : const MaterialStatePropertyAll<Color>(
+                                Colors.black26),
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      if (pageVM.currButton.value != 2) {
-                        pageVM.buttonPressed(2);
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: pageVM.activeButton[2]
-                          ? const MaterialStatePropertyAll<Color>(Colors.black)
-                          : const MaterialStatePropertyAll<Color>(
-                              Colors.black26),
-                    ),
-                    child: Text(
-                      'Sell',
-                      style: TextStyle(
-                        color: pageVM.activeButton[2]
-                            ? Colors.white
-                            : Colors.black,
+                      child: Text(
+                        'Sell',
+                        style: TextStyle(
+                          color: pageVM.activeButton[1]
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   ),
@@ -112,7 +97,13 @@ class _HistoryPageState extends State<HistoryPage> {
                 : Expanded(
                     child: ListView.builder(
                       itemCount: 10,
-                      itemBuilder: (context, idx) {},
+                      itemBuilder: (context, idx) {
+                        return Container(
+                          height: 90,
+                          color: Colors.green,
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                        );
+                      },
                     ),
                   ),
           ),
@@ -123,7 +114,7 @@ class _HistoryPageState extends State<HistoryPage> {
 }
 
 class HistoryPageVM extends GetxController {
-  RxList<bool> activeButton = [true, false, false].obs;
+  RxList<bool> activeButton = [true, false].obs;
   RxInt currButton = 0.obs;
   RxBool isLoading = false.obs;
 

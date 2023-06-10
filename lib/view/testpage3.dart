@@ -4,6 +4,10 @@ import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/view/bottomNavigationBarPage.dart';
+import 'package:skripsiii/view/historyPage.dart';
+import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
 class TestPage3 extends StatefulWidget {
@@ -14,10 +18,11 @@ class TestPage3 extends StatefulWidget {
 }
 
 class _TestPage3State extends State<TestPage3> {
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
+  final ShopController shopController = Get.find<ShopController>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +53,24 @@ class _TestPage3State extends State<TestPage3> {
               onPressed: () async {
                 await loginController.logout();
                 if (mounted) {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
+                  foodController.reset();
+                  shopController.reset();
+                  memberController.reset();
+                  Get.delete<BottomNavController>();
+                  Get.delete<HistoryPageVM>();
+                  Get.delete<HomePageVM>();
+                  Get.offAll(const WelcomePage());
+                  // Navigator.of(context)
+                  //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
                 }
               },
               child: const Text('logout'),
             ),
-            ElevatedButton(onPressed: (){
-
-            }, child: const Text('test')),
+            ElevatedButton(
+                onPressed: () async {
+                  await shopController.test();
+                },
+                child: const Text('test')),
             // ElevatedButton(
             //   onPressed: () async {
             //     await loginController.checkLogin();

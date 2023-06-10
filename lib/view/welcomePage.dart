@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:get/get.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/bottomNavigationBarPage.dart';
+import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
 import 'package:skripsiii/view/registerPage.dart';
 import 'package:skripsiii/widget/button36x220.dart';
@@ -52,6 +55,24 @@ class WelcomePage extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(
+              height: 25,
+            ),
+            // Button36x220(
+            //   text: 'Register',
+            //   func: () {
+            //     final a = Get.find<BottomNavController>();
+            //     final b = Get.find<HomePageVM>();
+            //     print(a.idx);
+            //     print(b.isLoadingSellingSoon);
+            //     // Navigator.push(
+            //     //   context,
+            //     //   SlideFadeTransition(
+            //     //     child: const RegisterPage(),
+            //     //   ),
+            //     // );
+            //   },
+            // ),
           ],
         ),
       ),
