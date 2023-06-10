@@ -16,14 +16,14 @@ import 'package:skripsiii/widget/sellingItemCard.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
   final ShopController shopController = Get.find<ShopController>();
-  late final HomeVM pageVM = Get.put(HomeVM());
 
   @override
   Widget build(BuildContext context) {
+    HomePageVM pageVM = Get.put(HomePageVM());
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           Obx(
-                                () => Text(
+                            () => Text(
                               memberController.member.value.username,
                               style: const TextStyle(
                                 fontSize: 20,
@@ -154,16 +154,19 @@ class HomePage extends StatelessWidget {
                                   child: Text('No data'),
                                 );
                               } else {
-                                return ListView.builder(
-                                  key: const Key('sellingNow'),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: shopController.sellNowList.length,
-                                  itemBuilder: (context, idx) =>
-                                      SellingItemCard(
-                                    data: {},
-                                    func: () async {},
-                                  ),
+                                return const Center(
+                                  child: Text('No data'),
                                 );
+                                // return ListView.builder(
+                                //   key: const Key('sellingNow'),
+                                //   scrollDirection: Axis.horizontal,
+                                //   itemCount: shopController.sellNowList.length,
+                                //   itemBuilder: (context, idx) =>
+                                //       SellingItemCard(
+                                //     data: {},
+                                //     func: () async {},
+                                //   ),
+                                // );
                               }
                             }
                           },
@@ -215,6 +218,49 @@ class HomePage extends StatelessWidget {
                         height: 220,
                         child: Obx(
                           () {
+                            // if (pageVM.isLoadingSellingNow.value) {
+                            //   return Shimmer.fromColors(
+                            //     baseColor: Colors.black12,
+                            //     highlightColor: Colors.white12,
+                            //     child: Container(
+                            //       margin:
+                            //       const EdgeInsets.symmetric(vertical: 5),
+                            //       decoration: const BoxDecoration(
+                            //         borderRadius: BorderRadius.all(
+                            //           Radius.circular(15.0),
+                            //         ),
+                            //         color: Colors.white,
+                            //       ),
+                            //       height: 220,
+                            //       width:
+                            //       MediaQuery.of(context).size.width * 0.8,
+                            //     ),
+                            //   );
+                            //   // return LoadingAnimationWidget.threeArchedCircle(
+                            //   //   color: Colors.lightBlue,
+                            //   //   size: 50,
+                            //   // );
+                            // } else {
+                            //   if (shopController.sellNowList.isEmpty) {
+                            //     return const Center(
+                            //       child: Text('No data'),
+                            //     );
+                            //   } else {
+                            //     return const Center(
+                            //       child: Text('No data'),
+                            //     );
+                            //     // return ListView.builder(
+                            //     //   key: const Key('sellingNow'),
+                            //     //   scrollDirection: Axis.horizontal,
+                            //     //   itemCount: shopController.sellNowList.length,
+                            //     //   itemBuilder: (context, idx) =>
+                            //     //       SellingItemCard(
+                            //     //     data: {},
+                            //     //     func: () async {},
+                            //     //   ),
+                            //     // );
+                            //   }
+                            // }
                             print('rebuild obx');
                             if (pageVM.isLoadingSellingSoon.value) {
                               return Shimmer.fromColors(
@@ -235,21 +281,27 @@ class HomePage extends StatelessWidget {
                                 ),
                               );
                             } else {
-                              return ListView.builder(
-                                key: const Key('sellingNow'),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: shopController.sellSoonList.length,
-                                itemBuilder: (context, idx) {
-                                  // var a = shopController.sellNowList[idx];
-                                  return SellingItemCard(
-                                    data: shopController.sellSoonList[idx]
-                                        .toMap(),
-                                    func: () async {
-                                      // TODO redirect to the shop details page
-                                    },
-                                  );
-                                },
-                              );
+                              if (shopController.sellSoonList.isEmpty) {
+                                return const Center(
+                                  child: Text('No data'),
+                                );
+                              } else {
+                                return ListView.builder(
+                                  key: const Key('sellingNow'),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: shopController.sellSoonList.length,
+                                  itemBuilder: (context, idx) {
+                                    // var a = shopController.sellNowList[idx];
+                                    return SellingItemCard(
+                                      data: shopController.sellSoonList[idx]
+                                          .toMap(),
+                                      func: () async {
+                                        // TODO redirect to the shop details page
+                                      },
+                                    );
+                                  },
+                                );
+                              }
                             }
                           },
                         ),
@@ -266,7 +318,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class HomeVM extends GetxController {
+class HomePageVM extends GetxController {
   // RxBool searchBarOpen = false.obs;
   // final TextEditingController searchBarTextController = TextEditingController();
 

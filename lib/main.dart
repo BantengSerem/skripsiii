@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
 import 'package:skripsiii/constants/route.dart';
+import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/homePage.dart';
@@ -45,22 +46,121 @@ class MyApp extends StatelessWidget {
       ),
 
       // home: const MapSample(),
+      // initialRoute: 'test',
+      // initialRoute: botNavRoute,
       initialRoute: splashScrRoute,
-      // initialRoute: getCurrentUser() != null ? botNavRoute : welcomeRoute,
-
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
-        homeRoute: (context) =>  HomePage(),
+        homeRoute: (context) => HomePage(),
         registerRoute: (context) => const RegisterPage(),
         botNavRoute: (context) => BottomNavigationPage(),
         splashScrRoute: (context) => const SplashScreenPage(),
+        // 'test': (context) => const Test3(),
         // browseRoute: (context) => BrowseRestaurantPage(title: title),
       },
       initialBinding: HomeBinding(),
     );
   }
 }
+
+class TestController extends GetxController {
+  RxInt i = 0.obs;
+}
+
+class Test1 extends StatelessWidget {
+  const Test1({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('tetspage1'),
+      ),
+      body: const Center(
+        child: Text('tetspage1'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Get.to(Test2());
+
+          Get.offAll(() => Test3());
+          // Navigator.push(
+          //   context,
+          //   SlideFadeTransition(
+          //     child:  Test2(),
+          //   ),
+          // );
+        },
+      ),
+    );
+  }
+}
+
+class Test2 extends StatelessWidget {
+  Test2({Key? key}) : super(key: key);
+
+  // TestController testController = Get.put(TestController());
+
+  @override
+  Widget build(BuildContext context) {
+    print('test2 before controller');
+    TestController testController = Get.put(TestController());
+    print('test2 after controller');
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('tetspage2'),
+      ),
+      body: Center(
+        child: Obx(
+          () => Text('tetspage2 ${testController.i.value}'),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          testController.i.value += 1;
+          // Get.to(Test2());
+          // Navigator.push(
+          //   context,
+          //   SlideFadeTransition(
+          //     child:  Test2(),
+          //   ),
+          // );
+        },
+      ),
+    );
+  }
+}
+
+class Test3 extends StatelessWidget {
+  const Test3({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('tetspage3'),
+      ),
+      body: const Center(
+        child: Text('tetspage3'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.delete<TestController>();
+          // Get.deleteAll();
+          Get.offAll(() => BottomNavigationPage());
+          // Navigator.push(
+          //   context,
+          //   SlideFadeTransition(
+          //     child:  Test2(),
+          //   ),
+          // );
+        },
+      ),
+    );
+  }
+}
+
 //
 // class MapSample extends StatefulWidget {
 //   const MapSample({super.key});

@@ -5,6 +5,9 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/view/bottomNavigationBarPage.dart';
+import 'package:skripsiii/view/historyPage.dart';
+import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
 class TestPage3 extends StatefulWidget {
@@ -49,10 +52,13 @@ class _TestPage3State extends State<TestPage3> {
             ElevatedButton(
               onPressed: () async {
                 await loginController.logout();
-                foodController.reset();
-                shopController.reset();
-                memberController.reset();
                 if (mounted) {
+                  foodController.reset();
+                  shopController.reset();
+                  memberController.reset();
+                  Get.delete<BottomNavController>();
+                  Get.delete<HistoryPageVM>();
+                  Get.delete<HomePageVM>();
                   Get.offAll(const WelcomePage());
                   // Navigator.of(context)
                   //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);

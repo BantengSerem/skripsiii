@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:skripsiii/controller/loginController.dart';
+import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/controller/shopContoller.dart';
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
-
-  @override
-  State<HistoryPage> createState() => _HistoryPageState();
-}
-
-class _HistoryPageState extends State<HistoryPage> {
-  late final HistoryPageVM pageVM;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    pageVM = Get.put(HistoryPageVM());
-  }
+class HistoryPage extends StatelessWidget {
+  HistoryPage({Key? key}) : super(key: key);
+  final LoginController loginController = Get.find<LoginController>();
+  final MemberController memberController = Get.find<MemberController>();
+  final ShopController shopController = Get.find<ShopController>();
 
   @override
   Widget build(BuildContext context) {
+    HistoryPageVM pageVM = Get.put(HistoryPageVM());
     return Scaffold(
       appBar: AppBar(
         title: const Text('History'),
