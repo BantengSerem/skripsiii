@@ -2,25 +2,25 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
+import 'package:skripsiii/model/shopModel.dart';
+import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
+  HomePage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
-  final HomeVM pageVM = Get.find<HomeVM>();
+  final ShopController shopController = Get.find<ShopController>();
+  late final HomeVM pageVM = Get.put(HomeVM());
 
   @override
   Widget build(BuildContext context) {
@@ -35,48 +35,19 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Container(
-                  height: 50,
-                  color: Colors.blueGrey,
-                  // alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextField(
-                    controller: pageVM.searchBarTextController,
-                    textAlignVertical: TextAlignVertical.center,
-                    cursorColor: Colors.blueGrey,
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    onTap: () async {
-                      // FocusScope.of(context).unfocus();
-                      var a = await showSearch(
-                          context: context, delegate: SearchFood());
-                      print('result : $a');
-                      pageVM.getSearch(a);
-                      // pageVM.openSeachBar();
-                    },
-                    autofillHints: const ['nasi padang', 'burger', 'soto ayam'],
-                    onTapOutside: (_) {
-                      // pageVM.closeSearchbar();
-                      FocusScope.of(context).unfocus();
-                    },
-                    onSubmitted: (submitted) {
-                      // pageVM.closeSearchbar();
-                    },
-                    enableSuggestions: true,
-                  ),
+                IconButton(
+                  onPressed: () async {
+                    // FocusScope.of(context).unfocus();
+                    var a = await showSearch(
+                        context: context, delegate: SearchFood());
+                    print('result : $a');
+                    // pageVM.getSearch(a);
+                    // pageVM.openSeachBar();
+                  },
+                  icon: const Icon(Icons.search),
                 ),
                 Container(
-                  // color: Colors.yellow,
+                  color: Colors.yellow,
                   height: 60,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Row(
@@ -99,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                SizedBox(
+                Container(
                   // color: Colors.red,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
                   height: 280,
@@ -120,6 +91,15 @@ class _HomePageState extends State<HomePage> {
                             TextButton(
                               onPressed: () {
                                 // TODO redirect to browsing page
+                                // Navigator.push(
+                                //   context,
+                                //   SlideFadeTransition(
+                                //     child: const BrowseRestaurantPage(
+                                //         title: 'Selling Now'),
+                                //   ),
+                                // );
+                                pageVM.isLoadingSellingNow.value =
+                                    !pageVM.isLoadingSellingNow.value;
                               },
                               child: const Text(
                                 'View All',
@@ -133,23 +113,56 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(
                         height: 220,
-                        child: ListView.builder(
-                          key: const Key('sellingNow'),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 20,
-                          itemBuilder: (context, idx) => SellingItemCard(
-                            data: {},
-                            func: () async{
-
-                            },
-                          ),
+                        child: Obx(
+                          () {
+                            if (pageVM.isLoadingSellingNow.value) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.black12,
+                                highlightColor: Colors.white12,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15.0),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  height: 220,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                ),
+                              );
+                              // return LoadingAnimationWidget.threeArchedCircle(
+                              //   color: Colors.lightBlue,
+                              //   size: 50,
+                              // );
+                            } else {
+                              if (shopController.sellNowList.isEmpty) {
+                                return const Center(
+                                  child: Text('No data'),
+                                );
+                              } else {
+                                return ListView.builder(
+                                  key: const Key('sellingNow'),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: shopController.sellNowList.length,
+                                  itemBuilder: (context, idx) =>
+                                      SellingItemCard(
+                                    data: {},
+                                    func: () async {},
+                                  ),
+                                );
+                              }
+                            }
+                          },
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  // color: Colors.red,
+                Container(
+                  // color: Colors.green,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
                   height: 280,
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -167,8 +180,15 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // TODO redirect to browsing page
+                                Navigator.push(
+                                  context,
+                                  SlideFadeTransition(
+                                    child: const BrowseRestaurantPage(
+                                        title: 'Selling Soon'),
+                                  ),
+                                );
                               },
                               child: const Text(
                                 'View All',
@@ -182,16 +202,45 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(
                         height: 220,
-                        child: ListView.builder(
-                          key: const Key('sellingNow'),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 20,
-                          itemBuilder: (context, idx) => SellingItemCard(
-                            data: {},
-                            func: () async{
-
-                            },
-                          ),
+                        child: Obx(
+                          () {
+                            print('rebuild obx');
+                            if (pageVM.isLoadingSellingSoon.value) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.black12,
+                                highlightColor: Colors.white12,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15.0),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  height: 220,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                ),
+                              );
+                            } else {
+                              return ListView.builder(
+                                key: const Key('sellingNow'),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: shopController.sellSoonList.length,
+                                itemBuilder: (context, idx) {
+                                  // var a = shopController.sellNowList[idx];
+                                  return SellingItemCard(
+                                    data: shopController.sellSoonList[idx]
+                                        .toMap(),
+                                    func: () async {
+                                      // TODO redirect to the shop details page
+                                    },
+                                  );
+                                },
+                              );
+                            }
+                          },
                         ),
                       ),
                     ],
@@ -202,39 +251,37 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: Row(
-          children: const [
-            Text(
-              'Share Food',
-              style: TextStyle(
-                fontSize: 15,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
 
 class HomeVM extends GetxController {
   // RxBool searchBarOpen = false.obs;
-  final TextEditingController searchBarTextController = TextEditingController();
+  // final TextEditingController searchBarTextController = TextEditingController();
 
-  // final FoodController foodController = Get.find<FoodController>();
+  final ShopController shopController = Get.find<ShopController>();
 
   RxBool isLoadingSellingNow = false.obs;
   RxBool isLoadingSellingSoon = false.obs;
 
-  Future<void> init() async {
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
     isLoadingSellingNow.value = true;
     isLoadingSellingSoon.value = true;
-
+    shopController.init();
     isLoadingSellingNow.value = false;
     isLoadingSellingSoon.value = false;
   }
+
+  // Future<void> init() async {
+  //   isLoadingSellingNow.value = true;
+  //   isLoadingSellingSoon.value = true;
+  //   shopController.init();
+  //   isLoadingSellingNow.value = false;
+  //   isLoadingSellingSoon.value = false;
+  // }
 
   void loadingSN() {
     isLoadingSellingNow.value = true;
@@ -252,17 +299,17 @@ class HomeVM extends GetxController {
     isLoadingSellingSoon.value = false;
   }
 
-  // void openSeachBar() {
-  //   searchBarOpen.value = true;
-  // }
-  //
-  // void closeSearchbar() {
-  //   searchBarOpen.value = false;
-  // }
+// void openSeachBar() {
+//   searchBarOpen.value = true;
+// }
+//
+// void closeSearchbar() {
+//   searchBarOpen.value = false;
+// }
 
-  void getSearch(String value) {
-    searchBarTextController.text = value;
-  }
+// void getSearch(String value) {
+//   searchBarTextController.text = value;
+// }
 }
 
 class SearchFood extends SearchDelegate<dynamic> {

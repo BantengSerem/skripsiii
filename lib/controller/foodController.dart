@@ -10,12 +10,22 @@ import 'package:skripsiii/model/foodModel.dart';
 
 class FoodController extends GetxController {
   List<StreamSubscription<QuerySnapshot>> streamList = [];
-  List<Food> listItem = [];
+  RxList<Food> listItem = RxList<Food>();
   final fireStoreInstance = FirebaseFirestore.instance;
   late DocumentSnapshot? currDoc;
 
   // late DocumentSnapshot? currDoc = null;
   bool firstTime = true;
+
+  void reset() {
+    listItem.clear();
+    currDoc = null;
+    firstTime = true;
+    for (var element in streamList) {
+      element.cancel();
+    }
+    streamList.clear();
+  }
 
   void refreshAllData() {
     for (var element in streamList) {

@@ -33,12 +33,12 @@ class RegisterController extends GetxController {
 
   void addShopDetail(Map<String, dynamic> data) {}
 
-  Future<UserCredential?> registerMember(Member currMember) async {
+  Future<UserCredential?> registerMember(String email, String password) async {
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: currMember.email,
-        password: currMember.password,
+        email: email,
+        password: password,
       );
       // Authentication successful, return the UserCredential object
       return userCredential;

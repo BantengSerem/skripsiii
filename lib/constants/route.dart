@@ -5,3 +5,4 @@ const registerRoute = '/register/';
 const registerInfoRoute = '/register-info/';
 const botNavRoute = '/bottomNav/';
 const splashScrRoute = '/splash/';
+const browseRoute = '/browse/';
