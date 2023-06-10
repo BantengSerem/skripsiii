@@ -35,42 +35,53 @@ class HomePage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                IconButton(
-                  onPressed: () async {
-                    // FocusScope.of(context).unfocus();
-                    var a = await showSearch(
-                        context: context, delegate: SearchFood());
-                    print('result : $a');
-                    // pageVM.getSearch(a);
-                    // pageVM.openSeachBar();
-                  },
-                  icon: const Icon(Icons.search),
-                ),
-                Container(
-                  color: Colors.yellow,
-                  height: 60,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Welcome, ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                        ),
-                      ),
-                      Obx(
-                        () => Text(
-                          memberController.member.value.username,
-                          style: const TextStyle(
-                            fontSize: 20,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      // color: Colors.yellow,
+                      height: 60,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Welcome, ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
                           ),
-                        ),
+                          Obx(
+                                () => Text(
+                              memberController.member.value.username,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      height: 50,
+                      color: Colors.blueGrey,
+                      // alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // FocusScope.of(context).unfocus();
+                          var a = await showSearch(
+                              context: context, delegate: SearchFood());
+                          print('result : $a');
+                          // pageVM.getSearch(a);
+                          // pageVM.openSeachBar();
+                        },
+                        child: const Text('Search'),
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
+                SizedBox(
                   // color: Colors.red,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
                   height: 280,
@@ -161,7 +172,7 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   // color: Colors.green,
                   // margin: const EdgeInsets.symmetric(horizontal: 20),
                   height: 280,
