@@ -58,21 +58,21 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(
               height: 25,
             ),
-            Button36x220(
-              text: 'Register',
-              func: () {
-                final a = Get.find<BottomNavController>();
-                final b = Get.find<HomeVM>();
-                print(a.idx);
-                print(b.isLoadingSellingSoon);
-                // Navigator.push(
-                //   context,
-                //   SlideFadeTransition(
-                //     child: const RegisterPage(),
-                //   ),
-                // );
-              },
-            ),
+            // Button36x220(
+            //   text: 'Register',
+            //   func: () {
+            //     final a = Get.find<BottomNavController>();
+            //     final b = Get.find<HomePageVM>();
+            //     print(a.idx);
+            //     print(b.isLoadingSellingSoon);
+            //     // Navigator.push(
+            //     //   context,
+            //     //   SlideFadeTransition(
+            //     //     child: const RegisterPage(),
+            //     //   ),
+            //     // );
+            //   },
+            // ),
           ],
         ),
       ),
