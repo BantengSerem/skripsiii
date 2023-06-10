@@ -18,7 +18,7 @@ class TestPage3 extends StatefulWidget {
 }
 
 class _TestPage3State extends State<TestPage3> {
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
   final LoginController loginController = Get.find<LoginController>();
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();

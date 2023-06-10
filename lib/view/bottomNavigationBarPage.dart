@@ -5,6 +5,7 @@ import 'package:skripsiii/main.dart';
 import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
+import 'package:skripsiii/view/profilePage.dart';
 import 'package:skripsiii/view/testpage3.dart';
 
 class BottomNavigationPage extends StatelessWidget {
@@ -29,8 +30,8 @@ class BottomNavigationPage extends StatelessWidget {
     HistoryPage(
       key: PageStorageKey<String>('HistoryPage'),
     ),
-    const TestPage3(
-      key: PageStorageKey<String>('TestPage3'),
+    const ProfilePage(
+      key: PageStorageKey<String>('ProfilePage'),
     ),
   ];
   final PageStorageBucket bucket = PageStorageBucket();
