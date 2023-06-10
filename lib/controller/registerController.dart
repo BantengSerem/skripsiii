@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:skripsiii/helper/databaseHelper.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
+import 'dart:developer' as devtools show log;
+import 'package:http/http.dart' as http;
+import 'package:skripsiii/model/addressModel.dart';
 
 class RegisterController extends GetxController {
   // late Shop currShop;
@@ -44,7 +47,7 @@ class RegisterController extends GetxController {
       return userCredential;
     } catch (e) {
       // Handle any errors that occur during authentication
-      print('register member with email and password failed: $e');
+      devtools.log('register member with email and password failed: $e');
       return null;
     }
   }
@@ -61,8 +64,23 @@ class RegisterController extends GetxController {
       });
       return true;
     } catch (e) {
-      print('error while registering new member : $e');
+      devtools.log('error while registering new member : $e');
       return false;
+    }
+  }
+
+  Future addAddressToFirebase(Address address) async {
+    try {
+      await fireStoreInstance.collection('address').doc(address.addressId).set({
+        'addressId': address.addressId,
+        'memberId': address.memberId,
+        'address': address.address,
+        'province': address.province,
+        'city': address.city,
+        'postalCode': address.poscode,
+      });
+    } catch (e) {
+      devtools.log('error while registering new address : $e');
     }
   }
 

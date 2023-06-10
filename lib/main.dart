@@ -13,6 +13,8 @@ import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
+import 'package:skripsiii/view/registerInfoMemberPage.dart';
+import 'package:skripsiii/view/registerInfoShopPage.dart';
 
 import 'package:skripsiii/view/registerPage.dart';
 
