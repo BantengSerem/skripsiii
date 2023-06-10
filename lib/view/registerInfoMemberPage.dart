@@ -1,14 +1,17 @@
 import 'dart:ffi';
-
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
+import 'package:skripsiii/constants/indonesiaRepo.dart';
+import 'package:skripsiii/constants/listProvinces.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/model/addressModel.dart';
 import 'dart:developer' as devtools show log;
-
+import 'package:uuid/uuid.dart';
 import 'package:skripsiii/controller/registerController.dart';
 import 'package:skripsiii/model/memberModel.dart';
 
@@ -24,6 +27,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
   final String role = 'member';
   final RegisterController registerController = Get.find<RegisterController>();
   final MemberController memberController = Get.find<MemberController>();
+  final IndoRepo repo = IndoRepo();
 
   String? _email;
   String? _password;
@@ -33,24 +37,21 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
   String? _address;
   String? _city;
   String? _province;
-  String? _country;
   String? _postalCode;
 
   var _activeStepIndex = 0;
+  String? _dropDownProvinceValue;
+  String? _dropDownCityValue;
+  List<String?> provinces = [];
+  List<dynamic> cities = [];
 
   Future<bool> submitCommand() async {
     var form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
-      Member m = Member(
-        email: _email!,
-        password: _password!,
-        memberID: '',
-        username: _username!,
-        name: _name!,
-        contacts: _phone!,
-      );
-
+      var uuid = const Uuid();
+      String _memberId = uuid.v4();
+      String _addressId = uuid.v4();
       // Map<String, dynamic> data = {
       //   'email': _email,
       //   'password': _password,
@@ -60,40 +61,39 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
       //   'address': _address,
       //   'city': _city,
       //   'province': _province,
-      //   'country': _country,
       //   'postalCode': _postalCode
       // };
       // devtools.log(data.toString());
-      // registerController.addMemberDetail(data);
+      Member m = Member(
+        email: _email!,
+        password: _password!,
+        memberID: _memberId,
+        username: _username!,
+        name: _name!,
+        contacts: _phone!,
+      );
+
+      Address x = Address(
+        addressId: _addressId,
+        memberId: _memberId,
+        address: _address!,
+        province: _province!,
+        city: _city!,
+        poscode: _postalCode!,
+      );
 
       var userCred = await registerController.registerMember(m);
       if (userCred != null) {
         bool a = await registerController.addMemberToFirebase(m);
+        await registerController.addAddressToFirebase(x);
         if (a) {
           memberController.member.value = m;
         }
+        devtools.log('Submitted');
         return a;
-        // Map<String, dynamic> map = {
-        //   "email": _email,
-        //   'password': _password,
-        //   'userid': userCred.user!.uid,
-        // };
-        //
-        // var x = await loginController.manualLogin(map);
-        // if (x.runtimeType == Member) {
-        //   memberController.member.value = x;
-        // } else if (x.runtimeType == Shop) {
-        //   shopController.shop.value = x;
-        // }
-        // // TODO user is not finished to fill all required data
-        // else if (x == null) {
-        //   return false;
-        // }
-        // return false;
       }
     }
     return false;
-    devtools.log('Submitted');
   }
 
   List<Step> stepListMember() => [
@@ -104,6 +104,8 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
             children: [
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Email'),
+                validator: (value) =>
+                    EmailValidator.validate(value!) ? null : 'Invalid Email',
                 onSaved: (newValue) => _email = newValue,
               ),
               const SizedBox(
@@ -111,6 +113,12 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
               ),
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Password'),
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length < 4) {
+                    return 'Please enter password';
+                  }
+                  return null;
+                },
                 onSaved: (newValue) => _password = newValue,
               ),
               const SizedBox(
@@ -130,6 +138,9 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
             children: [
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Name'),
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please enter name'
+                    : null,
                 onSaved: (newValue) => _name = newValue,
               ),
               const SizedBox(
@@ -137,6 +148,9 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
               ),
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Username'),
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please enter username'
+                    : null,
                 onSaved: (newValue) => _username = newValue,
               ),
               const SizedBox(
@@ -148,6 +162,10 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                   FilteringTextInputFormatter.digitsOnly
                 ],
                 decoration: const InputDecoration(hintText: 'Phone'),
+                validator: (value) =>
+                    (value == null || value.isEmpty || value.length < 10)
+                        ? 'Please enter phone number'
+                        : null,
                 onSaved: (newValue) => _phone = newValue,
               ),
               const SizedBox(
@@ -167,68 +185,86 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
             children: [
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Address'),
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please enter address'
+                    : null,
                 onSaved: (newValue) => _address = newValue,
               ),
               const SizedBox(
                 height: 10,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 140,
-                    child: TextFormField(
-                      decoration: const InputDecoration(hintText: 'City'),
-                      onSaved: (newValue) => _city = newValue,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 28,
-                  ),
-                  SizedBox(
-                    width: 140,
-                    child: TextFormField(
-                      decoration: const InputDecoration(hintText: 'Province'),
-                      onSaved: (newValue) => _province = newValue,
-                    ),
-                  ),
-                ],
+              DropdownButtonFormField(
+                decoration: const InputDecoration(hintText: 'Province'),
+                value: _dropDownProvinceValue,
+                elevation: 16,
+                menuMaxHeight: 300,
+                icon: const Icon(Icons.expand_more),
+                items: provinces.map<DropdownMenuItem<String>>(
+                  (String? provinceValue) {
+                    return DropdownMenuItem(
+                      value: provinceValue,
+                      child: Text(provinceValue!),
+                    );
+                  },
+                ).toList(),
+                onChanged: (String? provinceValue) {
+                  setState(() {
+                    cities = [];
+                    _dropDownCityValue = null;
+                    _dropDownProvinceValue = provinceValue!;
+                    // devtools.log(provinceValue);
+                    cities = repo.getCityByProvince(provinceValue);
+                    // devtools.log(cities.toString());
+                  });
+                },
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please select province'
+                    : null,
+                onSaved: (newValue) => _province = newValue,
               ),
               const SizedBox(
                 height: 10,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 140,
-                    child: TextFormField(
-                      decoration: const InputDecoration(hintText: 'Country'),
-                      onSaved: (newValue) => _country = newValue,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 28,
-                  ),
-                  SizedBox(
-                    width: 140,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      decoration:
-                          const InputDecoration(hintText: 'Postal Code'),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter postal code';
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => _postalCode = newValue,
-                    ),
-                  ),
+              DropdownButtonFormField(
+                decoration: const InputDecoration(hintText: 'City'),
+                value: _dropDownCityValue,
+                elevation: 16,
+                menuMaxHeight: 300,
+                icon: const Icon(Icons.expand_more),
+                items: cities.map<DropdownMenuItem<String>>(
+                  (dynamic cityValue) {
+                    return DropdownMenuItem(
+                      value: cityValue,
+                      child: Text(cityValue!),
+                    );
+                  },
+                ).toList(),
+                onChanged: (String? cityValue) {
+                  setState(() {
+                    _dropDownCityValue = cityValue!;
+                  });
+                },
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Please select city'
+                    : null,
+                onSaved: (newValue) => _city = newValue,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
                 ],
+                decoration: const InputDecoration(hintText: 'Postal Code'),
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length < 5) {
+                    return 'Please enter postal code';
+                  }
+                  return null;
+                },
+                onSaved: (newValue) => _postalCode = newValue,
               ),
               const SizedBox(
                 height: 10,
@@ -237,6 +273,13 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
           ),
         )
       ];
+
+  @override
+  void initState() {
+    provinces = repo.getProvinces();
+    // devtools.log(provinces.toString());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -283,11 +326,13 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                 });
               },
               onStepTapped: (int index) {
-                setState(
-                  () {
-                    _activeStepIndex = index;
-                  },
-                );
+                if (index - _activeStepIndex <= 1) {
+                  setState(
+                    () {
+                      _activeStepIndex = index;
+                    },
+                  );
+                }
               },
               controlsBuilder: (context, details) {
                 final isLastStep =

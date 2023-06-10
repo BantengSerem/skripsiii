@@ -11,6 +11,8 @@ import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
+import 'package:skripsiii/view/registerInfoMemberPage.dart';
+import 'package:skripsiii/view/registerInfoShopPage.dart';
 
 import 'package:skripsiii/view/registerPage.dart';
 
@@ -43,8 +45,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
 
-      // home: const MapSample(),
-      initialRoute: splashScrRoute,
+      home: const RegisterInfoShopPage(),
+      // initialRoute: splashScrRoute,
       // initialRoute: getCurrentUser() != null ? botNavRoute : welcomeRoute,
 
       routes: {
