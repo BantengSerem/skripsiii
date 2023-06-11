@@ -6,6 +6,8 @@ class Member extends UserParent {
   late final String username;
   late final String name;
   late final String contacts;
+  late double latitude;
+  late double longitude;
 
   Member.blank({
     String password = '',
