@@ -89,7 +89,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
       if (userCred != null) {
         Member m = Member(
           email: _email!,
-          password: _password!,
+          password: '',
           memberID: userCred.user!.uid.toString(),
           username: _username!,
           name: _name!,
