@@ -61,7 +61,9 @@ class SplashScreenPageState extends State<SplashScreenPage> {
             print("this is splash for shop : $s");
             shopController.shop.value = s;
           }
-          return BottomNavigationPage();
+          return BottomNavigationPage(
+            userType: data['role'],
+          );
         } else {
           return const WelcomePage();
         }

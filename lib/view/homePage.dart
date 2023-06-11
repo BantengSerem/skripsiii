@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
@@ -13,6 +14,7 @@ class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
+  final FoodController foodController = Get.find<FoodController>();
 
   @override
   Widget build(BuildContext context) {
@@ -108,14 +110,40 @@ class HomePage extends StatelessWidget {
                       ),
                       SizedBox(
                         height: 220,
-                        child: ListView.builder(
-                          key: const Key('sellingNow'),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 20,
-                          itemBuilder: (context, idx) => SellingItemCard(
-                            data: {},
-                            func: () async {},
-                          ),
+                        child: Obx(
+                          () {
+                            if (pageVM.isLoadingSellingNow.value) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.black38,
+                                highlightColor: Colors.white,
+                                period: const Duration(milliseconds: 1500),
+                                child: Container(
+                                  color: Colors.white,
+                                  height: 220,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                ),
+                              );
+                            } else {
+                              if (pageVM.shopController.sellNowList.isEmpty) {
+                                return const Center(
+                                  child: Text('No Data'),
+                                );
+                              } else {
+                                return ListView.builder(
+                                  key: const Key('sellingNow'),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: pageVM.shopController.sellNowList.length,
+                                  itemBuilder: (context, idx) =>
+                                      SellingItemCard(
+                                    data: pageVM.shopController.sellNowList[idx]
+                                        .toMap(),
+                                    func: () async {},
+                                  ),
+                                );
+                              }
+                            }
+                          },
                         ),
                       ),
                     ],
@@ -155,14 +183,41 @@ class HomePage extends StatelessWidget {
                       ),
                       SizedBox(
                         height: 220,
-                        child: ListView.builder(
-                          key: const Key('sellingNow'),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 20,
-                          itemBuilder: (context, idx) => SellingItemCard(
-                            data: {},
-                            func: () async {},
-                          ),
+                        child: Obx(
+                          () {
+                            if (pageVM.isLoadingSellingSoon.value) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.black38,
+                                highlightColor: Colors.white,
+                                period: const Duration(milliseconds: 1500),
+                                child: Container(
+                                  color: Colors.white,
+                                  height: 220,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                ),
+                              );
+                            } else {
+                              if (pageVM.shopController.sellSoonList.isEmpty) {
+                                return const Center(
+                                  child: Text('No Data'),
+                                );
+                              } else {
+                                return ListView.builder(
+                                  key: const Key('sellingSoon'),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: pageVM.shopController.sellSoonList.length,
+                                  itemBuilder: (context, idx) =>
+                                      SellingItemCard(
+                                    data: pageVM
+                                        .shopController.sellSoonList[idx]
+                                        .toMap(),
+                                    func: () async {},
+                                  ),
+                                );
+                              }
+                            }
+                          },
                         ),
                       ),
                     ],
@@ -191,13 +246,23 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageVM extends GetxController {
-  // RxBool searchBarOpen = false.obs;
   final TextEditingController searchBarTextController = TextEditingController();
 
-  // final FoodController foodController = Get.find<FoodController>();
+  final ShopController shopController = Get.find<ShopController>();
 
   RxBool isLoadingSellingNow = false.obs;
   RxBool isLoadingSellingSoon = false.obs;
+
+  @override
+  Future<void> onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    isLoadingSellingNow.value = true;
+    isLoadingSellingSoon.value = true;
+    await shopController.init();
+    isLoadingSellingNow.value = false;
+    isLoadingSellingSoon.value = false;
+  }
 
   Future<void> init() async {
     isLoadingSellingNow.value = true;

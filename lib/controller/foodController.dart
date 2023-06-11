@@ -17,6 +17,10 @@ class FoodController extends GetxController {
   // late DocumentSnapshot? currDoc = null;
   bool firstTime = true;
 
+  void init(){
+
+  }
+
   void reset() {
     listItem.clear();
     currDoc = null;

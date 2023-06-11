@@ -9,11 +9,15 @@ import 'package:skripsiii/view/profilePage.dart';
 import 'package:skripsiii/view/testpage3.dart';
 
 class BottomNavigationPage extends StatelessWidget {
-  BottomNavigationPage({Key? key}) : super(key: key);
+  BottomNavigationPage({Key? key, required this.userType}) : super(key: key);
+  final String userType;
 
   // final HomeVM homeVM = Get.put(HomeVM());
   // final HistoryPageVM historyVM = Get.put(HistoryPageVM());
 
+  var a = [
+
+  ];
   final List<Widget> pages = [
     // Test1(
     //   key: PageStorageKey<String>('HomePage'),
@@ -22,13 +26,13 @@ class BottomNavigationPage extends StatelessWidget {
     //   key: PageStorageKey<String>('HomePage'),
     // ),
     HomePage(
-      key: PageStorageKey<String>('HomePage'),
+      key: const PageStorageKey<String>('HomePage'),
     ),
     const FindFoodPage(
       key: PageStorageKey<String>('FindFoodPage'),
     ),
     HistoryPage(
-      key: PageStorageKey<String>('HistoryPage'),
+      key: const PageStorageKey<String>('HistoryPage'),
     ),
     const ProfilePage(
       key: PageStorageKey<String>('ProfilePage'),

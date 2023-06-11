@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/constants/indonesiaRepo.dart';
 import 'package:skripsiii/constants/listProvinces.dart';
@@ -73,6 +74,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
 
       var userCred =
           await registerController.registerMember(_email!, _password!);
+      print('userCred : $userCred');
       if (userCred != null) {
         Member m = Member(
           email: _email!,
@@ -93,14 +95,16 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
           poscode: _postalCode!,
         );
         bool a = await registerController.addMemberToFirebase(m);
-        await registerController.addAddressToFirebase(x);
+        print('a : $a');
         if (a) {
           memberController.member.value = m;
           print(
               'memberController.member.value : ${memberController.member.value}');
         }
+        bool b = await registerController.addAddressToFirebase(x);
+        print('b : $b');
         devtools.log('Submitted');
-        return a;
+        return a && b;
       }
     }
     return false;
@@ -317,15 +321,22 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                     _activeStepIndex += 1;
                   });
                 } else {
+                  await EasyLoading.show(
+                    dismissOnTap: false,
+                    maskType: EasyLoadingMaskType.clear,
+                  );
+                  print('asdfasdf');
                   var a = await submitCommand();
+                  print(a);
                   if (a) {
                     if (mounted) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        botNavRoute,
+                        botNavRouteMember,
                         (route) => false,
                       );
                     }
                   }
+                  await EasyLoading.dismiss();
                 }
               },
               onStepCancel: () {

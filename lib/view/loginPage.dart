@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _email;
   String? _password;
 
-  Future<int> submitCommand() async {
+  Future<String?> submitCommand() async {
     var userCred = await loginController.signInWithEmailPassword(
         email: _email!, password: _password!);
     if (userCred != null) {
@@ -43,33 +43,34 @@ class _LoginPageState extends State<LoginPage> {
       var x = await loginController.manualLogin(map);
       if (x.runtimeType == Member) {
         memberController.member.value = x;
+        return 'member';
       } else if (x.runtimeType == Shop) {
         shopController.shop.value = x;
+        return 'shop';
       }
       // TODO user is not finished to fill all required data
       else if (x == null) {
-        return 2;
+        return null;
       }
-      return 1;
     }
-    return 0;
+    return 'error';
   }
 
-  Future<int> googleLogin() async {
+  Future<String?> googleLogin() async {
     var x = await loginController.googleLogin();
     if (x.runtimeType == Member) {
       memberController.member.value = x;
+      return 'member';
     } else if (x.runtimeType == Shop) {
       shopController.shop.value = x;
+      return 'shop';
     } else if (x == null) {
-      return 2;
+      return null;
     }
     // TODO user is not finished to fill all required data
     else {
-      return 0;
+      return 'error';
     }
-
-    return 1;
   }
 
   Future<bool?> _showExitDialog(BuildContext context) async {
@@ -177,13 +178,19 @@ class _LoginPageState extends State<LoginPage> {
                                   form.save();
                                   var a = await submitCommand();
                                   if (mounted) {
-                                    if (a == 1) {
+                                    if (a == 'shop') {
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil(
-                                        botNavRoute,
+                                        botNavRouteShop,
                                         (route) => false,
                                       );
-                                    } else if (a == 2) {
+                                    } else if (a == 'member') {
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                        botNavRouteMember,
+                                        (route) => false,
+                                      );
+                                    } else if (a == null) {
                                       Navigator.of(context)
                                           .pushNamedAndRemoveUntil(
                                         registerRoute,
@@ -219,12 +226,17 @@ class _LoginPageState extends State<LoginPage> {
                           pageVM.loading();
                           var u = await googleLogin();
                           if (mounted) {
-                            if (u == 1) {
+                            if (u == 'member') {
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                botNavRoute,
+                                botNavRouteMember,
                                 (route) => false,
                               );
-                            } else if (u == 2) {
+                            } else if (u == 'shop') {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                botNavRouteShop,
+                                (route) => false,
+                              );
+                            } else if (u == null) {
                               Navigator.of(context).pushNamedAndRemoveUntil(
                                 registerRoute,
                                 (route) => false,
