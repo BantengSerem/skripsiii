@@ -48,18 +48,18 @@ class SellingItemCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '0 Km',
-                  style: TextStyle(
+                Text(
+                  '${data['distance']} Km',
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
                 Row(
-                  children: const [
+                  children:  [
                     Text(
-                      '5',
+                      '${data['ratingAVG'] ?? ''}',
                     ),
-                    Icon(
+                    const Icon(
                       Icons.star,
                       color: Colors.yellow,
                     ),

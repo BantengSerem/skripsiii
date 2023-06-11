@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
@@ -54,6 +55,9 @@ class SplashScreenPageState extends State<SplashScreenPage> {
           if (data['role'] == null) return const RegisterPage();
           if (data['role'] == 'member') {
             var m = await loginController.getMemberData(data['email']);
+            var location = await LocationHelper.instance.getCurrentLocation();
+            m.latitude = location.latitude;
+            m.longitude = location.longitude;
             print("this is splash for member : $m");
             memberController.member.value = m;
           } else if (data['role'] == 'shop') {
@@ -61,6 +65,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
             print("this is splash for shop : $s");
             shopController.shop.value = s;
           }
+          print('user role : ${data['role']}');
           return BottomNavigationPage(
             userType: data['role'],
           );

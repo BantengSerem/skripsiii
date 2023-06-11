@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/model/addressModel.dart';
+import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 
 class ShopController extends GetxController {
   late Rx<Shop> shop = Shop.blank().obs;
@@ -15,6 +19,8 @@ class ShopController extends GetxController {
   final RxList<Shop> browseNowList = RxList<Shop>();
   late StreamSubscription<QuerySnapshot> sellNowListSnapshot;
 
+  // final MemberController memberController = Get.find();
+
   void reset() {
     shop = Shop.blank().obs;
     sellNowList.clear();
@@ -24,12 +30,30 @@ class ShopController extends GetxController {
     if (sellNowListSnapshot != null) sellNowListSnapshot.cancel();
   }
 
-  Future<void> init() async {
-    getSellSoon();
-    getSellNow();
+  Future<void> init(Member member) async {
+    getSellSoon(member);
+    getSellNow(member);
   }
 
-  Future<void> getSellNow() async {
+  Future<Address> getShopLoc(Shop shop) async {
+    var res = await fireStoreInstance
+        .collection('address')
+        .where('userID', isEqualTo: shop.shopID)
+        // .where('userID', isEqualTo: 'O5vObIuWE9WwotA2gwkcVuXhW5z1')
+        .limit(1)
+        .get();
+
+    // res.docs.asMap().forEach((key, value) {
+    //   print(value.data());
+    // });
+    final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
+
+    return addresses[0];
+    // print(res.);
+    // Address address = Address
+  }
+
+  Future<void> getSellNow(Member member) async {
     print('call getSellSoon');
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
@@ -42,15 +66,34 @@ class ShopController extends GetxController {
         .snapshots()
         .listen((event) {
       print(event.docChanges.asMap());
-      event.docChanges.asMap().forEach((key, value) {
+      event.docChanges.asMap().forEach((key, value) async {
         switch (value.type) {
           case DocumentChangeType.added:
-            sellNowList.add(Shop.fromJson(value.doc.data()));
+            var shop = Shop.fromJson(value.doc.data());
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            sellNowList.add(shop);
             break;
           case DocumentChangeType.modified:
-            int i = sellNowList.indexWhere((element) =>
-                element.shopID == Shop.fromJson(value.doc.data()).shopID);
-            sellNowList[i] = Shop.fromJson(value.doc.data());
+            var shop = Shop.fromJson(value.doc.data());
+            int i = sellNowList
+                .indexWhere((element) => element.shopID == shop.shopID);
+
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            sellNowList[i] = shop;
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
@@ -64,7 +107,7 @@ class ShopController extends GetxController {
     sellNowListSnapshot = snapshot;
   }
 
-  Future<void> getSellSoon() async {
+  Future<void> getSellSoon(Member member) async {
     print('call getSellSoon');
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
@@ -76,15 +119,34 @@ class ShopController extends GetxController {
         .snapshots()
         .listen((event) {
       print(event.docChanges.asMap());
-      event.docChanges.asMap().forEach((key, value) {
+      event.docChanges.asMap().forEach((key, value) async {
         switch (value.type) {
           case DocumentChangeType.added:
-            sellSoonList.add(Shop.fromJson(value.doc.data()));
+            var shop = Shop.fromJson(value.doc.data());
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            sellNowList.add(shop);
             break;
           case DocumentChangeType.modified:
-            int i = sellSoonList.indexWhere((element) =>
-                element.shopID == Shop.fromJson(value.doc.data()).shopID);
-            sellSoonList[i] = Shop.fromJson(value.doc.data());
+            var shop = Shop.fromJson(value.doc.data());
+            int i = sellNowList
+                .indexWhere((element) => element.shopID == shop.shopID);
+
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            sellNowList[i] = shop;
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
@@ -99,33 +161,39 @@ class ShopController extends GetxController {
   }
 
   Future<void> test() async {
-    var a = DateFormat('HHmmss').format(DateTime.now());
-    var b = int.parse(a);
-    b = 223300;
-
-    var m = '2300';
-    var h = m.substring(0, 2);
-    var h1 = m.substring(2);
-    var h2 = "$h'.'$h1";
+    // calculateDistance();
+    // var a = DateFormat('HHmmss').format(DateTime.now());
+    // var b = int.parse(a);
+    // b = 223300;
+    //
+    // var m = '2300';
+    // var h = m.substring(0, 2);
+    // var h1 = m.substring(2);
+    // var h2 = "$h'.'$h1";
+    //
+    // var res = await fireStoreInstance
+    //     .collection('shop')
+    //     .where('sellingTime', isLessThanOrEqualTo: b)
+    //     .where('isOpen', isEqualTo: 'open')
+    //     // .where('closingTime', isGreaterThanOrEqualTo: b)
+    //     .get();
+    // res.docs.asMap().forEach((key, value) {
+    //   print(value.data());
+    // });
 
     var res = await fireStoreInstance
-        .collection('shop')
-        .where('sellingTime', isLessThanOrEqualTo: b)
-        .where('isOpen', isEqualTo: 'open')
-        // .where('closingTime', isGreaterThanOrEqualTo: b)
+        .collection('address')
+        .where('userID', isEqualTo: 'O5vObIuWE9WwotA2gwkcVuXhW5z1')
+        .limit(1)
         .get();
 
-    // await FirebaseFirestore.instance
-    //     .collection('shop')
-    //     .where('openingHours', arrayContains: {
-    //   'startTime':
-    //       '${currentTime.hour.toString().padLeft(2, '0')}:${currentTime.minute.toString().padLeft(2, '0')}',
-    //   'endTime':
-    //       '${currentTime.hour.toString().padLeft(2, '0')}:${currentTime.minute.toString().padLeft(2, '0')}',
-    // }).get();
-    res.docs.asMap().forEach((key, value) {
-      print(value.data());
-    });
+    // res.docs.asMap().forEach((key, value) {
+    //   print(value.data());
+    // });
+    final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
+
+    print(addresses);
+    // return addresses.first;
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getSuggestedRestaurant(
@@ -140,6 +208,49 @@ class ShopController extends GetxController {
         // .orderBy('sellingTime', descending: true)
         .limit(10)
         .get();
+  }
+
+  double calculateDistance(
+      {required double lat1,
+      required double lon1,
+      required double lat2,
+      required double lon2}) {
+    const double earthRadius = 6371; // Earth's radius in kilometers
+
+    // // Convert latitude and longitude from degrees to radians
+    // final double latRad1 = degreesToRadians(lat1);
+    // final double lonRad1 = degreesToRadians(lon1);
+    // final double latRad2 = degreesToRadians(lat2);
+    // final double lonRad2 = degreesToRadians(lon2);
+
+    // // Calculate the differences between the coordinates
+    // final double dLat = latRad2 - latRad1;
+    // final double dLon = lonRad2 - lonRad1;
+
+    // // Apply the Haversine formula
+    // final double a = pow(sin(dLat / 2), 2) +
+    //     cos(latRad1) * cos(latRad2) * pow(sin(dLon / 2), 2);
+    // final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    // final double distance = earthRadius * c;
+
+    final double latDifference = (lat2 - lat1).abs() *
+        0.01745329252; // Convert latitude difference to radians
+    final double lonDifference = (lon2 - lon1).abs() *
+        0.01745329252; // Convert longitude difference to radians
+
+    final double a = sin(latDifference / 2) * sin(latDifference / 2) +
+        cos(lat1 * 0.01745329252) *
+            cos(lat2 * 0.01745329252) *
+            sin(lonDifference / 2) *
+            sin(lonDifference / 2);
+    final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    final double distance = earthRadius * c;
+
+    return distance;
+  }
+
+  double degreesToRadians(double degrees) {
+    return degrees * 3.14 / 180;
   }
 
 // On progress, don't change

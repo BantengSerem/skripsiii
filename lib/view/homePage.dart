@@ -1,12 +1,15 @@
 import 'dart:async';
+// import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
@@ -253,6 +256,7 @@ class HomePageVM extends GetxController {
   final TextEditingController searchBarTextController = TextEditingController();
 
   final ShopController shopController = Get.find<ShopController>();
+  final MemberController memberController = Get.find<MemberController>();
 
   RxBool isLoadingSellingNow = false.obs;
   RxBool isLoadingSellingSoon = false.obs;
@@ -263,7 +267,7 @@ class HomePageVM extends GetxController {
     super.onInit();
     isLoadingSellingNow.value = true;
     isLoadingSellingSoon.value = true;
-    await shopController.init();
+    await shopController.init(memberController.member.value);
     isLoadingSellingNow.value = false;
     isLoadingSellingSoon.value = false;
   }
