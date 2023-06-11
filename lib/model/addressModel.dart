@@ -1,6 +1,6 @@
 class Address {
   late final String addressId;
-  late final String memberId;
+  late final String userId;
   late final String address;
   late final String province;
   late final String city;
@@ -8,7 +8,7 @@ class Address {
 
   Address({
     required this.addressId,
-    required this.memberId,
+    required this.userId,
     required this.address,
     required this.province,
     required this.city,

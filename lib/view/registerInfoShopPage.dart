@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:skripsiii/constants/indonesiaRepo.dart';
+import 'package:skripsiii/constants/route.dart';
+import 'package:skripsiii/controller/registerController.dart';
+import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:uuid/uuid.dart';
 import 'package:skripsiii/model/addressModel.dart';
@@ -22,6 +26,8 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
   final _formKey = GlobalKey<FormState>();
   final String role = 'shop';
   final IndoRepo repo = IndoRepo();
+  final RegisterController registerController = RegisterController();
+  final ShopController shopController = ShopController();
 
   String? _email;
   String? _password;
@@ -38,7 +44,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
   List<String?> provinces = [];
   List<dynamic> cities = [];
 
-  submitCommand() {
+  submitCommand() async {
     var form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
@@ -53,8 +59,45 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
       //   'postalCode': _postalCode
       // };
       // devtools.log(data.toString());
+      var userCred =
+          await registerController.registerMember(_email!, _password!);
+      var userId = userCred?.user!.uid.toString();
+      if (userCred != null) {
+        Shop shopData = Shop(
+            password: '',
+            email: _email!,
+            shopName: _shopName!,
+            contacts: _phone!,
+            closingTime: 0,
+            ratingAVG: 0,
+            sellingTime: 0,
+            shopID: userId!);
+
+        var uuid = const Uuid();
+        String addressId = uuid.v4();
+
+        Address x = Address(
+            addressId: addressId,
+            userId: userId,
+            address: _address!,
+            province: _province!,
+            city: _city!,
+            poscode: _postalCode!);
+
+        bool a = await registerController.addShopToFirebase(shopData);
+        if (a) {
+          shopController.shop.value = shopData;
+          devtools.log(
+              'memberController.member.value : ${shopController.shop.value}');
+        }
+        bool b = await registerController.addAddressToFirebase(x);
+        devtools.log('b : $b');
+        devtools.log('Submitted');
+        return a && b;
+      } else {
+        await EasyLoading.dismiss();
+      }
     }
-    devtools.log('Submitted');
   }
 
   List<Step> stepListMember() => [
@@ -75,7 +118,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Password'),
                 validator: (value) {
-                  if (value == null || value.isEmpty || value.length < 4) {
+                  if (value == null || value.isEmpty || value.length < 6) {
                     return 'Please enter password';
                   }
                   return null;
@@ -252,13 +295,28 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
               steps: stepListMember(),
               type: StepperType.vertical,
               currentStep: _activeStepIndex,
-              onStepContinue: () {
+              onStepContinue: () async {
                 if (_activeStepIndex < (stepListMember().length - 1)) {
                   setState(() {
                     _activeStepIndex += 1;
                   });
                 } else {
-                  submitCommand();
+                  await EasyLoading.show(
+                    dismissOnTap: false,
+                    maskType: EasyLoadingMaskType.clear,
+                  );
+                  print('asdfasdf');
+                  var a = await submitCommand();
+                  print(a);
+                  if (a) {
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        botNavRouteMember,
+                        (route) => false,
+                      );
+                    }
+                  }
+                  await EasyLoading.dismiss();
                 }
               },
               onStepCancel: () {

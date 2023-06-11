@@ -34,7 +34,6 @@ class RegisterController extends GetxController {
   //   );
   // }
 
-
   Future<UserCredential?> registerMember(String email, String password) async {
     try {
       UserCredential userCredential =
@@ -72,7 +71,7 @@ class RegisterController extends GetxController {
     try {
       await fireStoreInstance.collection('address').doc(address.addressId).set({
         'addressId': address.addressId,
-        'memberId': address.memberId,
+        'userId': address.userId,
         'address': address.address,
         'province': address.province,
         'city': address.city,
@@ -81,6 +80,41 @@ class RegisterController extends GetxController {
       return true;
     } catch (e) {
       devtools.log('error while registering new address : $e');
+      return false;
+    }
+  }
+
+  // Future<UserCredential?> registerShop(String email, String password) async {
+  //   try {
+  //     UserCredential userCredential =
+  //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
+  //     // Authentication successful, return the UserCredential object
+  //     return userCredential;
+  //   } catch (e) {
+  //     // Handle any errors that occur during authentication
+  //     devtools.log('register shop with email and password failed: $e');
+  //     return null;
+  //   }
+  // }
+
+  Future<bool> addShopToFirebase(Shop s) async {
+    try {
+      await fireStoreInstance.collection('shop').doc(s.shopID).set({
+        'email': s.email,
+        'password': s.password,
+        'memberID': s.shopID,
+        'name': s.shopName,
+        'contacts': s.contacts,
+        'ratingAVG': s.ratingAVG,
+        'closingTime': s.closingTime,
+        'sellingTime': s.sellingTime,
+      });
+      return true;
+    } catch (e) {
+      devtools.log('error while registering new shop : $e');
       return false;
     }
   }
