@@ -88,7 +88,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
         String addressId = uuid.v4();
         Address x = Address(
           addressId: addressId,
-          memberId: userCred.user!.uid.toString(),
+          userId: userCred.user!.uid.toString(),
           address: _address!,
           province: _province!,
           city: _city!,
@@ -105,6 +105,8 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
         print('b : $b');
         devtools.log('Submitted');
         return a && b;
+      } else {
+        await EasyLoading.dismiss();
       }
     }
     return false;
@@ -128,7 +130,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Password'),
                 validator: (value) {
-                  if (value == null || value.isEmpty || value.length < 4) {
+                  if (value == null || value.isEmpty || value.length < 6) {
                     return 'Please enter password';
                   }
                   return null;
