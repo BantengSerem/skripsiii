@@ -26,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: const Text('Account'),
         actions: [
           TextButton(
@@ -43,7 +44,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
               }
             },
-            child: const Text('Log Out'),
+            child: const Text(
+              'Log Out',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
           )
         ],
       ),

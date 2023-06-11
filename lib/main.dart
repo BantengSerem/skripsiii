@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skripsiii/binding/homeBinding.dart';
@@ -56,12 +57,15 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => HomePage(),
         registerRoute: (context) => const RegisterPage(),
-        botNavRoute: (context) => BottomNavigationPage(),
+        botNavRouteMember: (context) =>
+            BottomNavigationPage(userType: 'member'),
+        botNavRouteShop: (context) => BottomNavigationPage(userType: 'shop'),
         splashScrRoute: (context) => const SplashScreenPage(),
         // 'test': (context) => const Test3(),
         // browseRoute: (context) => BrowseRestaurantPage(title: title),
       },
       initialBinding: HomeBinding(),
+      builder: EasyLoading.init(),
     );
   }
 }
@@ -150,7 +154,9 @@ class Test3 extends StatelessWidget {
         onPressed: () {
           Get.delete<TestController>();
           // Get.deleteAll();
-          Get.offAll(() => BottomNavigationPage());
+          Get.offAll(() => BottomNavigationPage(
+                userType: 'member',
+              ));
           // Navigator.push(
           //   context,
           //   SlideFadeTransition(

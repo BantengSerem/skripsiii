@@ -34,7 +34,6 @@ class RegisterController extends GetxController {
   //   );
   // }
 
-  void addShopDetail(Map<String, dynamic> data) {}
 
   Future<UserCredential?> registerMember(String email, String password) async {
     try {
@@ -69,7 +68,7 @@ class RegisterController extends GetxController {
     }
   }
 
-  Future addAddressToFirebase(Address address) async {
+  Future<bool> addAddressToFirebase(Address address) async {
     try {
       await fireStoreInstance.collection('address').doc(address.addressId).set({
         'addressId': address.addressId,
@@ -79,8 +78,10 @@ class RegisterController extends GetxController {
         'city': address.city,
         'postalCode': address.poscode,
       });
+      return true;
     } catch (e) {
       devtools.log('error while registering new address : $e');
+      return false;
     }
   }
 
