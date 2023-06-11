@@ -12,6 +12,7 @@ class Shop extends UserParent {
   late final double ratingAVG;
   late final int closingTime;
   late final int sellingTime;
+  late double distance;
 
   Shop.blank({
     String password = '',
