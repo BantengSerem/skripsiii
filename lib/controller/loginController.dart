@@ -22,6 +22,10 @@ class LoginController extends GetxController {
     return res;
   }
 
+  Future<void> updateRoleDB(String role, String userid) async {
+    await DatabaseHelper.instance.updateRole(role, userid);
+  }
+
   Future<void> getUser() async {
     var res = await DatabaseHelper.instance.getUser();
   }
@@ -50,7 +54,7 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<UserParent?> manualLogin(Map<String, dynamic> data) async {
+  Future<dynamic> manualLogin(Map<String, dynamic> data) async {
     var member = await fireStoreInstance
         .collection('member')
         .where('email', isEqualTo: data['email'])
@@ -87,22 +91,16 @@ class LoginController extends GetxController {
       await DatabaseHelper.instance.loginUser(map);
       return s;
     }
+
+    // TODO command this line so user can change user and don't stuck on the register page
+    // var map = {
+    //   'userID': data['uid'],
+    //   'email': data['email'],
+    // };
+    // await DatabaseHelper.instance.loginUser(map);
     return null;
   }
 
-  Future<void> registerMember(Map<String, dynamic> data) async {
-    await fireStoreInstance
-        .collection('member')
-        .doc(data['uid'])
-        .set({
-          'email': data['email'],
-          'memberID': data['uid'],
-        })
-        .then((value) => print('success registering new member'))
-        .onError((error, stackTrace) {
-          print('error while registering new member : $error');
-        });
-  }
 
   Future<void> registerShop(Map<String, dynamic> data) async {
     await fireStoreInstance
@@ -136,18 +134,48 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<UserParent?> getUserData(UserCredential userCredential) async {
+  Future<Member> getMemberData(String email) async {
+    var member = await fireStoreInstance
+        .collection('member')
+        .where('email', isEqualTo: email)
+        .get();
+    Member m = Member.fromJson(member.docs[0].data());
+    var map = {
+      'userID': m.memberID,
+      'email': m.email,
+      'role': 'member',
+    };
+    await DatabaseHelper.instance.loginUser(map);
+    return m;
+  }
+
+  Future<Shop> getShopData(String email) async {
+    var shop = await fireStoreInstance
+        .collection('shop')
+        .where('email', isEqualTo: email)
+        .get();
+    Shop s = Shop.fromJson(shop.docs[0].data());
+    var map = {
+      'userID': s.shopID,
+      'email': s.email,
+      'role': 'shop',
+    };
+    await DatabaseHelper.instance.loginUser(map);
+    return s;
+  }
+
+  Future<dynamic> getUserData(UserCredential userCredential) async {
     User? user = userCredential.user;
     var member = await fireStoreInstance
         .collection('member')
-        .where('email', isEqualTo: user?.email.toString())
+        .where('email', isEqualTo: user?.email)
         // .where('password', isEqualTo: '')
         // .where('uid', isEqualTo: user?.uid.toString())
         .get();
 
     var shop = await fireStoreInstance
         .collection('shop')
-        .where('email', isEqualTo: user?.email.toString())
+        .where('email', isEqualTo: user?.email)
         // .where('password', isEqualTo: '')
         // .where('uid', isEqualTo: user?.uid.toString())
         .get();
@@ -155,8 +183,8 @@ class LoginController extends GetxController {
       Member m = Member.fromJson(member.docs[0].data());
       var map = {
         'userID': m.memberID,
-        'password': m.password,
         'email': m.email,
+        'role': 'member',
       };
       await DatabaseHelper.instance.loginUser(map);
       return m;
@@ -164,31 +192,37 @@ class LoginController extends GetxController {
       Shop s = Shop.fromJson(shop.docs[0].data());
       var map = {
         'userID': s.shopID,
-        'password': s.password,
         'email': s.email,
+        'role': 'shop',
       };
       await DatabaseHelper.instance.loginUser(map);
       return s;
     }
+
+    // TODO command this line so user can change user and don't stuck on the register page
+    // var map = {
+    //   'userID': user?.uid,
+    //   'email': user?.email,
+    // };
+    // await DatabaseHelper.instance.loginUser(map);
     return null;
   }
 
-  Future<UserParent?> googleLogin() async {
+  Future<dynamic> googleLogin() async {
     try {
       _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
         print(error);
       });
 
-    print('_googleUser : ${_googleUser != null}');
-    final GoogleSignInAuthentication googleAuth =
-        await _googleUser!.authentication;
+      print('_googleUser : ${_googleUser != null}');
+      final GoogleSignInAuthentication googleAuth =
+          await _googleUser!.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
 
       // Once signed in, return the UserCredential
       UserCredential userCredential =
@@ -199,75 +233,16 @@ class LoginController extends GetxController {
       debugPrint(e.toString());
       return null;
     }
-    // if (googleSignInAccount != null) {
-    //   googleSignInAuthentication = await googleSignInAccount!.authentication;
-    //
-    //   final AuthCredential credential = GoogleAuthProvider.credential(
-    //     accessToken: googleSignInAuthentication.accessToken,
-    //     idToken: googleSignInAuthentication.idToken,
-    //   );
-    //   try {
-    //     final UserCredential userCredential =
-    //         await FirebaseAuth.instance.signInWithCredential(credential);
-    //
-    //
-    //     var member = await fireStoreInstance
-    //         .collection('member')
-    //         .where('email', isEqualTo: data['email'])
-    //         .where('password', isEqualTo: data['password'])
-    //         .get();
-    //
-    //     var shop = await fireStoreInstance
-    //         .collection('shop')
-    //         .where('email', isEqualTo: data['email'])
-    //         .where('password', isEqualTo: data['password'])
-    //         .get();
-    //
-    //     if(member.docs.isNotEmpty){
-    //       Member m = Member.fromJson(member.docs[0].data());
-    //       var map = {
-    //         'userID': m.memberID,
-    //         'password': m.password,
-    //         'email': m.email,
-    //       };
-    //       await DatabaseHelper.instance.loginUser(map);
-    //       return m;
-    //     }else if(shop.docs.isNotEmpty){
-    //       Shop s = Shop.fromJson(shop.docs[0].data());
-    //       var map = {
-    //         'userID': s.shopID,
-    //         'password': s.password,
-    //         'email': s.email,
-    //       };
-    //       await DatabaseHelper.instance.loginUser(map);
-    //       return s;
-    //     }
-    //     // return userCredential.user;
-    //   } on FirebaseAuthException catch (e) {
-    //     if (e.code == 'account-exists-with-different-credential') {
-    //       // await EasyLoading.showError(
-    //       //     'The account already exists with a different credential',
-    //       //     dismissOnTap: true);
-    //       return null;
-    //     } else if (e.code == 'invalid-credential') {
-    //       // await EasyLoading.showError(
-    //       //     'Error occurred while accessing credentials. Try again.',
-    //       //     dismissOnTap: true);
-    //       return null;
-    //     }
-    //   } catch (e) {
-    //     // await EasyLoading.showError(
-    //     //     'Error occurred using Google Sign In. Try again.',
-    //     //     dismissOnTap: true);
-    //     return null;
-    //   }
-    // }
   }
 
   Future<void> firebaseLogOut() async {
     await FirebaseAuth.instance.signOut();
     await googleSignIn.signOut();
     _googleUser = null;
+  }
+
+  Future<Map<String, dynamic>> getUserEmailRoleAndUid() async {
+    return await DatabaseHelper.instance.getUserEmailRoleAndUid();
   }
 
   void test() {

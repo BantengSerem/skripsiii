@@ -4,13 +4,16 @@ import 'package:location/location.dart';
 import 'package:skripsiii/model/memberModel.dart';
 
 
-class memberController extends GetxController{
-  late Member _member;
+class MemberController extends GetxController{
+  late Rx<Member> member = Member.blank().obs;
   final Location location = Location();
-
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;
   late LocationData _locationData;
+
+  void reset(){
+    member = Member.blank().obs;
+  }
 
   Future<void> enableService()async{
     _serviceEnabled = await location.serviceEnabled();

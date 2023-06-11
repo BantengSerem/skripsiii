@@ -10,12 +10,24 @@ import 'package:skripsiii/model/foodModel.dart';
 
 class FoodController extends GetxController {
   List<StreamSubscription<QuerySnapshot>> streamList = [];
-  List<Food> listItem = [];
+  RxList<Food> listItem = RxList<Food>();
   final fireStoreInstance = FirebaseFirestore.instance;
   late DocumentSnapshot? currDoc;
 
   // late DocumentSnapshot? currDoc = null;
   bool firstTime = true;
+
+  void init() {}
+
+  void reset() {
+    listItem.clear();
+    currDoc = null;
+    firstTime = true;
+    for (var element in streamList) {
+      element.cancel();
+    }
+    streamList.clear();
+  }
 
   void refreshAllData() {
     for (var element in streamList) {
@@ -28,13 +40,32 @@ class FoodController extends GetxController {
     firstTime = true;
   }
 
-  Future<String?> dataToStorage(Map<String, dynamic> data) async {
-    fireStoreInstance.collection('locations').add(data);
+  Future<String?> imgFoodDataToStorage(Map<String, dynamic> data) async {
+    // fireStoreInstance.collection('locations').add(data);
 
     var name = data['file'].name;
     Reference reference = FirebaseStorage.instance
         .ref()
-        .child(data['restaurantID'])
+        .child(data['shopID'])
+        .child('foodIMG')
+        .child(name);
+    try {
+      await reference.putFile(File(data['file'].path));
+      var url = await reference.getDownloadURL();
+      return url;
+    } catch (e) {
+      debugPrint('error in dataToStorage : $e');
+      return null;
+    }
+  }
+
+  Future<String?> imgSharedFoodDataToStorage(Map<String, dynamic> data) async {
+    // fireStoreInstance.collection('locations').add(data);
+
+    var name = data['file'].name;
+    Reference reference = FirebaseStorage.instance
+        .ref()
+        .child(data['memberID'])
         .child('foodIMG')
         .child(name);
     try {
@@ -53,10 +84,28 @@ class FoodController extends GetxController {
     return file;
   }
 
+  Future<void> addNewSharedFoodData(Map<String, dynamic> data) async {
+    await fireStoreInstance
+        .collection('sharedFood')
+        .doc(data['sharedFoodID'])
+        .set({
+      'sharedFoodID': data['sharedFoodID'],
+      'sharedFoodName': data['sharedFoodName'],
+      'sharedFoodImageURL': data['sharedFoodImageURL'],
+      'detailNotes': data['detailNotes'],
+      'price': data['price'],
+      'memberID': data['memberID'],
+    }).whenComplete(() {
+      debugPrint('adding new data is successful');
+    }).catchError((error) {
+      debugPrint('error : $error');
+    });
+  }
+
   Future<void> addNewFoodData(Map<String, dynamic> data) async {
     await fireStoreInstance
-        .collection('restaurant')
-        .doc(data['restaurantID'])
+        .collection('shop')
+        .doc(data['shopID'])
         .collection('foodList')
         .doc(data['foodID'])
         .set({
@@ -66,7 +115,6 @@ class FoodController extends GetxController {
       'detailNotes': data['detailNotes'],
       'price': data['price'],
       'qty': data['qty'],
-      'location': data['location'],
     }).whenComplete(() {
       debugPrint('adding new data is successful');
     }).catchError((error) {
@@ -74,39 +122,28 @@ class FoodController extends GetxController {
     });
   }
 
-  // On progress, don't change
-  Map<String, double> getLatLongRange({double radius = 1}) {
-    // double latRange = radius / 6371.0 * (180 / pi);
-    // double lonRange =
-    //     radius / (6371.0 * cos(latitude * pi / 180)) * (180 / pi);
-    return {};
-  }
-
-  Map<String, double> getLatLongFilter({
-    double latRange = 0.009,
-    double lonRange = 0.014,
-    required double latitude,
-    required double longitude,
-  }) {
-    double minLat = latitude - latRange;
-    double maxLat = latitude + latRange;
-    double minLon = longitude - lonRange;
-    double maxLon = longitude + lonRange;
-
-    return {
-      'minLat': minLat,
-      'maxLat': maxLat,
-      'minLon': minLon,
-      'maxLon': maxLon,
-    };
+  Future<void> test() async {
+    var res = await fireStoreInstance
+        .collection('shop')
+        .where('shopName', isGreaterThanOrEqualTo: '23')
+        // .where('shopName', isLessThanOrEqualTo: 'shop')
+        .limit(10)
+        .get();
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+    });
+    // var l = res.docs.map((doc) {
+    //   return Food.fromMap(doc);
+    // }).toList();
+    // print(l);
   }
 
   Future<void> getFilteredFoodList(Map<String, dynamic> data) async {
     late Query query;
     if (firstTime) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .where('latitude', isGreaterThanOrEqualTo: data['minLat'])
@@ -118,8 +155,8 @@ class FoodController extends GetxController {
       firstTime = false;
     } else if (currDoc != null) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .where('latitude', isGreaterThanOrEqualTo: data['minLat'])
@@ -135,7 +172,7 @@ class FoodController extends GetxController {
     var index = streamList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStream(data['restaurantID']);
+      if (event.size == 0) return deleteStream(data['shopID']);
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -182,8 +219,8 @@ class FoodController extends GetxController {
 
   Future<void> updateFoodData(Map<String, dynamic> data) async {
     await fireStoreInstance
-        .collection('restaurant')
-        .doc(data['restaurantID'])
+        .collection('shop')
+        .doc(data['shopID'])
         .collection('foodList')
         .doc(data['foodID'])
         .update({
@@ -201,17 +238,17 @@ class FoodController extends GetxController {
     });
   }
 
-  void deleteStream(String restaurantID) {
+  void deleteStream(String shopID) {
     streamList.last.cancel();
     streamList.removeLast();
-    getLastDocSnapshots(restaurantID);
+    getLastDocSnapshots(shopID);
     print('streamList : ${streamList}');
   }
 
-  void getLastDocSnapshots(String restaurantID) async {
+  void getLastDocSnapshots(String shopID) async {
     var query = fireStoreInstance
-        .collection('restaurant')
-        .doc(restaurantID)
+        .collection('shop')
+        .doc(shopID)
         .collection('foodList')
         .doc(listItem.last.foodID.toString());
     currDoc = await query.get();
@@ -221,8 +258,8 @@ class FoodController extends GetxController {
     late Query query;
     if (firstTime) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .limit(10);
@@ -230,8 +267,8 @@ class FoodController extends GetxController {
       firstTime = false;
     } else if (currDoc != null) {
       query = fireStoreInstance
-          .collection('restaurant')
-          .doc(data['restaurantID'])
+          .collection('shop')
+          .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
           .limit(10)
@@ -243,7 +280,7 @@ class FoodController extends GetxController {
     var index = streamList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStream(data['restaurantID']);
+      if (event.size == 0) return deleteStream(data['shopID']);
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {

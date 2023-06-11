@@ -1,13 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skripsiii/model/userModel.dart';
 
-enum SellingTime {
-  m30,
-  m15,
-  m60,
-  m45,
-}
-
 class Shop extends UserParent {
   // @override
   // late final String email;
@@ -17,8 +10,25 @@ class Shop extends UserParent {
   late final String shopName;
   late final String contacts;
   late final double ratingAVG;
-  late final DateTime closingTime;
-  late final SellingTime sellingTime;
+  late final int closingTime;
+  late final int sellingTime;
+  late double distance;
+
+  Shop.blank({
+    String password = '',
+    String email = '',
+    this.shopName = '',
+    this.contacts = '',
+    // DateTime? closingTime,
+    this.closingTime = 0,
+    this.ratingAVG = 0.0,
+    // DateTime? sellingTime,
+    this.sellingTime = 0,
+    this.shopID = '',
+  }) :
+        // closingTime = closingTime ?? DateTime.now(),
+        // sellingTime = sellingTime ?? DateTime.now(),
+        super(email: email, password: password);
 
   Shop({
     required String password,
@@ -31,27 +41,26 @@ class Shop extends UserParent {
     required this.shopID,
   }) : super(email: email, password: password);
 
-  // factory Shop.fromMap(DocumentSnapshot<Object> data) {
-  //   email = data['email']!;
-  //   password = data['password'] ?? '';
-  //   shopID = data['shopID'] ?? '';
-  //   shopName = data['shopName'] ?? '';
-  //   contacts = data['contacts'] ?? '';
-  //   ratingAVG = data['ratingAVG'] ?? 0.0;
-  //   closingTime = data['closingTime'] ?? DateTime;
-  //   sellingTime = data['sellingTime'] ?? SellingTime.m30;
-  // }
+  Shop.fromMap(DocumentSnapshot<Object?> data)
+      : super(email: data['email']! ?? '', password: data['password']! ?? '') {
+    shopID = data['shopID'] ?? '';
+    shopName = data['shopName'] ?? '';
+    contacts = data['contacts'] ?? '';
+    ratingAVG = data['ratingAVG'] ?? 0.0;
+    closingTime = data['closingTime'] ?? 0;
+    sellingTime = data['sellingTime'] ?? 0;
+  }
 
-  factory Shop.fromJson(Map<String, dynamic> json) => Shop(
-    email: json['email'],
-    password: json['password'] ?? '',
-    shopID: json['shopID'] ?? '',
-    shopName: json['shopName'] ?? '',
-    contacts: json['contacts'] ?? '',
-    ratingAVG: json['ratingAVG'] ?? 0.0,
-    closingTime: json['closingTime'] ?? DateTime.now(),
-    sellingTime: json['sellingTime'] ?? SellingTime.m30,
-  );
+  factory Shop.fromJson(Map<String, dynamic>? json) => Shop(
+        email: json!['email'] ?? '',
+        password: json['password'] ?? '',
+        shopID: json['shopID'] ?? '',
+        shopName: json['shopName'] ?? '',
+        contacts: json['contacts'] ?? '',
+        ratingAVG: json['ratingAVG'] ?? 0.0,
+        closingTime: json['closingTime'] ?? 0,
+        sellingTime: json['sellingTime'] ?? 0,
+      );
 
   @override
   String toString() {
