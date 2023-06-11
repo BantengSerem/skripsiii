@@ -9,6 +9,7 @@ import 'package:skripsiii/constants/indonesiaRepo.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/registerController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:uuid/uuid.dart';
 import 'package:skripsiii/model/addressModel.dart';
@@ -64,25 +65,31 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
       var userId = userCred?.user!.uid.toString();
       if (userCred != null) {
         Shop shopData = Shop(
-            password: '',
-            email: _email!,
-            shopName: _shopName!,
-            contacts: _phone!,
-            closingTime: 0,
-            ratingAVG: 0,
-            sellingTime: 0,
-            shopID: userId!);
+          password: '',
+          email: _email!,
+          shopName: _shopName!,
+          contacts: _phone!,
+          closingTime: 0,
+          ratingAVG: 0,
+          sellingTime: 0,
+          shopID: userId!,
+          isOpen: 'false',
+        );
 
         var uuid = const Uuid();
-        String addressId = uuid.v4();
+        String addressID = uuid.v4();
+        var location = await LocationHelper.instance.getCurrentLocation();
 
         Address x = Address(
-            addressId: addressId,
-            userId: userId,
-            address: _address!,
-            province: _province!,
-            city: _city!,
-            poscode: _postalCode!);
+          addressID: addressID,
+          userID: userId,
+          address: _address!,
+          province: _province!,
+          city: _city!,
+          poscode: _postalCode!,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        );
 
         bool a = await registerController.addShopToFirebase(shopData);
         if (a) {
@@ -310,6 +317,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
                   print(a);
                   if (a) {
                     if (mounted) {
+                      // TODO change to botNavRouteShop
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         botNavRouteMember,
                         (route) => false,

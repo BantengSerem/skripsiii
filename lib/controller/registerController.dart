@@ -69,13 +69,15 @@ class RegisterController extends GetxController {
 
   Future<bool> addAddressToFirebase(Address address) async {
     try {
-      await fireStoreInstance.collection('address').doc(address.addressId).set({
-        'addressId': address.addressId,
-        'userId': address.userId,
+      await fireStoreInstance.collection('address').doc(address.addressID).set({
+        'addressID': address.addressID,
+        'userID': address.userID,
         'address': address.address,
         'province': address.province,
         'city': address.city,
         'postalCode': address.poscode,
+        'latitude': address.latitude,
+        'longitude': address.longitude,
       });
       return true;
     } catch (e) {
@@ -105,7 +107,7 @@ class RegisterController extends GetxController {
       await fireStoreInstance.collection('shop').doc(s.shopID).set({
         'email': s.email,
         'password': s.password,
-        'memberID': s.shopID,
+        'shopID': s.shopID,
         'name': s.shopName,
         'contacts': s.contacts,
         'ratingAVG': s.ratingAVG,

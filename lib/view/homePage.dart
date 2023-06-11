@@ -9,6 +9,7 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
@@ -17,6 +18,7 @@ class HomePage extends StatelessWidget {
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
   final FoodController foodController = Get.find<FoodController>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -234,9 +236,17 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         
-        onPressed: () {
-          Get.to(const SharedFoodPage());
-
+        onPressed: () async{
+          // Get.to(const SharedFoodPage());
+          // await pageVM.shopController.test();
+          // print(memberController.member.value.toMap());
+          print(pageVM.shopController.sellNowList);
+          // -6.269434, 106.732208
+          // var loc = await LocationHelper.instance.getCurrentLocation();
+          // print(loc);
+          // var d = pageVM.shopController.calculateDistance(lat1: -6.2690418, lon1: 106.6098773, lat2: -6.269434, lon2: 106.732208);
+          // print(d);
+          // await pageVM.shopController.getShopLoc();
         },
         label: Row(
           children: const [
@@ -257,6 +267,7 @@ class HomePageVM extends GetxController {
   final TextEditingController searchBarTextController = TextEditingController();
 
   final ShopController shopController = Get.find<ShopController>();
+  final MemberController memberController = Get.find<MemberController>();
 
   RxBool isLoadingSellingNow = false.obs;
   RxBool isLoadingSellingSoon = false.obs;
@@ -267,7 +278,7 @@ class HomePageVM extends GetxController {
     super.onInit();
     isLoadingSellingNow.value = true;
     isLoadingSellingSoon.value = true;
-    await shopController.init();
+    await shopController.init(memberController.member.value);
     isLoadingSellingNow.value = false;
     isLoadingSellingSoon.value = false;
   }

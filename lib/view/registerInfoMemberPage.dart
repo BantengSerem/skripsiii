@@ -10,6 +10,7 @@ import 'package:skripsiii/constants/indonesiaRepo.dart';
 import 'package:skripsiii/constants/listProvinces.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/memberController.dart';
+import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/model/addressModel.dart';
 import 'dart:developer' as devtools show log;
 import 'package:uuid/uuid.dart';
@@ -85,14 +86,18 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
           contacts: _phone!,
         );
         var uuid = const Uuid();
-        String addressId = uuid.v4();
+        String addressID = uuid.v4();
+
+        var location = await LocationHelper.instance.getCurrentLocation();
         Address x = Address(
-          addressId: addressId,
-          userId: userCred.user!.uid.toString(),
+          addressID: addressID,
+          userID: userCred.user!.uid.toString(),
           address: _address!,
           province: _province!,
           city: _city!,
           poscode: _postalCode!,
+          latitude: location.latitude,
+          longitude: location.longitude,
         );
         bool a = await registerController.addMemberToFirebase(m);
         print('a : $a');

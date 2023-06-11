@@ -2,9 +2,10 @@ import 'package:geolocator/geolocator.dart';
 
 class LocationHelper {
   LocationHelper._();
+
   static final LocationHelper instance = LocationHelper._();
 
-  Future<dynamic> getCurrentLocation() async{
+  Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 

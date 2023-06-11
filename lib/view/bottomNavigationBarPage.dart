@@ -21,7 +21,7 @@ class BottomNavigationPage extends StatelessWidget {
       key: PageStorageKey<String>('HomePage'),
     ),
     Test2(
-      key: PageStorageKey<String>('HomePage'),
+      key: PageStorageKey<String>('Test2'),
     ),
   ];
   final List<Widget> userPages = [
@@ -48,7 +48,8 @@ class BottomNavigationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = userType == 'member' ? userPages : shopPages;
+    // TODO change later on to shopPages
+    final List<Widget> pages = userType == 'member' ? userPages : userPages;
     BottomNavController pageVM = Get.put(BottomNavController());
     print('build whole botNav page');
     return Scaffold(

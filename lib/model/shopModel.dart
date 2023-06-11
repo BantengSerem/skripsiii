@@ -12,6 +12,7 @@ class Shop extends UserParent {
   late final double ratingAVG;
   late final int closingTime;
   late final int sellingTime;
+  late final String isOpen;
   late double distance;
 
   Shop.blank({
@@ -25,6 +26,7 @@ class Shop extends UserParent {
     // DateTime? sellingTime,
     this.sellingTime = 0,
     this.shopID = '',
+    this.isOpen = '',
   }) :
         // closingTime = closingTime ?? DateTime.now(),
         // sellingTime = sellingTime ?? DateTime.now(),
@@ -39,6 +41,7 @@ class Shop extends UserParent {
     required this.ratingAVG,
     required this.sellingTime,
     required this.shopID,
+    required this.isOpen,
   }) : super(email: email, password: password);
 
   Shop.fromMap(DocumentSnapshot<Object?> data)
@@ -60,18 +63,26 @@ class Shop extends UserParent {
         ratingAVG: json['ratingAVG'] ?? 0.0,
         closingTime: json['closingTime'] ?? 0,
         sellingTime: json['sellingTime'] ?? 0,
+        isOpen: json['isOpen'] ?? '',
       );
 
   @override
   String toString() {
-    return 'Shop: { email: $email, password: $password, shopID: $shopID, shopName: $shopName, contacts: $contacts, ratingAVG: $ratingAVG, closingTime: $closingTime, sellingTime: $sellingTime }';
+    return 'Shop: { email: $email, password: $password, shopID: $shopID, shopName: $shopName, contacts: $contacts, ratingAVG: $ratingAVG, closingTime: $closingTime, sellingTime: $sellingTime, isOpen: $isOpen }';
   }
 
   Map<String, dynamic> toMap() {
     return {
       'email': email,
       'password': password,
+      'shopID': shopID,
       'shopName': shopName,
+      'contacts': contacts,
+      'ratingAVG': ratingAVG,
+      'closingTime': closingTime,
+      'sellingTime': sellingTime,
+      'isOpen': isOpen,
+      'distance': distance,
     };
   }
 }
