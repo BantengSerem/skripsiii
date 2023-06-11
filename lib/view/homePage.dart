@@ -19,7 +19,6 @@ class HomePage extends StatelessWidget {
   final MemberController memberController = Get.find<MemberController>();
   final FoodController foodController = Get.find<FoodController>();
 
-
   @override
   Widget build(BuildContext context) {
     HomePageVM pageVM = Get.put(HomePageVM());
@@ -235,18 +234,8 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        
-        onPressed: () async{
-          // Get.to(const SharedFoodPage());
-          // await pageVM.shopController.test();
-          // print(memberController.member.value.toMap());
-          print(pageVM.shopController.sellNowList);
-          // -6.269434, 106.732208
-          // var loc = await LocationHelper.instance.getCurrentLocation();
-          // print(loc);
-          // var d = pageVM.shopController.calculateDistance(lat1: -6.2690418, lon1: 106.6098773, lat2: -6.269434, lon2: 106.732208);
-          // print(d);
-          // await pageVM.shopController.getShopLoc();
+        onPressed: () {
+          Get.to(const SharedFoodPage());
         },
         label: Row(
           children: const [
