@@ -50,10 +50,6 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
     if (form!.validate()) {
       form.save();
 
-      var uuid = const Uuid();
-      String _memberId = uuid.v4();
-      String _addressId = uuid.v4();
-
       // Map<String, dynamic> data = {
       //   'email': _email,
       //   'password': _password,
@@ -66,23 +62,14 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
       //   'postalCode': _postalCode
       // };
       // devtools.log(data.toString());
-      Member m = Member(
-        email: _email!,
-        password: _password!,
-        memberID: _memberId,
-        username: _username!,
-        name: _name!,
-        contacts: _phone!,
-      );
-
-      Address x = Address(
-        addressId: _addressId,
-        memberId: _memberId,
-        address: _address!,
-        province: _province!,
-        city: _city!,
-        poscode: _postalCode!,
-      );
+      // Member m = Member(
+      //   email: _email!,
+      //   password: _password!,
+      //   memberID: _memberId,
+      //   username: _username!,
+      //   name: _name!,
+      //   contacts: _phone!,
+      // );
 
       var userCred =
           await registerController.registerMember(_email!, _password!);
@@ -94,6 +81,16 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
           username: _username!,
           name: _name!,
           contacts: _phone!,
+        );
+        var uuid = const Uuid();
+        String addressId = uuid.v4();
+        Address x = Address(
+          addressId: addressId,
+          memberId: userCred.user!.uid.toString(),
+          address: _address!,
+          province: _province!,
+          city: _city!,
+          poscode: _postalCode!,
         );
         bool a = await registerController.addMemberToFirebase(m);
         await registerController.addAddressToFirebase(x);
