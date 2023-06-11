@@ -17,9 +17,7 @@ class FoodController extends GetxController {
   // late DocumentSnapshot? currDoc = null;
   bool firstTime = true;
 
-  void init(){
-
-  }
+  void init() {}
 
   void reset() {
     listItem.clear();
@@ -42,13 +40,32 @@ class FoodController extends GetxController {
     firstTime = true;
   }
 
-  Future<String?> dataToStorage(Map<String, dynamic> data) async {
-    fireStoreInstance.collection('locations').add(data);
+  Future<String?> imgFoodDataToStorage(Map<String, dynamic> data) async {
+    // fireStoreInstance.collection('locations').add(data);
 
     var name = data['file'].name;
     Reference reference = FirebaseStorage.instance
         .ref()
         .child(data['shopID'])
+        .child('foodIMG')
+        .child(name);
+    try {
+      await reference.putFile(File(data['file'].path));
+      var url = await reference.getDownloadURL();
+      return url;
+    } catch (e) {
+      debugPrint('error in dataToStorage : $e');
+      return null;
+    }
+  }
+
+  Future<String?> imgSharedFoodDataToStorage(Map<String, dynamic> data) async {
+    // fireStoreInstance.collection('locations').add(data);
+
+    var name = data['file'].name;
+    Reference reference = FirebaseStorage.instance
+        .ref()
+        .child(data['memberID'])
         .child('foodIMG')
         .child(name);
     try {
@@ -67,6 +84,24 @@ class FoodController extends GetxController {
     return file;
   }
 
+  Future<void> addNewSharedFoodData(Map<String, dynamic> data) async {
+    await fireStoreInstance
+        .collection('sharedFood')
+        .doc(data['sharedFoodID'])
+        .set({
+      'sharedFoodID': data['sharedFoodID'],
+      'sharedFoodName': data['sharedFoodName'],
+      'sharedFoodImageURL': data['sharedFoodImageURL'],
+      'detailNotes': data['detailNotes'],
+      'price': data['price'],
+      'memberID': data['memberID'],
+    }).whenComplete(() {
+      debugPrint('adding new data is successful');
+    }).catchError((error) {
+      debugPrint('error : $error');
+    });
+  }
+
   Future<void> addNewFoodData(Map<String, dynamic> data) async {
     await fireStoreInstance
         .collection('shop')
@@ -80,7 +115,6 @@ class FoodController extends GetxController {
       'detailNotes': data['detailNotes'],
       'price': data['price'],
       'qty': data['qty'],
-      'location': data['location'],
     }).whenComplete(() {
       debugPrint('adding new data is successful');
     }).catchError((error) {

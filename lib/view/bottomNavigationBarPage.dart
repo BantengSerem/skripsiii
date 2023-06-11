@@ -15,16 +15,22 @@ class BottomNavigationPage extends StatelessWidget {
   // final HomeVM homeVM = Get.put(HomeVM());
   // final HistoryPageVM historyVM = Get.put(HistoryPageVM());
 
-  var a = [
+  final List<Widget> shopPages = [
 
+    const Test1(
+      key: PageStorageKey<String>('HomePage'),
+    ),
+    Test2(
+      key: PageStorageKey<String>('HomePage'),
+    ),
   ];
-  final List<Widget> pages = [
+  final List<Widget> userPages = [
     // Test1(
     //   key: PageStorageKey<String>('HomePage'),
     // ),
     // Test2(
     //   key: PageStorageKey<String>('HomePage'),
-    // ),
+    // ),c
     HomePage(
       key: const PageStorageKey<String>('HomePage'),
     ),
@@ -42,6 +48,7 @@ class BottomNavigationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = userType == 'member' ? userPages : shopPages;
     BottomNavController pageVM = Get.put(BottomNavController());
     print('build whole botNav page');
     return Scaffold(
