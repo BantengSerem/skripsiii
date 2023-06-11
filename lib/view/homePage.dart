@@ -7,7 +7,7 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
-import 'package:skripsiii/model/foodModel.dart';
+import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
 class HomePage extends StatelessWidget {
@@ -133,7 +133,8 @@ class HomePage extends StatelessWidget {
                                 return ListView.builder(
                                   key: const Key('sellingNow'),
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: pageVM.shopController.sellNowList.length,
+                                  itemCount:
+                                      pageVM.shopController.sellNowList.length,
                                   itemBuilder: (context, idx) =>
                                       SellingItemCard(
                                     data: pageVM.shopController.sellNowList[idx]
@@ -206,7 +207,8 @@ class HomePage extends StatelessWidget {
                                 return ListView.builder(
                                   key: const Key('sellingSoon'),
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: pageVM.shopController.sellSoonList.length,
+                                  itemCount:
+                                      pageVM.shopController.sellSoonList.length,
                                   itemBuilder: (context, idx) =>
                                       SellingItemCard(
                                     data: pageVM
@@ -229,7 +231,9 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          Get.to(const SharedFoodPage());
+        },
         label: Row(
           children: const [
             Text(

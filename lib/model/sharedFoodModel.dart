@@ -1,25 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Food {
+class SharedFood {
   late final String sharedFoodID;
   late final String sharedFoodName;
   late final String sharedFoodImageURL;
   late final String detailNotes;
+  late final String memberID;
   late final double price;
 
-  Food({
+  SharedFood({
     required this.sharedFoodID,
     required this.sharedFoodName,
     required this.sharedFoodImageURL,
     required this.detailNotes,
     required this.price,
+    required this.memberID,
   });
 
-  Food.fromMap(DocumentSnapshot<Object?> data) {
-    sharedFoodID = data['foodID'];
-    sharedFoodName = data['foodName'];
-    sharedFoodImageURL = data['foodImageURL'];
+  SharedFood.fromMap(DocumentSnapshot<Object?> data) {
+    sharedFoodID = data['sharedFoodID'];
+    sharedFoodName = data['sharedFoodName'];
+    sharedFoodImageURL = data['sharedFoodImageURL'];
     detailNotes = data['detailNotes'];
+    memberID = data['memberID'];
     price = data['price'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'sharedFoodID': sharedFoodID,
+      'memberID': memberID,
+      'sharedFoodName': sharedFoodName,
+      'sharedFoodImageURL': sharedFoodImageURL,
+      'detailNotes': detailNotes,
+      'price': price,
+    };
   }
 }
