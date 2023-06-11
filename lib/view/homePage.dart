@@ -9,21 +9,14 @@ import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final _formKey = GlobalKey<FormState>();
+class HomePage extends StatelessWidget {
+  HomePage({Key? key}) : super(key: key);
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
-  final HomeVM pageVM = Get.find<HomeVM>();
 
   @override
   Widget build(BuildContext context) {
+    HomePageVM pageVM = Get.put(HomePageVM());
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -197,7 +190,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class HomeVM extends GetxController {
+class HomePageVM extends GetxController {
   // RxBool searchBarOpen = false.obs;
   final TextEditingController searchBarTextController = TextEditingController();
 
