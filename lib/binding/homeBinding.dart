@@ -8,7 +8,6 @@ import 'package:skripsiii/controller/shopContoller.dart';
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
-    // TODO: implement dependencies
     Get.put<LoginController>(LoginController(), permanent: true);
     Get.lazyPut<MemberController>(() => MemberController(), fenix: true);
     Get.lazyPut<ShopController>(() => ShopController(), fenix: true);

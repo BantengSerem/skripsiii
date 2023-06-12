@@ -17,8 +17,8 @@ class ShopController extends GetxController {
   final RxList<Shop> sellNowList = RxList<Shop>();
   final RxList<Shop> browseSoonList = RxList<Shop>();
   final RxList<Shop> browseNowList = RxList<Shop>();
-  late StreamSubscription<QuerySnapshot> sellNowListSnapshot;
-  late StreamSubscription<QuerySnapshot> sellSoonListSnapshot;
+  StreamSubscription<QuerySnapshot>? sellNowListSnapshot;
+  StreamSubscription<QuerySnapshot>? sellSoonListSnapshot;
   List<StreamSubscription<QuerySnapshot>> streamListNow = [];
   List<StreamSubscription<QuerySnapshot>> streamListSoon = [];
 
@@ -35,8 +35,8 @@ class ShopController extends GetxController {
     sellSoonList.clear();
     browseNowList.clear();
     browseSoonList.clear();
-    if (sellNowListSnapshot != null) sellNowListSnapshot.cancel();
-    if (sellSoonListSnapshot != null) sellSoonListSnapshot.cancel();
+    if (sellNowListSnapshot != null) sellNowListSnapshot?.cancel();
+    if (sellSoonListSnapshot != null) sellSoonListSnapshot?.cancel();
   }
 
   void cleanBrowseSoon() {
@@ -47,7 +47,7 @@ class ShopController extends GetxController {
     browseSoonList.clear();
     currDocSoon = null;
     firstTimeSoon = true;
-    print('finish cleaning ');
+    // print('finish cleaning ');
   }
 
   void cleanBrowseNow() {
@@ -58,12 +58,13 @@ class ShopController extends GetxController {
     browseNowList.clear();
     currDocNow = null;
     firstTimeNow = true;
-    print('finish cleaning ');
+    // print('finish cleaning ');
   }
 
   Future<void> init(Member member) async {
-    getSellSoon(member);
-    getSellNow(member);
+    await getSellSoon(member);
+    await getSellNow(member);
+    print('finished init');
   }
 
   Future<Address> getShopLoc(Shop shop) async {
@@ -85,7 +86,7 @@ class ShopController extends GetxController {
   }
 
   Future<void> getSellNow(Member member) async {
-    print('call getSellSoon');
+    // print('call getSellSoon');
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
     var snapshot = fireStoreInstance
@@ -97,7 +98,7 @@ class ShopController extends GetxController {
         .orderBy('sellingTime')
         .snapshots()
         .listen((event) {
-      print(event.docChanges.asMap());
+      // print(event.docChanges.asMap());
       event.docChanges.asMap().forEach((key, value) async {
         switch (value.type) {
           case DocumentChangeType.added:
@@ -110,7 +111,7 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('added item $shop');
+            // print('added item $shop');
             sellNowList.add(shop);
             break;
           case DocumentChangeType.modified:
@@ -126,12 +127,12 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('update item $shop');
+            // print('update item $shop');
             sellNowList[i] = shop;
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
-            print('delete item ${Shop.fromJson(value.doc.data())}');
+            // print('delete item ${Shop.fromJson(value.doc.data())}');
             sellNowList.removeWhere((element) =>
                 element.shopID == Shop.fromJson(value.doc.data()).shopID);
             break;
@@ -143,7 +144,7 @@ class ShopController extends GetxController {
   }
 
   Future<void> getSellSoon(Member member) async {
-    print('call getSellSoon');
+    // print('call getSellSoon');
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
     var snapshot = fireStoreInstance
@@ -155,7 +156,7 @@ class ShopController extends GetxController {
         // .orderBy('sellingTime')
         .snapshots()
         .listen((event) {
-      print(event.docChanges.asMap());
+      // print(event.docChanges.asMap());
       event.docChanges.asMap().forEach((key, value) async {
         switch (value.type) {
           case DocumentChangeType.added:
@@ -168,7 +169,7 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('added item $shop');
+            // print('added item $shop');
             sellSoonList.add(shop);
             break;
           case DocumentChangeType.modified:
@@ -184,12 +185,12 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('update item $shop');
+            // print('update item $shop');
             sellSoonList[i] = shop;
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
-            print('delete item ${Shop.fromJson(value.doc.data())}');
+            // print('delete item ${Shop.fromJson(value.doc.data())}');
             sellSoonList.removeWhere((element) =>
                 element.shopID == Shop.fromJson(value.doc.data()).shopID);
             break;
@@ -204,14 +205,14 @@ class ShopController extends GetxController {
     streamListNow.last.cancel();
     streamListNow.removeLast();
     getLastDocSnapshotsNow();
-    print('streamList : ${streamListNow}');
+    // print('streamList : ${streamListNow}');
   }
 
   void deleteStreamSoon() {
     streamListSoon.last.cancel();
     streamListSoon.removeLast();
     getLastDocSnapshotsSoon();
-    print('streamList : ${streamListSoon}');
+    // print('streamList : ${streamListSoon}');
   }
 
   void getLastDocSnapshotsNow() async {
@@ -229,7 +230,7 @@ class ShopController extends GetxController {
   }
 
   Future<void> getBrowseSoon(Member member) async {
-    print('getBrowseSoon');
+    // print('getBrowseSoon');
     Query? query;
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
@@ -258,7 +259,7 @@ class ShopController extends GetxController {
       var snapshot = query.snapshots().listen((event) {
         if (event.size == 0) return deleteStreamSoon();
 
-        print(event.docChanges.asMap());
+        // print(event.docChanges.asMap());
         event.docChanges.asMap().forEach((key, value) async {
           switch (value.type) {
             case DocumentChangeType.added:
@@ -274,7 +275,7 @@ class ShopController extends GetxController {
                 lon2: member.longitude,
               );
               shop.distance = double.parse(distance.toStringAsFixed(2));
-              print('added item $shop');
+              // print('added item $shop');
               browseSoonList.add(shop);
               break;
             case DocumentChangeType.modified:
@@ -290,12 +291,12 @@ class ShopController extends GetxController {
                 lon2: member.longitude,
               );
               shop.distance = double.parse(distance.toStringAsFixed(2));
-              print('update item $shop');
+              // print('update item $shop');
               browseSoonList[i] = shop;
               break;
             case DocumentChangeType.removed:
               // if (removeData == false) removeData = true;
-              print('delete item ${Shop.fromMap(value.doc)}');
+              // print('delete item ${Shop.fromMap(value.doc)}');
               browseSoonList.removeWhere((element) =>
                   element.shopID == Shop.fromMap(value.doc).shopID);
               break;
@@ -312,7 +313,7 @@ class ShopController extends GetxController {
       });
       streamListSoon.add(snapshot);
     } else {
-      print("can't retrieve data, already max or no currDoc");
+      // print("can't retrieve data, already max or no currDoc");
     }
   }
 
@@ -346,7 +347,7 @@ class ShopController extends GetxController {
       var snapshot = query.snapshots().listen((event) {
         if (event.size == 0) return deleteStreamNow();
 
-        print(event.docChanges.asMap());
+        // print(event.docChanges.asMap());
         event.docChanges.asMap().forEach((key, value) async {
           switch (value.type) {
             case DocumentChangeType.added:
@@ -361,7 +362,7 @@ class ShopController extends GetxController {
                 lon2: member.longitude,
               );
               shop.distance = double.parse(distance.toStringAsFixed(2));
-              print('added item $shop');
+              // print('added item $shop');
               browseNowList.add(shop);
               break;
             case DocumentChangeType.modified:
@@ -376,12 +377,12 @@ class ShopController extends GetxController {
                 lon2: member.longitude,
               );
               shop.distance = double.parse(distance.toStringAsFixed(2));
-              print('update item $shop');
+              // print('update item $shop');
               browseNowList[i] = shop;
               break;
             case DocumentChangeType.removed:
               // if (removeData == false) removeData = true;
-              print('delete item ${Shop.fromMap(value.doc)}');
+              // print('delete item ${Shop.fromMap(value.doc)}');
               browseNowList.removeWhere((element) =>
                   element.shopID == Shop.fromMap(value.doc).shopID);
               break;

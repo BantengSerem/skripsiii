@@ -6,6 +6,7 @@ class Food {
   late final String foodImageURL;
   late final String detailNotes;
   late final double price;
+  late final String shopID;
   late final int qty;
 
   Food({
@@ -15,6 +16,7 @@ class Food {
     required this.detailNotes,
     required this.price,
     required this.qty,
+    required this.shopID,
   });
 
   Food.fromMap(DocumentSnapshot<Object?> data) {
@@ -24,5 +26,18 @@ class Food {
     detailNotes = data['detailNotes'];
     price = data['price'];
     qty = data['qty'];
+    shopID = data['shopID'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'foodID': foodID,
+      'foodName': foodName,
+      'foodImageURL': foodImageURL,
+      'detailNotes': detailNotes,
+      'price': price,
+      'qty': qty,
+      'shopID': shopID,
+    };
   }
 }

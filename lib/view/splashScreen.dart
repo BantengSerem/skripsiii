@@ -51,7 +51,6 @@ class SplashScreenPageState extends State<SplashScreenPage> {
         bool ch = await loginController.checkLogin();
         if (res != null && ch) {
           var data = await loginController.getUserEmailRoleAndUid();
-          // TODO redirect to "rolePage", make sure user to choose their role
           if (data['role'] == null) return const RegisterPage();
           if (data['role'] == 'member') {
             var m = await loginController.getMemberData(data['email']);

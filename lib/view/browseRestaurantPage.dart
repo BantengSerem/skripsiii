@@ -23,7 +23,6 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     title = widget.title;
     type = widget.type;
@@ -32,7 +31,6 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     Get.delete<BrowseRestaurantVM>();
     super.dispose();
   }
@@ -125,7 +123,6 @@ class BrowseRestaurantVM extends GetxController {
 
   @override
   void onInit() async {
-    // TODO: implement onInit
     super.onInit();
     isLoading.value = true;
     if (type == 'soon') {
@@ -161,7 +158,6 @@ class BrowseRestaurantVM extends GetxController {
   }
 
   @override
-  // TODO: implement onDelete
   InternalFinalCallback<void> get onDelete {
     if (type == 'soon') {
       shopController.cleanBrowseSoon();

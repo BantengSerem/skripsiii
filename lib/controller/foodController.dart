@@ -103,39 +103,19 @@ class FoodController extends GetxController {
   }
 
   Future<void> addNewFoodData(Map<String, dynamic> data) async {
-    await fireStoreInstance
-        .collection('shop')
-        .doc(data['shopID'])
-        .collection('foodList')
-        .doc(data['foodID'])
-        .set({
+    await fireStoreInstance.collection('food').doc(data['foodID']).set({
       'foodID': data['foodID'],
       'foodName': data['foodName'],
       'foodImageURL': data['foodImageURL'],
       'detailNotes': data['detailNotes'],
       'price': data['price'],
       'qty': data['qty'],
+      'shopID': data['shopID'],
     }).whenComplete(() {
       debugPrint('adding new data is successful');
     }).catchError((error) {
       debugPrint('error : $error');
     });
-  }
-
-  Future<void> test() async {
-    var res = await fireStoreInstance
-        .collection('shop')
-        .where('shopName', isGreaterThanOrEqualTo: '23')
-        // .where('shopName', isLessThanOrEqualTo: 'shop')
-        .limit(10)
-        .get();
-    res.docs.asMap().forEach((key, value) {
-      print(value.data());
-    });
-    // var l = res.docs.map((doc) {
-    //   return Food.fromMap(doc);
-    // }).toList();
-    // print(l);
   }
 
   Future<void> getFilteredFoodList(Map<String, dynamic> data) async {
@@ -258,7 +238,7 @@ class FoodController extends GetxController {
     late Query query;
     if (firstTime) {
       query = fireStoreInstance
-          .collection('shop')
+          .collection('food')
           .doc(data['shopID'])
           .collection('foodList')
           .orderBy('date', descending: false)
@@ -323,5 +303,21 @@ class FoodController extends GetxController {
       }
     });
     streamList.add(snapshot);
+  }
+
+  Future<void> test(String shopID) async {
+    var res = await fireStoreInstance
+        .collection('food')
+        .where('shopID', isEqualTo: shopID)
+        // .where('shopName', isLessThanOrEqualTo: 'shop')
+        //     .limit(10)
+        .get();
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+    });
+    // var l = res.docs.map((doc) {
+    //   return Food.fromMap(doc);
+    // }).toList();
+    // print(l);
   }
 }

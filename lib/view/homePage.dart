@@ -9,7 +9,6 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
-import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
@@ -139,8 +138,19 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellNowList.isEmpty) {
-                                return const Center(
-                                  child: Text('No Data'),
+                                // return const Center(
+                                //   child: Text('No Data'),
+                                // );
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.black38,
+                                  highlightColor: Colors.white,
+                                  period: const Duration(milliseconds: 1500),
+                                  child: Container(
+                                    color: Colors.white,
+                                    height: 220,
+                                    width:
+                                    MediaQuery.of(context).size.width * 0.8,
+                                  ),
                                 );
                               } else {
                                 return ListView.builder(
@@ -232,8 +242,19 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellSoonList.isEmpty) {
-                                return const Center(
-                                  child: Text('No Data'),
+                                // return const Center(
+                                //   child: Text('No Data'),
+                                // );
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.black38,
+                                  highlightColor: Colors.white,
+                                  period: const Duration(milliseconds: 1500),
+                                  child: Container(
+                                    color: Colors.white,
+                                    height: 220,
+                                    width:
+                                    MediaQuery.of(context).size.width * 0.8,
+                                  ),
                                 );
                               } else {
                                 return ListView.builder(
@@ -295,12 +316,14 @@ class HomePageVM extends GetxController {
   @override
   Future<void> onInit() async {
     // TODO: implement onInit
-    super.onInit();
     isLoadingSellingNow.value = true;
     isLoadingSellingSoon.value = true;
+    print('start laoding');
     await shopController.init(memberController.member.value);
+    print('stop loading');
     isLoadingSellingNow.value = false;
     isLoadingSellingSoon.value = false;
+    super.onInit();
   }
 
   Future<void> init() async {

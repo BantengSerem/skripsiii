@@ -317,7 +317,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
                     if (mounted) {
                       // TODO change to botNavRouteShop
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        botNavRouteMember,
+                        botNavRouteShop,
                             (route) => false,
                       );
                     }

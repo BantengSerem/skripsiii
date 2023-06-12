@@ -6,6 +6,9 @@ import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/profilePage.dart';
+import 'package:skripsiii/view/shopHistoryPage.dart';
+import 'package:skripsiii/view/shopHomepage.dart';
+import 'package:skripsiii/view/shopProfilePage.dart';
 import 'package:skripsiii/view/testpage3.dart';
 
 class BottomNavigationPage extends StatelessWidget {
@@ -15,14 +18,57 @@ class BottomNavigationPage extends StatelessWidget {
   // final HomeVM homeVM = Get.put(HomeVM());
   // final HistoryPageVM historyVM = Get.put(HistoryPageVM());
 
-  final List<Widget> shopPages = [
+  List<SalomonBottomBarItem> memberList = [
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.home),
+      title: const Text("Home"),
+      selectedColor: Colors.purple,
+    ),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.food_bank_outlined),
+      title: const Text("Find Food"),
+      selectedColor: Colors.red,
+    ),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.history_rounded),
+      title: const Text("History"),
+      selectedColor: Colors.pink,
+    ),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.person),
+      title: const Text("Profile"),
+      selectedColor: Colors.teal,
+    ),
+  ];
 
-    const Test1(
-      key: PageStorageKey<String>('HomePage'),
+  List<SalomonBottomBarItem> shopList = [
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.home),
+      title: const Text("Home"),
+      selectedColor: Colors.purple,
     ),
-    Test2(
-      key: PageStorageKey<String>('Test2'),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.food_bank_outlined),
+      title: const Text("Find Food"),
+      selectedColor: Colors.red,
     ),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.history_rounded),
+      title: const Text("History"),
+      selectedColor: Colors.pink,
+    ),
+  ];
+
+  final List<Widget> shopPages = [
+    const ShopHomePage(
+      key: PageStorageKey<String>('ShopHomePage'),
+    ),
+    const ShopHistoryPage(
+      key: PageStorageKey<String>('ShopHistoryPage'),
+    ),
+    const ShopProfilePage(
+      key: PageStorageKey<String>('ShopProfilePage'),
+    )
   ];
   final List<Widget> userPages = [
     // Test1(
@@ -49,7 +95,7 @@ class BottomNavigationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO change later on to shopPages
-    final List<Widget> pages = userType == 'member' ? userPages : userPages;
+    final List<Widget> pages = userType == 'member' ? userPages : shopPages;
     BottomNavController pageVM = Get.put(BottomNavController());
     print('build whole botNav page');
     return Scaffold(
@@ -72,28 +118,7 @@ class BottomNavigationPage extends StatelessWidget {
                 onTap: (i) {
                   pageVM.changeIdx(i);
                 },
-                items: [
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.home),
-                    title: const Text("Home"),
-                    selectedColor: Colors.purple,
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.food_bank_outlined),
-                    title: const Text("Find Food"),
-                    selectedColor: Colors.red,
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.history_rounded),
-                    title: const Text("History"),
-                    selectedColor: Colors.pink,
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.person),
-                    title: const Text("Profile"),
-                    selectedColor: Colors.teal,
-                  ),
-                ],
+                items: userType == 'member' ? memberList : shopList,
               ),
             );
           },
