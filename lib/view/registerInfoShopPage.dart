@@ -1,40 +1,36 @@
-import 'dart:ffi';
-import 'package:email_validator/email_validator.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
 import 'package:skripsiii/constants/indonesiaRepo.dart';
-import 'package:skripsiii/constants/listProvinces.dart';
 import 'package:skripsiii/constants/route.dart';
-import 'package:skripsiii/controller/memberController.dart';
-import 'package:skripsiii/helper/location.dart';
-import 'package:skripsiii/model/addressModel.dart';
-import 'dart:developer' as devtools show log;
-import 'package:uuid/uuid.dart';
 import 'package:skripsiii/controller/registerController.dart';
-import 'package:skripsiii/model/memberModel.dart';
+import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/helper/location.dart';
+import 'package:skripsiii/model/shopModel.dart';
+import 'package:uuid/uuid.dart';
+import 'package:skripsiii/model/addressModel.dart';
+import 'package:email_validator/email_validator.dart';
+import 'dart:developer' as devtools show log;
 
-class RegisterInfoMemberPage extends StatefulWidget {
-  const RegisterInfoMemberPage({super.key});
+class RegisterInfoShopPage extends StatefulWidget {
+  const RegisterInfoShopPage({super.key});
 
   @override
-  State<RegisterInfoMemberPage> createState() => _RegisterInfoMemberPageState();
+  State<RegisterInfoShopPage> createState() => _RegisterInfoShopPageState();
 }
 
-class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
+class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
   final _formKey = GlobalKey<FormState>();
-  final String role = 'member';
-  final RegisterController registerController = Get.find<RegisterController>();
-  final MemberController memberController = Get.find<MemberController>();
+  final String role = 'shop';
   final IndoRepo repo = IndoRepo();
+  final RegisterController registerController = RegisterController();
+  final ShopController shopController = ShopController();
 
   String? _email;
   String? _password;
-  String? _name;
-  String? _username;
+  String? _shopName;
   String? _phone;
   String? _address;
   String? _city;
@@ -47,16 +43,14 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
   List<String?> provinces = [];
   List<dynamic> cities = [];
 
-  Future<bool> submitCommand() async {
+  submitCommand() async {
     var form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
-
       // Map<String, dynamic> data = {
       //   'email': _email,
       //   'password': _password,
-      //   'name': _name,
-      //   'username': _username,
+      //   'shopName': _shopName,
       //   'phone': _phone,
       //   'address': _address,
       //   'city': _city,
@@ -64,34 +58,29 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
       //   'postalCode': _postalCode
       // };
       // devtools.log(data.toString());
-      // Member m = Member(
-      //   email: _email!,
-      //   password: _password!,
-      //   memberID: _memberId,
-      //   username: _username!,
-      //   name: _name!,
-      //   contacts: _phone!,
-      // );
-
       var userCred =
       await registerController.registerMember(_email!, _password!);
-      print('userCred : $userCred');
+      var userId = userCred?.user!.uid.toString();
       if (userCred != null) {
-        Member m = Member(
-          email: _email!,
+        Shop shopData = Shop(
           password: '',
-          memberID: userCred.user!.uid.toString(),
-          username: _username!,
-          name: _name!,
+          email: _email!,
+          shopName: _shopName!,
           contacts: _phone!,
+          closingTime: 0,
+          ratingAVG: 0,
+          sellingTime: 0,
+          shopID: userId!,
+          isOpen: 'false',
         );
+
         var uuid = const Uuid();
         String addressID = uuid.v4();
-
         var location = await LocationHelper.instance.getCurrentLocation();
+
         Address x = Address(
           addressID: addressID,
-          userID: userCred.user!.uid.toString(),
+          userID: userId,
           address: _address!,
           province: _province!,
           city: _city!,
@@ -99,22 +88,21 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
           latitude: location.latitude,
           longitude: location.longitude,
         );
-        bool a = await registerController.addMemberToFirebase(m);
-        print('a : $a');
+
+        bool a = await registerController.addShopToFirebase(shopData);
         if (a) {
-          memberController.member.value = m;
-          print(
-              'memberController.member.value : ${memberController.member.value}');
+          shopController.shop.value = shopData;
+          devtools.log(
+              'memberController.member.value : ${shopController.shop.value}');
         }
         bool b = await registerController.addAddressToFirebase(x);
-        print('b : $b');
+        devtools.log('b : $b');
         devtools.log('Submitted');
         return a && b;
       } else {
         await EasyLoading.dismiss();
       }
     }
-    return false;
   }
 
   List<Step> stepListMember() => [
@@ -162,17 +150,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
             validator: (value) => (value == null || value.isEmpty)
                 ? 'Please enter name'
                 : null,
-            onSaved: (newValue) => _name = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(hintText: 'Username'),
-            validator: (value) => (value == null || value.isEmpty)
-                ? 'Please enter username'
-                : null,
-            onSaved: (newValue) => _username = newValue,
+            onSaved: (newValue) => _shopName = newValue,
           ),
           const SizedBox(
             height: 10,
@@ -337,6 +315,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                   print(a);
                   if (a) {
                     if (mounted) {
+                      // TODO change to botNavRouteShop
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         botNavRouteMember,
                             (route) => false,
@@ -356,13 +335,11 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                 });
               },
               onStepTapped: (int index) {
-                if (index - _activeStepIndex <= 1) {
-                  setState(
-                        () {
-                      _activeStepIndex = index;
-                    },
-                  );
-                }
+                setState(
+                      () {
+                    _activeStepIndex = index;
+                  },
+                );
               },
               controlsBuilder: (context, details) {
                 final isLastStep =
