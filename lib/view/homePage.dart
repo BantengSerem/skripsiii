@@ -10,6 +10,8 @@ import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/helper/location.dart';
+import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
@@ -100,6 +102,14 @@ class HomePage extends StatelessWidget {
                             TextButton(
                               onPressed: () {
                                 // TODO redirect to browsing page
+                                Navigator.push(
+                                    context,
+                                    SlideFadeTransition(
+                                      child: const BrowseRestaurantPage(
+                                        title: 'Selling Now',
+                                        type: 'now',
+                                      ),
+                                    ));
                               },
                               child: const Text(
                                 'View All',
@@ -140,6 +150,7 @@ class HomePage extends StatelessWidget {
                                       pageVM.shopController.sellNowList.length,
                                   itemBuilder: (context, idx) =>
                                       SellingItemCard(
+                                    type: 'sellingNow',
                                     data: pageVM.shopController.sellNowList[idx]
                                         .toMap(),
                                     func: () async {},
@@ -174,6 +185,24 @@ class HomePage extends StatelessWidget {
                             TextButton(
                               onPressed: () {
                                 // TODO redirect to browsing page
+                                Navigator.push(
+                                    context,
+                                    SlideFadeTransition(
+                                      child: const BrowseRestaurantPage(
+                                        title: 'Selling Soon',
+                                        type: 'soon',
+                                      ),
+                                    ));
+
+                                // Navigator.push(
+                                //     context,
+                                //     SlideFadeTransition(
+                                //       child: const BrowseRestaurantPage(
+                                //           title: 'Selling Now'),
+                                //     ));
+
+                                // Get.to(const BrowseRestaurantPage(
+                                //     title: 'Selling Now'));
                               },
                               child: const Text(
                                 'View All',
@@ -214,6 +243,7 @@ class HomePage extends StatelessWidget {
                                       pageVM.shopController.sellSoonList.length,
                                   itemBuilder: (context, idx) =>
                                       SellingItemCard(
+                                    type: 'sellingSoon',
                                     data: pageVM
                                         .shopController.sellSoonList[idx]
                                         .toMap(),
@@ -234,9 +264,9 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async{
-          await pageVM.shopController.test();
-          // Get.to(const SharedFoodPage());
+        onPressed: () async {
+          // await pageVM.shopController.test();
+          Get.to(const SharedFoodPage());
         },
         label: Row(
           children: const [
@@ -360,10 +390,10 @@ class SearchFood extends SearchDelegate<dynamic> {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, idx) => ListTile(
-              title: Text('${snapshot.data!.docs[idx].data()['shopName']}'),
+              title: Text('${snapshot.data!.docs[idx].data()['name']}'),
               onTap: () {
                 final restaurantData = snapshot.data!.docs[idx].data();
-                query = restaurantData['shopName'];
+                query = restaurantData['name'];
                 close(context, query);
               },
             ),
@@ -395,10 +425,10 @@ class SearchFood extends SearchDelegate<dynamic> {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, idx) => ListTile(
-                title: Text('${snapshot.data!.docs[idx].data()['shopName']}'),
+                title: Text('${snapshot.data!.docs[idx].data()['name']}'),
                 onTap: () {
                   final restaurantData = snapshot.data!.docs[idx].data();
-                  query = restaurantData['shopName'];
+                  query = restaurantData['name'];
                   close(context, query);
                   // showResults(context);
                 },

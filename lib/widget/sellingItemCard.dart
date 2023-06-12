@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
 class SellingItemCard extends StatelessWidget {
-  const SellingItemCard({Key? key, required this.func, required this.data})
-      : super(key: key);
+  const SellingItemCard({
+    Key? key,
+    required this.func,
+    required this.data,
+    required this.type,
+  }) : super(key: key);
   final Function() func;
   final Map<String, dynamic> data;
+
+  final String type;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class SellingItemCard extends StatelessWidget {
                   ),
                 ),
                 Row(
-                  children:  [
+                  children: [
                     Text(
                       '${data['ratingAVG'] ?? ''}',
                     ),
@@ -70,9 +76,24 @@ class SellingItemCard extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            const Text(
+
+            type == 'sellingNow' ? const Text(
               'Open',
               style: TextStyle(color: Colors.green, fontSize: 15),
+            ): Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Open on  ',
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                  ),
+                ),
+                Text(
+                  '${data['sellingTime'].toString().substring(0,2)}.${data['sellingTime'].toString().substring(2,4)}',
+                  style: TextStyle(),
+                ),
+              ],
             ),
           ],
         ),

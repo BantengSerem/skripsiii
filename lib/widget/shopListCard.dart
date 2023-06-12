@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:skripsiii/model/shopModel.dart';
 
 class ShopListCard extends StatelessWidget {
-  const ShopListCard({Key? key, required this.func}) : super(key: key);
+  const ShopListCard(
+      {Key? key, required this.func, required this.shop, required this.type})
+      : super(key: key);
   final Function() func;
+  final Shop shop;
+  final String type;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,7 @@ class ShopListCard extends StatelessWidget {
           border: Border.all(color: Colors.grey, width: 1),
           // color: Colors.green,
         ),
-        height: 100,
+        height: 300,
         child: Row(
           children: [
             Container(
@@ -32,17 +37,17 @@ class ShopListCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Restaurant'),
+                Text('${shop.shopName}'),
                 Row(
                   children: [
-                    const Text('0.0 km'),
+                    Text('${shop.distance} km'),
                     const Text(' | '),
                     Row(
-                      children: const [
+                      children: [
                         Text(
-                          '5',
+                          '${shop.ratingAVG}',
                         ),
-                        Icon(
+                        const Icon(
                           Icons.star,
                           color: Colors.yellow,
                         ),
@@ -50,7 +55,23 @@ class ShopListCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Text('Open'),
+                type == 'now'
+                    ? const Text('Open')
+                    : Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Open on  ',
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                          Text(
+                            '${shop.sellingTime.toString().substring(0, 2)}.${shop.sellingTime.toString().substring(2, 4)}',
+                            style: TextStyle(),
+                          ),
+                        ],
+                      ),
               ],
             ),
           ],

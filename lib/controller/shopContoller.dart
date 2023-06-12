@@ -39,6 +39,28 @@ class ShopController extends GetxController {
     if (sellSoonListSnapshot != null) sellSoonListSnapshot.cancel();
   }
 
+  void cleanBrowseSoon() {
+    for (var element in streamListSoon) {
+      element.cancel();
+    }
+    streamListSoon.clear();
+    browseSoonList.clear();
+    currDocSoon = null;
+    firstTimeSoon = true;
+    print('finish cleaning ');
+  }
+
+  void cleanBrowseNow() {
+    for (var element in streamListNow) {
+      element.cancel();
+    }
+    streamListNow.clear();
+    browseNowList.clear();
+    currDocNow = null;
+    firstTimeNow = true;
+    print('finish cleaning ');
+  }
+
   Future<void> init(Member member) async {
     getSellSoon(member);
     getSellNow(member);
@@ -207,7 +229,8 @@ class ShopController extends GetxController {
   }
 
   Future<void> getBrowseSoon(Member member) async {
-    late Query query;
+    print('getBrowseSoon');
+    Query? query;
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
     if (firstTimeSoon) {
@@ -215,75 +238,86 @@ class ShopController extends GetxController {
           .collection('shop')
           .where('sellingTime', isGreaterThan: b)
           .where('sellingTime', isNotEqualTo: -1)
+          .orderBy('sellingTime', descending: false)
           .limit(10);
 
       firstTimeSoon = false;
     } else if (currDocSoon != null) {
-      fireStoreInstance
+      query = fireStoreInstance
           .collection('shop')
           .where('sellingTime', isGreaterThan: b)
           .where('sellingTime', isNotEqualTo: -1)
+          .orderBy('sellingTime', descending: false)
           .limit(10)
           .startAfterDocument(currDocSoon!);
     }
 
-    var index = streamListSoon.length + 1;
+    if (query != null) {
+      var index = streamListSoon.length + 1;
 
-    var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStreamSoon();
+      var snapshot = query.snapshots().listen((event) {
+        if (event.size == 0) return deleteStreamSoon();
 
-      print(event.docChanges.asMap());
-      event.docChanges.asMap().forEach((key, value) async {
-        switch (value.type) {
-          case DocumentChangeType.added:
-            var shop = Shop.fromMap(value.doc);
-            var sl = await getShopLoc(shop);
-            var distance = calculateDistance(
-              lat1: sl.latitude,
-              lon1: sl.longitude,
-              lat2: member.latitude,
-              lon2: member.longitude,
-            );
-            shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('added item $shop');
-            sellSoonList.add(shop);
-            break;
-          case DocumentChangeType.modified:
-            var shop = Shop.fromMap(value.doc);
-            int i = sellSoonList
-                .indexWhere((element) => element.shopID == shop.shopID);
+        print(event.docChanges.asMap());
+        event.docChanges.asMap().forEach((key, value) async {
+          switch (value.type) {
+            case DocumentChangeType.added:
+              var shop = Shop.fromMap(value.doc);
 
-            var sl = await getShopLoc(shop);
-            var distance = calculateDistance(
-              lat1: sl.latitude,
-              lon1: sl.longitude,
-              lat2: member.latitude,
-              lon2: member.longitude,
-            );
-            shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('update item $shop');
-            sellSoonList[i] = shop;
-            break;
-          case DocumentChangeType.removed:
-            // if (removeData == false) removeData = true;
-            print('delete item ${Shop.fromMap(value.doc)}');
-            sellSoonList.removeWhere(
-                (element) => element.shopID == Shop.fromMap(value.doc).shopID);
-            break;
+              browseSoonList
+                  .removeWhere((element) => element.shopID == shop.shopID);
+              var sl = await getShopLoc(shop);
+              var distance = calculateDistance(
+                lat1: sl.latitude,
+                lon1: sl.longitude,
+                lat2: member.latitude,
+                lon2: member.longitude,
+              );
+              shop.distance = double.parse(distance.toStringAsFixed(2));
+              print('added item $shop');
+              browseSoonList.add(shop);
+              break;
+            case DocumentChangeType.modified:
+              var shop = Shop.fromMap(value.doc);
+              int i = browseSoonList
+                  .indexWhere((element) => element.shopID == shop.shopID);
+
+              var sl = await getShopLoc(shop);
+              var distance = calculateDistance(
+                lat1: sl.latitude,
+                lon1: sl.longitude,
+                lat2: member.latitude,
+                lon2: member.longitude,
+              );
+              shop.distance = double.parse(distance.toStringAsFixed(2));
+              print('update item $shop');
+              browseSoonList[i] = shop;
+              break;
+            case DocumentChangeType.removed:
+              // if (removeData == false) removeData = true;
+              print('delete item ${Shop.fromMap(value.doc)}');
+              browseSoonList.removeWhere((element) =>
+                  element.shopID == Shop.fromMap(value.doc).shopID);
+              break;
+          }
+        });
+
+        browseSoonList.sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
+
+        if (index == streamListSoon.length && event.size == 10) {
+          currDocSoon = event.docs.last;
+        } else if (index == streamListSoon.length && event.size < 10) {
+          currDocSoon = null;
         }
       });
-
-      if (index == streamListSoon.length && event.size == 10) {
-        currDocSoon = event.docs.last;
-      } else if (index == streamListSoon.length && event.size < 10) {
-        currDocSoon = null;
-      }
-    });
-    streamListSoon.add(snapshot);
+      streamListSoon.add(snapshot);
+    } else {
+      print("can't retrieve data, already max or no currDoc");
+    }
   }
 
   Future<void> getBrowseNow(Member member) async {
-    late Query query;
+    late Query? query;
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
     if (firstTimeNow) {
@@ -292,71 +326,77 @@ class ShopController extends GetxController {
           .where('sellingTime', isLessThanOrEqualTo: b)
           .where('sellingTime', isNotEqualTo: -1)
           .where('isOpen', isEqualTo: 'true')
+          .orderBy('sellingTime')
           .limit(10);
       firstTimeNow = false;
     } else if (currDocNow != null) {
-      fireStoreInstance
+      query = fireStoreInstance
           .collection('shop')
           .where('sellingTime', isLessThanOrEqualTo: b)
           .where('sellingTime', isNotEqualTo: -1)
           .where('isOpen', isEqualTo: 'true')
+          .orderBy('sellingTime')
           .limit(10)
           .startAfterDocument(currDocNow!);
     }
 
-    var index = streamListNow.length + 1;
+    if (query != null) {
+      var index = streamListNow.length + 1;
 
-    var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStreamNow();
+      var snapshot = query.snapshots().listen((event) {
+        if (event.size == 0) return deleteStreamNow();
 
-      print(event.docChanges.asMap());
-      event.docChanges.asMap().forEach((key, value) async {
-        switch (value.type) {
-          case DocumentChangeType.added:
-            var shop = Shop.fromMap(value.doc);
-            var sl = await getShopLoc(shop);
-            var distance = calculateDistance(
-              lat1: sl.latitude,
-              lon1: sl.longitude,
-              lat2: member.latitude,
-              lon2: member.longitude,
-            );
-            shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('added item $shop');
-            sellNowList.add(shop);
-            break;
-          case DocumentChangeType.modified:
-            var shop = Shop.fromMap(value.doc);
-            int i = sellNowList
-                .indexWhere((element) => element.shopID == shop.shopID);
+        print(event.docChanges.asMap());
+        event.docChanges.asMap().forEach((key, value) async {
+          switch (value.type) {
+            case DocumentChangeType.added:
+              var shop = Shop.fromMap(value.doc);
+              browseSoonList
+                  .removeWhere((element) => element.shopID == shop.shopID);
+              var sl = await getShopLoc(shop);
+              var distance = calculateDistance(
+                lat1: sl.latitude,
+                lon1: sl.longitude,
+                lat2: member.latitude,
+                lon2: member.longitude,
+              );
+              shop.distance = double.parse(distance.toStringAsFixed(2));
+              print('added item $shop');
+              browseNowList.add(shop);
+              break;
+            case DocumentChangeType.modified:
+              var shop = Shop.fromMap(value.doc);
+              int i = browseNowList
+                  .indexWhere((element) => element.shopID == shop.shopID);
+              var sl = await getShopLoc(shop);
+              var distance = calculateDistance(
+                lat1: sl.latitude,
+                lon1: sl.longitude,
+                lat2: member.latitude,
+                lon2: member.longitude,
+              );
+              shop.distance = double.parse(distance.toStringAsFixed(2));
+              print('update item $shop');
+              browseNowList[i] = shop;
+              break;
+            case DocumentChangeType.removed:
+              // if (removeData == false) removeData = true;
+              print('delete item ${Shop.fromMap(value.doc)}');
+              browseNowList.removeWhere((element) =>
+                  element.shopID == Shop.fromMap(value.doc).shopID);
+              break;
+          }
+        });
+        // browseSoonList.sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
 
-            var sl = await getShopLoc(shop);
-            var distance = calculateDistance(
-              lat1: sl.latitude,
-              lon1: sl.longitude,
-              lat2: member.latitude,
-              lon2: member.longitude,
-            );
-            shop.distance = double.parse(distance.toStringAsFixed(2));
-            print('update item $shop');
-            sellNowList[i] = shop;
-            break;
-          case DocumentChangeType.removed:
-            // if (removeData == false) removeData = true;
-            print('delete item ${Shop.fromMap(value.doc)}');
-            sellNowList.removeWhere(
-                (element) => element.shopID == Shop.fromMap(value.doc).shopID);
-            break;
+        if (index == streamListNow.length && event.size == 10) {
+          currDocNow = event.docs.last;
+        } else if (index == streamListNow.length && event.size < 10) {
+          currDocNow = null;
         }
       });
-
-      if (index == streamListNow.length && event.size == 10) {
-        currDocNow = event.docs.last;
-      } else if (index == streamListNow.length && event.size < 10) {
-        currDocNow = null;
-      }
-    });
-    streamListNow.add(snapshot);
+      streamListNow.add(snapshot);
+    }
   }
 
   Future<void> test() async {
@@ -411,7 +451,7 @@ class ShopController extends GetxController {
     );
     return await fireStoreInstance
         .collection('shop')
-        .where('shopName', isGreaterThanOrEqualTo: query)
+        .where('name', isGreaterThanOrEqualTo: query)
         // .where('sellingTime', isLessThanOrEqualTo: DateTime.now())
         // .orderBy('sellingTime', descending: true)
         .limit(10)
@@ -425,16 +465,16 @@ class ShopController extends GetxController {
       required double lon2}) {
     const double earthRadius = 6371; // Earth's radius in kilometers
 
-    // // Convert latitude and longitude from degrees to radians
+    // Convert latitude and longitude from degrees to radians
     // final double latRad1 = degreesToRadians(lat1);
     // final double lonRad1 = degreesToRadians(lon1);
     // final double latRad2 = degreesToRadians(lat2);
     // final double lonRad2 = degreesToRadians(lon2);
-
+    //
     // // Calculate the differences between the coordinates
     // final double dLat = latRad2 - latRad1;
     // final double dLon = lonRad2 - lonRad1;
-
+    //
     // // Apply the Haversine formula
     // final double a = pow(sin(dLat / 2), 2) +
     //     cos(latRad1) * cos(latRad2) * pow(sin(dLon / 2), 2);

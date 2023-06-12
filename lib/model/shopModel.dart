@@ -49,7 +49,7 @@ class Shop extends UserParent {
     shopID = data['shopID'] ?? '';
     shopName = data['name'] ?? '';
     contacts = data['contacts'] ?? '';
-    ratingAVG = data['ratingAVG'] ?? 0.0;
+    ratingAVG = double.parse(data['ratingAVG'].toString()) ?? 0.0;
     closingTime = data['closingTime'] ?? 0;
     sellingTime = data['sellingTime'] ?? 0;
     isOpen = data['isOpen'] ?? '';
@@ -61,7 +61,7 @@ class Shop extends UserParent {
         shopID: json['shopID'] ?? '',
         shopName: json['name'] ?? '',
         contacts: json['contacts'] ?? '',
-        ratingAVG: json['ratingAVG'] ?? 0.0,
+        ratingAVG: double.parse(json['ratingAVG'].toString()) ?? 0.0,
         closingTime: json['closingTime'] ?? 0,
         sellingTime: json['sellingTime'] ?? 0,
         isOpen: json['isOpen'] ?? '',
