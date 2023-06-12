@@ -287,7 +287,7 @@ class FoodController extends GetxController {
           case DocumentChangeType.added:
             // if (addData == false) addData = true;
             debugPrint("added : ${Food.fromMap(value.doc).foodID}");
-            // When a data is deleted in the database it will trigger
+            // When a data is deleted in the database, it will trigger
             // changes (type = added) to retrieve more data and then it
             // retrieves data after the last one of this snapshot initial
             // retrieve thus, there'll be duplication inside the list

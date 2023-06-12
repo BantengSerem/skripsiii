@@ -234,8 +234,9 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Get.to(const SharedFoodPage());
+        onPressed: () async{
+          await pageVM.shopController.test();
+          // Get.to(const SharedFoodPage());
         },
         label: Row(
           children: const [

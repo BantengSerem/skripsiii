@@ -7,6 +7,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/widget/button36x220.dart';
@@ -42,7 +43,12 @@ class _LoginPageState extends State<LoginPage> {
       };
       var x = await loginController.manualLogin(map);
       if (x.runtimeType == Member) {
+        // var m = await loginController.getMemberData(x.memberID);
+        var location = await LocationHelper.instance.getCurrentLocation();
+        x.latitude = location.latitude;
+        x.longitude = location.longitude;
         memberController.member.value = x;
+        print('memberController.member.value : ${memberController.member.value}');
         return 'member';
       } else if (x.runtimeType == Shop) {
         shopController.shop.value = x;
@@ -59,6 +65,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<String?> googleLogin() async {
     var x = await loginController.googleLogin();
     if (x.runtimeType == Member) {
+      var location = await LocationHelper.instance.getCurrentLocation();
+      x.latitude = location.latitude;
+      x.longitude = location.longitude;
       memberController.member.value = x;
       return 'member';
     } else if (x.runtimeType == Shop) {

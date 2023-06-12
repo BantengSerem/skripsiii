@@ -67,9 +67,9 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
           email: _email!,
           shopName: _shopName!,
           contacts: _phone!,
-          closingTime: 0,
+          closingTime: -1,
           ratingAVG: 0,
-          sellingTime: 0,
+          sellingTime: -1,
           shopID: userId!,
           isOpen: 'false',
         );

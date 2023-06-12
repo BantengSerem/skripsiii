@@ -47,18 +47,19 @@ class Shop extends UserParent {
   Shop.fromMap(DocumentSnapshot<Object?> data)
       : super(email: data['email']! ?? '', password: data['password']! ?? '') {
     shopID = data['shopID'] ?? '';
-    shopName = data['shopName'] ?? '';
+    shopName = data['name'] ?? '';
     contacts = data['contacts'] ?? '';
     ratingAVG = data['ratingAVG'] ?? 0.0;
     closingTime = data['closingTime'] ?? 0;
     sellingTime = data['sellingTime'] ?? 0;
+    isOpen = data['isOpen'] ?? '';
   }
 
   factory Shop.fromJson(Map<String, dynamic>? json) => Shop(
         email: json!['email'] ?? '',
         password: json['password'] ?? '',
         shopID: json['shopID'] ?? '',
-        shopName: json['shopName'] ?? '',
+        shopName: json['name'] ?? '',
         contacts: json['contacts'] ?? '',
         ratingAVG: json['ratingAVG'] ?? 0.0,
         closingTime: json['closingTime'] ?? 0,

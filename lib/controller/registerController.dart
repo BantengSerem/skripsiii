@@ -37,7 +37,7 @@ class RegisterController extends GetxController {
   Future<UserCredential?> registerMember(String email, String password) async {
     try {
       UserCredential userCredential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -113,6 +113,7 @@ class RegisterController extends GetxController {
         'ratingAVG': s.ratingAVG,
         'closingTime': s.closingTime,
         'sellingTime': s.sellingTime,
+        'isOpen': 'false',
       });
       return true;
     } catch (e) {

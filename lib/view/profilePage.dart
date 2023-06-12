@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
               await loginController.logout();
               if (mounted) {
                 foodController.reset();
-                shopController.reset();
+                shopController.reset(); 
                 memberController.reset();
                 Get.delete<BottomNavController>();
                 Get.delete<HistoryPageVM>();

@@ -18,6 +18,14 @@ class ShopController extends GetxController {
   final RxList<Shop> browseSoonList = RxList<Shop>();
   final RxList<Shop> browseNowList = RxList<Shop>();
   late StreamSubscription<QuerySnapshot> sellNowListSnapshot;
+  late StreamSubscription<QuerySnapshot> sellSoonListSnapshot;
+  List<StreamSubscription<QuerySnapshot>> streamListNow = [];
+  List<StreamSubscription<QuerySnapshot>> streamListSoon = [];
+
+  bool firstTimeSoon = true;
+  bool firstTimeNow = true;
+  late DocumentSnapshot? currDocSoon;
+  late DocumentSnapshot? currDocNow;
 
   // final MemberController memberController = Get.find();
 
@@ -28,6 +36,7 @@ class ShopController extends GetxController {
     browseNowList.clear();
     browseSoonList.clear();
     if (sellNowListSnapshot != null) sellNowListSnapshot.cancel();
+    if (sellSoonListSnapshot != null) sellSoonListSnapshot.cancel();
   }
 
   Future<void> init(Member member) async {
@@ -60,7 +69,8 @@ class ShopController extends GetxController {
     var snapshot = fireStoreInstance
         .collection('shop')
         .where('sellingTime', isLessThanOrEqualTo: b)
-        .where('isOpen', isEqualTo: 'open')
+        .where('sellingTime', isNotEqualTo: -1)
+        .where('isOpen', isEqualTo: 'true')
         .limit(5)
         .orderBy('sellingTime')
         .snapshots()
@@ -78,6 +88,7 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('added item $shop');
             sellNowList.add(shop);
             break;
           case DocumentChangeType.modified:
@@ -93,10 +104,12 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('update item $shop');
             sellNowList[i] = shop;
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
+            print('delete item ${Shop.fromJson(value.doc.data())}');
             sellNowList.removeWhere((element) =>
                 element.shopID == Shop.fromJson(value.doc.data()).shopID);
             break;
@@ -114,8 +127,10 @@ class ShopController extends GetxController {
     var snapshot = fireStoreInstance
         .collection('shop')
         .where('sellingTime', isGreaterThan: b)
+        .where('sellingTime', isNotEqualTo: -1)
+        // .where('isOpen', isEqualTo: 'true')
         .limit(5)
-        .orderBy('sellingTime')
+        // .orderBy('sellingTime')
         .snapshots()
         .listen((event) {
       print(event.docChanges.asMap());
@@ -131,10 +146,187 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
-            sellNowList.add(shop);
+            print('added item $shop');
+            sellSoonList.add(shop);
             break;
           case DocumentChangeType.modified:
             var shop = Shop.fromJson(value.doc.data());
+            int i = sellSoonList
+                .indexWhere((element) => element.shopID == shop.shopID);
+
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('update item $shop');
+            sellSoonList[i] = shop;
+            break;
+          case DocumentChangeType.removed:
+            // if (removeData == false) removeData = true;
+            print('delete item ${Shop.fromJson(value.doc.data())}');
+            sellSoonList.removeWhere((element) =>
+                element.shopID == Shop.fromJson(value.doc.data()).shopID);
+            break;
+        }
+      });
+    });
+
+    sellSoonListSnapshot = snapshot;
+  }
+
+  void deleteStreamNow() {
+    streamListNow.last.cancel();
+    streamListNow.removeLast();
+    getLastDocSnapshotsNow();
+    print('streamList : ${streamListNow}');
+  }
+
+  void deleteStreamSoon() {
+    streamListSoon.last.cancel();
+    streamListSoon.removeLast();
+    getLastDocSnapshotsSoon();
+    print('streamList : ${streamListSoon}');
+  }
+
+  void getLastDocSnapshotsNow() async {
+    var query = fireStoreInstance
+        .collection('shop')
+        .doc(browseNowList.last.shopID.toString());
+    currDocNow = await query.get();
+  }
+
+  void getLastDocSnapshotsSoon() async {
+    var query = fireStoreInstance
+        .collection('shop')
+        .doc(browseSoonList.last.shopID.toString());
+    currDocSoon = await query.get();
+  }
+
+  Future<void> getBrowseSoon(Member member) async {
+    late Query query;
+    var a = DateFormat('HHmmss').format(DateTime.now());
+    var b = int.parse(a);
+    if (firstTimeSoon) {
+      query = fireStoreInstance
+          .collection('shop')
+          .where('sellingTime', isGreaterThan: b)
+          .where('sellingTime', isNotEqualTo: -1)
+          .limit(10);
+
+      firstTimeSoon = false;
+    } else if (currDocSoon != null) {
+      fireStoreInstance
+          .collection('shop')
+          .where('sellingTime', isGreaterThan: b)
+          .where('sellingTime', isNotEqualTo: -1)
+          .limit(10)
+          .startAfterDocument(currDocSoon!);
+    }
+
+    var index = streamListSoon.length + 1;
+
+    var snapshot = query.snapshots().listen((event) {
+      if (event.size == 0) return deleteStreamSoon();
+
+      print(event.docChanges.asMap());
+      event.docChanges.asMap().forEach((key, value) async {
+        switch (value.type) {
+          case DocumentChangeType.added:
+            var shop = Shop.fromMap(value.doc);
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('added item $shop');
+            sellSoonList.add(shop);
+            break;
+          case DocumentChangeType.modified:
+            var shop = Shop.fromMap(value.doc);
+            int i = sellSoonList
+                .indexWhere((element) => element.shopID == shop.shopID);
+
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('update item $shop');
+            sellSoonList[i] = shop;
+            break;
+          case DocumentChangeType.removed:
+            // if (removeData == false) removeData = true;
+            print('delete item ${Shop.fromMap(value.doc)}');
+            sellSoonList.removeWhere(
+                (element) => element.shopID == Shop.fromMap(value.doc).shopID);
+            break;
+        }
+      });
+
+      if (index == streamListSoon.length && event.size == 10) {
+        currDocSoon = event.docs.last;
+      } else if (index == streamListSoon.length && event.size < 10) {
+        currDocSoon = null;
+      }
+    });
+    streamListSoon.add(snapshot);
+  }
+
+  Future<void> getBrowseNow(Member member) async {
+    late Query query;
+    var a = DateFormat('HHmmss').format(DateTime.now());
+    var b = int.parse(a);
+    if (firstTimeNow) {
+      query = fireStoreInstance
+          .collection('shop')
+          .where('sellingTime', isLessThanOrEqualTo: b)
+          .where('sellingTime', isNotEqualTo: -1)
+          .where('isOpen', isEqualTo: 'true')
+          .limit(10);
+      firstTimeNow = false;
+    } else if (currDocNow != null) {
+      fireStoreInstance
+          .collection('shop')
+          .where('sellingTime', isLessThanOrEqualTo: b)
+          .where('sellingTime', isNotEqualTo: -1)
+          .where('isOpen', isEqualTo: 'true')
+          .limit(10)
+          .startAfterDocument(currDocNow!);
+    }
+
+    var index = streamListNow.length + 1;
+
+    var snapshot = query.snapshots().listen((event) {
+      if (event.size == 0) return deleteStreamNow();
+
+      print(event.docChanges.asMap());
+      event.docChanges.asMap().forEach((key, value) async {
+        switch (value.type) {
+          case DocumentChangeType.added:
+            var shop = Shop.fromMap(value.doc);
+            var sl = await getShopLoc(shop);
+            var distance = calculateDistance(
+              lat1: sl.latitude,
+              lon1: sl.longitude,
+              lat2: member.latitude,
+              lon2: member.longitude,
+            );
+            shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('added item $shop');
+            sellNowList.add(shop);
+            break;
+          case DocumentChangeType.modified:
+            var shop = Shop.fromMap(value.doc);
             int i = sellNowList
                 .indexWhere((element) => element.shopID == shop.shopID);
 
@@ -146,18 +338,25 @@ class ShopController extends GetxController {
               lon2: member.longitude,
             );
             shop.distance = double.parse(distance.toStringAsFixed(2));
+            print('update item $shop');
             sellNowList[i] = shop;
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
-            sellSoonList.removeWhere((element) =>
-                element.shopID == Shop.fromJson(value.doc.data()).shopID);
+            print('delete item ${Shop.fromMap(value.doc)}');
+            sellNowList.removeWhere(
+                (element) => element.shopID == Shop.fromMap(value.doc).shopID);
             break;
         }
       });
-    });
 
-    sellNowListSnapshot = snapshot;
+      if (index == streamListNow.length && event.size == 10) {
+        currDocNow = event.docs.last;
+      } else if (index == streamListNow.length && event.size < 10) {
+        currDocNow = null;
+      }
+    });
+    streamListNow.add(snapshot);
   }
 
   Future<void> test() async {
@@ -170,29 +369,38 @@ class ShopController extends GetxController {
     // var h = m.substring(0, 2);
     // var h1 = m.substring(2);
     // var h2 = "$h'.'$h1";
-    //
-    // var res = await fireStoreInstance
-    //     .collection('shop')
-    //     .where('sellingTime', isLessThanOrEqualTo: b)
-    //     .where('isOpen', isEqualTo: 'open')
-    //     // .where('closingTime', isGreaterThanOrEqualTo: b)
-    //     .get();
-    // res.docs.asMap().forEach((key, value) {
-    //   print(value.data());
-    // });
 
+    var a = DateFormat('HHmmss').format(DateTime.now());
+    var b = int.parse(a);
+    b = 223000;
     var res = await fireStoreInstance
-        .collection('address')
-        .where('userID', isEqualTo: 'O5vObIuWE9WwotA2gwkcVuXhW5z1')
-        .limit(1)
+        .collection('shop')
+        .where('time'[0], isGreaterThan: b)
+        .where('time'[1], isLessThanOrEqualTo: b)
+        // .where('sellingTime', isNotEqualTo: -1)
+        // .where('isOpen', isEqualTo: 'true')
+        // .limit(5)
+        // .orderBy('sellingTime')
+        // .where('closingTime', isGreaterThanOrEqualTo: b)
         .get();
 
-    // res.docs.asMap().forEach((key, value) {
-    //   print(value.data());
-    // });
-    final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
+    print(res.docs.asMap());
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+    });
 
-    print(addresses);
+    // var res = await fireStoreInstance
+    //     .collection('address')
+    //     .where('userID', isEqualTo: 'O5vObIuWE9WwotA2gwkcVuXhW5z1')
+    //     .limit(1)
+    //     .get();
+    //
+    // // res.docs.asMap().forEach((key, value) {
+    // //   print(value.data());
+    // // });
+    // final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
+    //
+    // print(addresses);
     // return addresses.first;
   }
 
