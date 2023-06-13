@@ -150,8 +150,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       margin: const EdgeInsets.symmetric(vertical: 5),
                       height: 80,
                       color: Colors.red,
-                      child: Text(pageVM.foodController.shareMemberFoodList[idx]
-                          .sharedFoodName),
+                      child: Text(
+                        '${pageVM.foodController.shareMemberFoodList[idx].sharedFoodName} and ${pageVM.foodController.shareMemberFoodList[idx].status}',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
                     );
                   },
                 ),
