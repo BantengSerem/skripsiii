@@ -141,20 +141,20 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellNowList.isEmpty) {
-                                // return const Center(
-                                //   child: Text('No Data'),
-                                // );
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.black38,
-                                  highlightColor: Colors.white,
-                                  period: const Duration(milliseconds: 1500),
-                                  child: Container(
-                                    color: Colors.white,
-                                    height: 220,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.8,
-                                  ),
+                                return const Center(
+                                  child: Text('No Data'),
                                 );
+                                // return Shimmer.fromColors(
+                                //   baseColor: Colors.black38,
+                                //   highlightColor: Colors.white,
+                                //   period: const Duration(milliseconds: 1500),
+                                //   child: Container(
+                                //     color: Colors.white,
+                                //     height: 220,
+                                //     width:
+                                //         MediaQuery.of(context).size.width * 0.8,
+                                //   ),
+                                // );
                               } else {
                                 return ListView.builder(
                                   key: const Key('sellingNow'),
@@ -250,20 +250,20 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellSoonList.isEmpty) {
-                                // return const Center(
-                                //   child: Text('No Data'),
-                                // );
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.black38,
-                                  highlightColor: Colors.white,
-                                  period: const Duration(milliseconds: 1500),
-                                  child: Container(
-                                    color: Colors.white,
-                                    height: 220,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.8,
-                                  ),
+                                return const Center(
+                                  child: Text('No Data'),
                                 );
+                                // return Shimmer.fromColors(
+                                //   baseColor: Colors.black38,
+                                //   highlightColor: Colors.white,
+                                //   period: const Duration(milliseconds: 1500),
+                                //   child: Container(
+                                //     color: Colors.white,
+                                //     height: 220,
+                                //     width:
+                                //         MediaQuery.of(context).size.width * 0.8,
+                                //   ),
+                                // );
                               } else {
                                 return ListView.builder(
                                   key: const Key('sellingSoon'),

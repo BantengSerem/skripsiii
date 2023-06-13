@@ -202,7 +202,7 @@ class ShopController extends GetxController {
   }
 
   void deleteStreamNow() {
-    if(streamListNow.isNotEmpty){
+    if (streamListNow.isNotEmpty) {
       streamListNow.last.cancel();
       streamListNow.removeLast();
       getLastDocSnapshotsNow();
@@ -211,7 +211,7 @@ class ShopController extends GetxController {
   }
 
   void deleteStreamSoon() {
-    if(streamListSoon.isNotEmpty){
+    if (streamListSoon.isNotEmpty) {
       streamListSoon.last.cancel();
       streamListSoon.removeLast();
       getLastDocSnapshotsSoon();
@@ -531,5 +531,14 @@ class ShopController extends GetxController {
       'minLon': minLon,
       'maxLon': maxLon,
     };
+  }
+
+  Future<Shop> getShopData(String shopID) async {
+    var res = await fireStoreInstance
+        .collection('shop')
+        .where('shopID', isEqualTo: shopID)
+        .get();
+
+    return Shop.fromMap(res.docs[0]);
   }
 }

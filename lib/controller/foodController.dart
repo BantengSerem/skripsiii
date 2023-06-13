@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:skripsiii/model/cart.dart';
 import 'package:skripsiii/model/foodModel.dart';
 
 class FoodController extends GetxController {
@@ -353,6 +354,26 @@ class FoodController extends GetxController {
       }
     });
     streamFoodList.add(snapshot);
+  }
+
+  Future<Food> getFoodData(String foodID) async {
+    var res = await fireStoreInstance
+        .collection('food')
+        .where('foodID', isEqualTo: foodID)
+        .get();
+
+    return Food.fromMap(res.docs[0]);
+  }
+
+  Future<bool> checkFoodCartList(cart) async {
+    var res = await fireStoreInstance
+        .collection('food')
+        .where('foodID', isEqualTo: cart.foodID)
+        .where('qty', isGreaterThanOrEqualTo: cart.qty)
+        .get();
+    var a = res.docs.isNotEmpty;
+    print(a);
+    return false;
   }
 
   Future<void> test(String shopID) async {

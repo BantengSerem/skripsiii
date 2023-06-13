@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:path/path.dart';
 import 'package:skripsiii/controller/foodController.dart';
+import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/editFoodPage.dart';
+import 'package:skripsiii/view/memberCartPage.dart';
 import 'package:skripsiii/widget/foodCustomListCard.dart';
 
 class RestaurantOrderMenuPage extends StatefulWidget {
@@ -24,10 +28,13 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
   late final RestaurantOrderMenuVM pageVM;
 
   Future<void> alert(
-      {required BuildContext context, required Food food}) async {
+      {required BuildContext context,
+      required Food food,
+      required Shop shop,
+      required Function() func}) async {
     RxInt _count = 0.obs;
-    TextEditingController tc =
-        TextEditingController(text: _count.value.toString());
+    // TextEditingController tc =
+    //     TextEditingController(text: _count.value.toString());
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -37,9 +44,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
           title: Text(
             textAlign: TextAlign.center,
             food.foodName,
-            style: const TextStyle(
-              fontSize: 20,
-            ),
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
           ),
           content: SizedBox(
             width: 250,
@@ -57,19 +62,20 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                 ),
                 const Text(
                   'Details',
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.w400
-                  ),
+                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.w400),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 Container(
-                  child: Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mattis mi iaculis ornare consectetur. Sed id sagittis enim. Nunc ut mauris diam. Suspendisse potenti. Ut pulvinar condimentum neque. Morbi convallis imperdiet lacinia. Etiam faucibus sit amet lacus ut lobortis. Vivamus lacus erat, imperdiet luctus commodo in, porta tristique lectus. Aliquam.',
-                      maxLines: 5,
-                      softWrap: true),
+                  height: 130,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(5),
+                    ),
+                    border: Border.all(width: 1, color: Colors.grey),
+                  ),
+                  child: Text(food.detailNotes, maxLines: 5, softWrap: true),
                 ),
                 const SizedBox(
                   height: 10,
@@ -87,7 +93,11 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       height: 40,
                       width: 40,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          if (_count.value > 0) {
+                            _count.value -= 1;
+                          }
+                        },
                         child: const Icon(Icons.arrow_back_ios_new_rounded),
                       ),
                     ),
@@ -101,24 +111,17 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                         ),
                         border: Border.all(width: 1, color: Colors.grey),
                       ),
+                      alignment: Alignment.center,
                       height: 40,
                       width: 55,
-                      child: TextFormField(
-                        style: const TextStyle(
-                          fontSize: 20,
-                          overflow: TextOverflow.clip,
+                      child: Obx(
+                        () => Text(
+                          _count.value.toString(),
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                        textAlignVertical: TextAlignVertical.center,
-                        // initialValue: _count.value.toString(),
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                        ),
-                        controller: tc,
-                        onChanged: (value) {
-                          _count.value = int.parse(tc.value.toString());
-                        },
                       ),
                     ),
                     const SizedBox(
@@ -134,59 +137,127 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       height: 40,
                       width: 40,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          // var a = int.parse(tc.text);
+                          if (_count.value < food.qty) {
+                            _count.value += 1;
+                          }
+                        },
                         child: const Icon(Icons.arrow_forward_ios_rounded),
                       ),
                     ),
                   ],
                 ),
-
                 const SizedBox(
                   height: 30,
                 ),
+                SizedBox(
+                  height: 36,
+                  width: 220,
+                  child: Obx(
+                    () => ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            _count.value > 0 && _count.value <= food.qty
+                                ? const MaterialStatePropertyAll<Color>(
+                                    Colors.greenAccent,
+                                  )
+                                : const MaterialStatePropertyAll<Color>(
+                                    Colors.grey,
+                                  ),
+                      ),
+                      onPressed: () async {
+                        await func();
+                        if (_count > 0 && _count <= food.qty) {
+                          await EasyLoading.show(
+                            dismissOnTap: false,
+                            maskType: EasyLoadingMaskType.black,
+                          );
 
+                          var data = {
+                            'memberID':
+                                pageVM.memberController.member.value.memberID,
+                            'shopID': shop.shopID,
+                            'foodID': food.foodID,
+                            'qty': _count.value,
+                            'subPrice': food.price * _count.value,
+                          };
+
+                          var isThisShopInCart =
+                              await pageVM.memberController.checkShopInCart(
+                            memberID:
+                                pageVM.memberController.member.value.memberID,
+                            shopID: shop.shopID,
+                          );
+                          print(isThisShopInCart);
+
+                          var isMemberCartEmpty =
+                              await pageVM.memberController.checkMemberCart(
+                            memberID:
+                                pageVM.memberController.member.value.memberID,
+                          );
+                          print(isMemberCartEmpty);
+
+                          if (isMemberCartEmpty) {
+                            await pageVM.memberController.addMemberShopToCart(
+                              memberID:
+                                  pageVM.memberController.member.value.memberID,
+                              shopID: shop.shopID,
+                            );
+                            await pageVM.memberController
+                                .addDataToCart(data: data);
+                            await EasyLoading.dismiss();
+                            if (mounted) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Successfully add item to cart')));
+                            }
+                          } else if (isThisShopInCart) {
+                            var isFoodInCart = await pageVM.memberController
+                                .checkFoodCart(data: data);
+                            print(isFoodInCart);
+                            if (isFoodInCart) {
+                              await pageVM.memberController
+                                  .updateDataToCart(data: data);
+                            } else {
+                              await pageVM.memberController
+                                  .addDataToCart(data: data);
+                            }
+                            EasyLoading.dismiss();
+                            if (mounted) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Successfully add item to cart')));
+                            }
+                          } else {
+                            EasyLoading.dismiss();
+                            if (mounted) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('You still unfinished cart')));
+                            }
+                          }
+                        }
+                      },
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                            color: _count.value > 0 && _count.value <= food.qty
+                                ? Colors.black54
+                                : Colors.white),
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
-          // actions: <Widget>[
-          //   TextButton(
-          //     onPressed: () => Navigator.pop(context, 'Cancel'),
-          //     child: const Text('Cancel'),
-          //   ),
-          //   TextButton(
-          //     onPressed: () async {
-          //       // await EasyLoading.show(
-          //       //   dismissOnTap: false,
-          //       //   maskType:
-          //       //   EasyLoadingMaskType.black,
-          //       // );
-          //       // var deleteSuccess = await pageVM
-          //       //     .foodController
-          //       //     .deleteFoodImage({
-          //       //   'shopID': pageVM.shopController
-          //       //       .shop.value.shopID,
-          //       //   'imgName': widget.food.foodID,
-          //       // });
-          //       //
-          //       // if (deleteSuccess) {
-          //       //   await pageVM.foodController
-          //       //       .deleteFoodData({
-          //       //     'foodID': widget.food.foodID,
-          //       //   });
-          //       // }
-          //       //
-          //       // if (mounted) {
-          //       //   EasyLoading.dismiss();
-          //       //   // int count = 2;
-          //       //   // Navigator.of(context).popUntil((_) => count-- <= 0);
-          //       //   Navigator.of(context).popUntil(
-          //       //           (route) => route.isFirst);
-          //       // }
-          //       Navigator.pop(context, 'OK');
-          //     },
-          //     child: const Text('OK'),
-          //   ),
-          // ],
         );
       },
     );
@@ -295,20 +366,23 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                   child: ListView.builder(
                     itemCount: pageVM.foodController.foodList.length,
                     itemBuilder: (context, idx) {
-                      // return Container(
-                      //   margin: EdgeInsets.symmetric(vertical: 10),
-                      //   height: 50,
-                      //   color: Colors.grey,
-                      //   child:
-                      //       Text(pageVM.foodController.foodList[idx].foodName),
-                      // );
                       return FoodCustomListCard(
                           food: pageVM.foodController.foodList[idx],
                           func: () async {
-                            alert(
-                              food: pageVM.foodController.foodList[idx],
-                              context: context,
-                            );
+                            var a = DateFormat('HHmmss').format(DateTime.now());
+                            var b = int.parse(a);
+
+                            if (pageVM.shop.sellingTime < b) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Store is not open yet')));
+                            } else {
+                              alert(
+                                  food: pageVM.foodController.foodList[idx],
+                                  shop: pageVM.shop,
+                                  context: context,
+                                  func: () async {});
+                            }
                           });
                     },
                   ),
@@ -324,12 +398,11 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
         child: FittedBox(
           child: FloatingActionButton(
             onPressed: () async {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const AddFoodPage(),
-              //   ),
-              // );
+              Navigator.push(
+                  context,
+                  SlideFadeTransition(
+                    child: const MemberCartPage(),
+                  ));
             },
             child: const Icon(
               Icons.shopping_cart,
@@ -349,6 +422,8 @@ class RestaurantOrderMenuVM extends GetxController {
 
   final FoodController foodController = Get.find<FoodController>();
   final ShopController shopController = Get.find<ShopController>();
+  final MemberController memberController = Get.find<MemberController>();
+
   final Shop shop;
   RxBool isLoading = false.obs;
   TextEditingController tc = TextEditingController();
