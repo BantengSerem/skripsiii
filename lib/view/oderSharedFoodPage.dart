@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/model/sharedFoodModel.dart';
+import 'package:skripsiii/model/transctionShareFood.dart';
+import 'package:uuid/uuid.dart';
 
 class OrderedSharedFoodPage extends StatefulWidget {
   const OrderedSharedFoodPage({Key? key, required this.sf}) : super(key: key);
@@ -64,8 +67,39 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
               child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: () async {
+                await EasyLoading.show(
+                  dismissOnTap: false,
+                  maskType: EasyLoadingMaskType.clear,
+                );
+                var uuid = const Uuid();
+                String tsfID = uuid.v4();
+                var tsf = TransactionShareFoodModel(
+                  shareFoodTransactionID: tsfID,
+                  memberBuyID: pageVM.memberController.member.value.memberID,
+                  memberSellID: widget.sf.memberID,
+                  date: DateTime.now(),
+                  shareFoodID: widget.sf.sharedFoodID,
+                  status: 'ongoing',
+                );
+                var z = await pageVM.foodController
+                    .createShareFoodTransaction(tsf: tsf);
+                if (z) {
+                  await pageVM.foodController
+                      .shareFoodStatusToBought(widget.sf);
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Successfully create transaction')));
+                  }
+                } else {
+                  EasyLoading.dismiss();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Something went wrong')));
+                  }
+                }
               },
             ),
           ],
@@ -188,11 +222,6 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     await pageVM.test();
-      //   },
-      // ),
     );
   }
 }

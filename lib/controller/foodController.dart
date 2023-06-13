@@ -10,26 +10,31 @@ import 'package:image_picker/image_picker.dart';
 import 'package:skripsiii/model/cart.dart';
 import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/sharedFoodModel.dart';
+import 'package:skripsiii/model/transctionShareFood.dart';
 
 class FoodController extends GetxController {
   // List<StreamSubscription<QuerySnapshot>> streamList = [];
   List<StreamSubscription<QuerySnapshot>> streamFoodList = [];
   List<StreamSubscription<QuerySnapshot>> streamShareFoodList = [];
+  List<StreamSubscription<QuerySnapshot>> streamMemberShareFoodList = [];
 
   // RxList<Food> listItem = RxList<Food>();
   RxList<Food> foodList = RxList<Food>();
   RxList<SharedFood> shareFoodList = RxList<SharedFood>();
+  RxList<SharedFood> shareMemberFoodList = RxList<SharedFood>();
 
   final fireStoreInstance = FirebaseFirestore.instance;
 
   // late DocumentSnapshot? currDoc;
   late DocumentSnapshot? currDocFoodList;
   late DocumentSnapshot? currDocShareFoodList;
+  late DocumentSnapshot? currDocMemberShareFoodList;
 
   // late DocumentSnapshot? currDoc = null;
   // bool firstTime = true;
   bool firstTimeFoodList = true;
   bool firstTimeShareFoodList = true;
+  bool firstTimeMemberShareFoodList = true;
 
   void init() {}
 
@@ -41,6 +46,14 @@ class FoodController extends GetxController {
       element.cancel();
     }
     streamShareFoodList.clear();
+
+    shareMemberFoodList.clear();
+    currDocMemberShareFoodList = null;
+    firstTimeMemberShareFoodList = true;
+    for (var element in streamMemberShareFoodList) {
+      element.cancel();
+    }
+    streamMemberShareFoodList.clear();
     // listItem.clear();
     // currDoc = null;
     // firstTime = true;
@@ -295,13 +308,17 @@ class FoodController extends GetxController {
   }
 
   void getLastDocSnapshotsFoodList(String shopID) async {
-    var query = fireStoreInstance
-        .collection('food')
-        .doc(foodList.last.foodID.toString());
-    currDocFoodList = await query.get();
+    if(foodList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('food')
+          .doc(foodList.last.foodID.toString());
+      currDocFoodList = await query.get();
+    }
   }
 
   void deleteStreamShareFoodList() {
+    print(streamShareFoodList.isNotEmpty);
+    print(streamShareFoodList.length);
     if (streamShareFoodList.isNotEmpty) {
       streamShareFoodList.last.cancel();
       streamShareFoodList.removeLast();
@@ -310,10 +327,12 @@ class FoodController extends GetxController {
   }
 
   void getLastDocSnapshotsShareFoodList() async {
-    var query = fireStoreInstance
-        .collection('sharedFood')
-        .doc(shareFoodList.last.sharedFoodID.toString());
-    currDocShareFoodList = await query.get();
+    if(shareFoodList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('sharedFood')
+          .doc(shareFoodList.last.sharedFoodID.toString());
+      currDocShareFoodList = await query.get();
+    }
   }
 
   Future<void> getSharedFoodList(String memberID) async {
@@ -342,9 +361,10 @@ class FoodController extends GetxController {
     }
 
     var index = streamShareFoodList.length + 1;
-
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStreamShareFoodList();
+      if (event.size == 0) {
+        return deleteStreamShareFoodList();
+      }
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -392,7 +412,7 @@ class FoodController extends GetxController {
         currDocShareFoodList = null;
       }
     });
-    streamShareFoodList.add(snapshot);
+   streamShareFoodList.add(snapshot);
   }
 
   Future<void> getFoodList(Map<String, dynamic> data) async {
@@ -487,10 +507,11 @@ class FoodController extends GetxController {
   Future<void> test() async {
     var res = await fireStoreInstance
         .collection('sharedFood')
-        .where('memberID', isNotEqualTo: '4vNgQgyFuGVEAF8zkFixU0esHRq2')
+        .where('memberID', isNotEqualTo: 'cr8mVrJeYBbmDHJ6gNywIOPws7H3')
+        .where('status', isEqualTo: 'onsale')
         .orderBy('memberID')
+        // .where('sharedFoodID', isEqualTo: data['sharedFoodID'])
         .orderBy('date', descending: true)
-        .limit(10)
         .get();
     res.docs.asMap().forEach((key, value) {
       print(value.data());
@@ -503,9 +524,9 @@ class FoodController extends GetxController {
 
   double calculateDistance(
       {required double lat1,
-        required double lon1,
-        required double lat2,
-        required double lon2}) {
+      required double lon1,
+      required double lat2,
+      required double lon2}) {
     const double earthRadius = 6371; // Earth's radius in kilometers
 
     // Convert latitude and longitude from degrees to radians
@@ -538,5 +559,133 @@ class FoodController extends GetxController {
     final double distance = earthRadius * c;
 
     return distance;
+  }
+
+  Future<bool> createShareFoodTransaction(
+      {required TransactionShareFoodModel tsf}) async {
+    try {
+      await fireStoreInstance
+          .collection('shareFoodTransaction')
+          .doc(tsf.shareFoodTransactionID)
+          .set({
+        'memberBuyID': tsf.memberBuyID,
+        'shareFoodTransactionID': tsf.shareFoodTransactionID,
+        'memberSellID': tsf.memberSellID,
+        'date': tsf.date,
+        'shareFoodID': tsf.shareFoodID,
+        'status': tsf.status,
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> shareFoodStatusToBought(SharedFood sf) async {
+    await fireStoreInstance
+        .collection('sharedFood')
+        .doc(sf.sharedFoodID)
+        .update({
+      'status': 'Bought',
+    });
+  }
+
+  void getLastDocSnapshotsMemberShareFoodList() async {
+    if(shareMemberFoodList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('sharedFood')
+          .doc(shareMemberFoodList.last.sharedFoodID.toString());
+      currDocMemberShareFoodList = await query.get();
+    }
+  }
+
+  void deleteStreamMemberShareFoodList() {
+    if (streamMemberShareFoodList.isNotEmpty) {
+      streamMemberShareFoodList.last.cancel();
+      streamMemberShareFoodList.removeLast();
+      getLastDocSnapshotsMemberShareFoodList();
+    }
+  }
+
+  // shareMemberFoodList.clear();
+  // currDocMemberShareFoodList = null;
+  // firstTimeMemberShareFoodList = true;
+  // for (var element in streamMemberShareFoodList) {
+  // element.cancel();
+  // }
+  // streamMemberShareFoodList.clear();
+  Future<void> getMemberShareFoodList(String memberID) async {
+    late Query query;
+    if (firstTimeMemberShareFoodList) {
+      query = fireStoreInstance
+          .collection('sharedFood')
+          .where('memberID', isEqualTo: memberID)
+          .orderBy('date', descending: true)
+          .limit(10);
+
+      firstTimeMemberShareFoodList = false;
+    } else if (currDocMemberShareFoodList != null) {
+      query = fireStoreInstance
+          .collection('shop')
+          .where('memberID', isEqualTo: memberID)
+          .orderBy('date', descending: true)
+          .limit(10)
+          .startAfterDocument(currDocMemberShareFoodList!);
+    } else {
+      return;
+    }
+
+    var index = streamMemberShareFoodList.length + 1;
+
+    var snapshot = query.snapshots().listen((event) {
+      if (event.size == 0) return deleteStreamMemberShareFoodList();
+
+      event.docChanges.asMap().forEach((key, value) {
+        switch (value.type) {
+          case DocumentChangeType.added:
+            // if (addData == false) addData = true;
+            debugPrint("added : ${SharedFood.fromMap(value.doc).sharedFoodID}");
+            // When a data is deleted in the database, it will trigger
+            // changes (type = added) to retrieve more data and then it
+            // retrieves data after the last one of this snapshot initial
+            // retrieve thus, there'll be duplication inside the list
+            // so it has to be removed
+            shareMemberFoodList.removeWhere((element) =>
+                element.sharedFoodID ==
+                SharedFood.fromMap(value.doc).sharedFoodID);
+            shareMemberFoodList.add(SharedFood.fromMap(value.doc));
+            print(shareMemberFoodList);
+            break;
+          case DocumentChangeType.modified:
+            debugPrint(
+                "modified : ${SharedFood.fromMap(value.doc).sharedFoodID}");
+            int i = shareMemberFoodList.indexWhere((element) =>
+                element.sharedFoodID ==
+                SharedFood.fromMap(value.doc).sharedFoodID);
+            shareMemberFoodList[i] = SharedFood.fromMap(value.doc);
+            break;
+          case DocumentChangeType.removed:
+            // if (removeData == false) removeData = true;
+            debugPrint(
+                "removed : ${SharedFood.fromMap(value.doc).sharedFoodID}");
+            shareMemberFoodList.removeWhere((element) =>
+                element.sharedFoodID ==
+                SharedFood.fromMap(value.doc).sharedFoodID);
+            break;
+        }
+      });
+      shareMemberFoodList.sort((a, b) => b.date.compareTo(a.date));
+
+      debugPrint(
+          'index : $index, streamList.length : ${streamMemberShareFoodList.length}, event.size : ${event.size}');
+      if (index == streamMemberShareFoodList.length && event.size == 10) {
+        currDocMemberShareFoodList = event.docs.last;
+        debugPrint(
+            'change the currDoc on stream : $index, with the streamList.length : ${streamMemberShareFoodList.length}');
+      } else if (index == streamMemberShareFoodList.length && event.size < 10) {
+        currDocMemberShareFoodList = null;
+      }
+    });
+    streamMemberShareFoodList.add(snapshot);
   }
 }
