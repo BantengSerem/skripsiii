@@ -79,7 +79,8 @@ class _FindFoodPageState extends State<FindFoodPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          print(pageVM.foodController.shareFoodList);
+          // print(pageVM.foodController.shareFoodList);
+          await pageVM.foodController.test();
         },
       ),
     );

@@ -18,13 +18,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final LoginController loginController = Get.find<LoginController>();
-  final FoodController foodController = Get.find<FoodController>();
-  final MemberController memberController = Get.find<MemberController>();
-  final ShopController shopController = Get.find<ShopController>();
-
   @override
   Widget build(BuildContext context) {
+    ProfileVM pageVM = Get.put(ProfileVM());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -32,15 +28,16 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           TextButton(
             onPressed: () async {
-              await loginController.logout();
+              await pageVM.loginController.logout();
               if (mounted) {
-                foodController.reset();
-                shopController.reset(); 
-                memberController.reset();
+                pageVM.foodController.reset();
+                pageVM.shopController.reset();
+                pageVM.memberController.reset();
                 Get.delete<BottomNavController>();
                 Get.delete<HistoryPageVM>();
                 Get.delete<HomePageVM>();
                 Get.delete<FindFoodVM>();
+                Get.delete<ProfileVM>();
                 Get.offAll(const WelcomePage());
                 // Navigator.of(context)
                 //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
@@ -88,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       Obx(
                         () => Text(
-                          memberController.member.value.username,
+                          pageVM.memberController.member.value.username,
                           style: const TextStyle(
                             fontSize: 20,
                             // fontWeight: FontWeight.bold,
@@ -106,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       Obx(
                         () => Text(
-                          memberController.member.value.email,
+                          pageVM.memberController.member.value.email,
                           style: const TextStyle(
                             fontSize: 20,
                             // fontWeight: FontWeight.bold,
@@ -138,12 +135,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: 5,
+                itemCount: pageVM.foodController.shareMemberFoodList.length,
                 itemBuilder: (context, idx) {
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 5),
                     height: 80,
                     color: Colors.red,
+                    child: Text(pageVM.foodController.shareMemberFoodList[idx]
+                        .sharedFoodName),
                   );
                 },
               ),
@@ -152,5 +151,24 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+}
+
+class ProfileVM extends GetxController {
+  final LoginController loginController = Get.find<LoginController>();
+  final FoodController foodController = Get.find<FoodController>();
+  final MemberController memberController = Get.find<MemberController>();
+  final ShopController shopController = Get.find<ShopController>();
+
+  RxBool isLoading = true.obs;
+
+  @override
+  void onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    isLoading.value = true;
+    await foodController
+        .getMemberShareFoodList(memberController.member.value.memberID);
+    isLoading.value = false;
   }
 }
