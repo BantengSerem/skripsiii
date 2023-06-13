@@ -202,16 +202,20 @@ class ShopController extends GetxController {
   }
 
   void deleteStreamNow() {
-    streamListNow.last.cancel();
-    streamListNow.removeLast();
-    getLastDocSnapshotsNow();
+    if(streamListNow.isNotEmpty){
+      streamListNow.last.cancel();
+      streamListNow.removeLast();
+      getLastDocSnapshotsNow();
+    }
     // print('streamList : ${streamListNow}');
   }
 
   void deleteStreamSoon() {
-    streamListSoon.last.cancel();
-    streamListSoon.removeLast();
-    getLastDocSnapshotsSoon();
+    if(streamListSoon.isNotEmpty){
+      streamListSoon.last.cancel();
+      streamListSoon.removeLast();
+      getLastDocSnapshotsSoon();
+    }
     // print('streamList : ${streamListSoon}');
   }
 

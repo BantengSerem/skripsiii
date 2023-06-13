@@ -86,4 +86,11 @@ class Shop extends UserParent {
       'distance': distance,
     };
   }
+  Map<String, dynamic> essentialMap() {
+    return {
+      'email': email,
+      'password': password,
+      'shopID': shopID,
+    };
+  }
 }

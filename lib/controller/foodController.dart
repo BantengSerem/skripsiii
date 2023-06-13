@@ -10,12 +10,16 @@ import 'package:skripsiii/model/foodModel.dart';
 
 class FoodController extends GetxController {
   List<StreamSubscription<QuerySnapshot>> streamList = [];
+  List<StreamSubscription<QuerySnapshot>> streamFoodList = [];
   RxList<Food> listItem = RxList<Food>();
+  RxList<Food> foodList = RxList<Food>();
   final fireStoreInstance = FirebaseFirestore.instance;
   late DocumentSnapshot? currDoc;
+  late DocumentSnapshot? currDocFoodList;
 
   // late DocumentSnapshot? currDoc = null;
   bool firstTime = true;
+  bool firstTimeFoodList = true;
 
   void init() {}
 
@@ -27,6 +31,16 @@ class FoodController extends GetxController {
       element.cancel();
     }
     streamList.clear();
+  }
+
+  void cleanFoodData() {
+    foodList.clear();
+    currDocFoodList = null;
+    firstTimeFoodList = true;
+    for (var element in streamFoodList) {
+      element.cancel();
+    }
+    streamFoodList.clear();
   }
 
   void refreshAllData() {
@@ -43,12 +57,12 @@ class FoodController extends GetxController {
   Future<String?> imgFoodDataToStorage(Map<String, dynamic> data) async {
     // fireStoreInstance.collection('locations').add(data);
 
-    var name = data['file'].name;
+    // var name = data['file'].name;
     Reference reference = FirebaseStorage.instance
         .ref()
         .child(data['shopID'])
         .child('foodIMG')
-        .child(name);
+        .child(data['imgName']);
     try {
       await reference.putFile(File(data['file'].path));
       var url = await reference.getDownloadURL();
@@ -56,6 +70,21 @@ class FoodController extends GetxController {
     } catch (e) {
       debugPrint('error in dataToStorage : $e');
       return null;
+    }
+  }
+
+  Future<bool> deleteFoodImage(Map<String, dynamic> data) async {
+    Reference reference = FirebaseStorage.instance
+        .ref()
+        .child(data['shopID'])
+        .child('foodIMG')
+        .child(data['imgName']);
+
+    try {
+      await reference.delete();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -82,6 +111,50 @@ class FoodController extends GetxController {
     ImagePicker imagePicker = ImagePicker();
     XFile file = (await imagePicker.pickImage(source: ImageSource.gallery))!;
     return file;
+  }
+
+  Future<bool> deleteFoodData(Map<String, dynamic> data) async {
+    try {
+      await fireStoreInstance.collection('food').doc(data['foodID']).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> updateFoodData(Map<String, dynamic> data) async {
+    // await fireStoreInstance
+    //     .collection('shop')
+    //     .doc(data['shopID'])
+    //     .collection('foodList')
+    //     .doc(data['foodID'])
+    //     .update({
+    //   'foodID': data['foodID'],
+    //   'foodName': data['foodName'],
+    //   'foodImageURL': data['foodImageURL'],
+    //   'detailNotes': data['detailNotes'],
+    //   'price': data['price'],
+    //   'qty': data['qty'],
+    //   'location': data['location'],
+    // }).whenComplete(() {
+    //   debugPrint('updating data is successful');
+    // }).catchError((error) {
+    //   debugPrint('error : $error');
+    // });
+
+    await fireStoreInstance.collection('food').doc(data['foodID']).update({
+      // 'foodID': data['foodID'],
+      'foodName': data['foodName'],
+      'foodImageURL': data['foodImageURL'],
+      'detailNotes': data['detailNotes'],
+      'price': data['price'],
+      'qty': data['qty'],
+      // 'shopID': data['shopID'],
+    }).whenComplete(() {
+      debugPrint('adding new data is successful');
+    }).catchError((error) {
+      debugPrint('error : $error');
+    });
   }
 
   Future<void> addNewSharedFoodData(Map<String, dynamic> data) async {
@@ -197,67 +270,44 @@ class FoodController extends GetxController {
     streamList.add(snapshot);
   }
 
-  Future<void> updateFoodData(Map<String, dynamic> data) async {
-    await fireStoreInstance
-        .collection('shop')
-        .doc(data['shopID'])
-        .collection('foodList')
-        .doc(data['foodID'])
-        .update({
-      'foodID': data['foodID'],
-      'foodName': data['foodName'],
-      'foodImageURL': data['foodImageURL'],
-      'detailNotes': data['detailNotes'],
-      'price': data['price'],
-      'qty': data['qty'],
-      'location': data['location'],
-    }).whenComplete(() {
-      debugPrint('updating data is successful');
-    }).catchError((error) {
-      debugPrint('error : $error');
-    });
-  }
-
   void deleteStream(String shopID) {
-    streamList.last.cancel();
-    streamList.removeLast();
-    getLastDocSnapshots(shopID);
+    if (streamList.isNotEmpty) {
+      streamList.last.cancel();
+      streamList.removeLast();
+      getLastDocSnapshots(shopID);
+    }
     print('streamList : ${streamList}');
   }
 
   void getLastDocSnapshots(String shopID) async {
     var query = fireStoreInstance
         .collection('shop')
-        .doc(shopID)
-        .collection('foodList')
         .doc(listItem.last.foodID.toString());
     currDoc = await query.get();
   }
 
   Future<void> getFoodList(Map<String, dynamic> data) async {
     late Query query;
-    if (firstTime) {
+    if (firstTimeFoodList) {
       query = fireStoreInstance
           .collection('food')
-          .doc(data['shopID'])
-          .collection('foodList')
-          .orderBy('date', descending: false)
+          .where('shopID', isEqualTo: data['shopID'])
+          .orderBy('qty', descending: true)
           .limit(10);
 
-      firstTime = false;
-    } else if (currDoc != null) {
+      firstTimeFoodList = false;
+    } else if (currDocFoodList != null) {
       query = fireStoreInstance
           .collection('shop')
-          .doc(data['shopID'])
-          .collection('foodList')
-          .orderBy('date', descending: false)
+          .where('shopID', isEqualTo: data['shopID'])
+          .orderBy('qty', descending: true)
           .limit(10)
-          .startAfterDocument(currDoc!);
+          .startAfterDocument(currDocFoodList!);
     } else {
       return;
     }
 
-    var index = streamList.length + 1;
+    var index = streamFoodList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
       if (event.size == 0) return deleteStream(data['shopID']);
@@ -272,43 +322,44 @@ class FoodController extends GetxController {
             // retrieves data after the last one of this snapshot initial
             // retrieve thus, there'll be duplication inside the list
             // so it has to be removed
-            listItem.removeWhere(
+            foodList.removeWhere(
                 (element) => element.foodID == Food.fromMap(value.doc).foodID);
-            listItem.add(Food.fromMap(value.doc));
+            foodList.add(Food.fromMap(value.doc));
             break;
           case DocumentChangeType.modified:
             debugPrint("modified : ${Food.fromMap(value.doc).foodID}");
-            int i = listItem.indexWhere(
+            int i = foodList.indexWhere(
                 (element) => element.foodID == Food.fromMap(value.doc).foodID);
-            listItem[i] = Food.fromMap(value.doc);
+            foodList[i] = Food.fromMap(value.doc);
             break;
           case DocumentChangeType.removed:
             // if (removeData == false) removeData = true;
             debugPrint("removed : ${Food.fromMap(value.doc).foodID}");
-            listItem.removeWhere(
+            foodList.removeWhere(
                 (element) => element.foodID == Food.fromMap(value.doc).foodID);
             break;
         }
       });
-      listItem.sort((a, b) => b.foodID.compareTo(a.foodID));
+      foodList.sort((a, b) => b.qty.compareTo(a.qty));
 
       debugPrint(
-          'index : $index, streamList.length : ${streamList.length}, event.size : ${event.size}');
-      if (index == streamList.length && event.size == 10) {
-        currDoc = event.docs.last;
+          'index : $index, streamList.length : ${streamFoodList.length}, event.size : ${event.size}');
+      if (index == streamFoodList.length && event.size == 10) {
+        currDocFoodList = event.docs.last;
         debugPrint(
             'change the currDoc on stream : $index, with the streamList.length : ${streamList.length}');
-      } else if (index == streamList.length && event.size < 10) {
-        currDoc = null;
+      } else if (index == streamFoodList.length && event.size < 10) {
+        currDocFoodList = null;
       }
     });
-    streamList.add(snapshot);
+    streamFoodList.add(snapshot);
   }
 
   Future<void> test(String shopID) async {
     var res = await fireStoreInstance
         .collection('food')
         .where('shopID', isEqualTo: shopID)
+        .orderBy('qty', descending: true)
         // .where('shopName', isLessThanOrEqualTo: 'shop')
         //     .limit(10)
         .get();

@@ -7,16 +7,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
+import 'package:skripsiii/model/shopModel.dart';
 import 'package:uuid/uuid.dart';
 
-class AddFoodPage extends StatefulWidget {
-  const AddFoodPage({Key? key}) : super(key: key);
+class EditFoodPage extends StatefulWidget {
+  const EditFoodPage({Key? key, required this.food}) : super(key: key);
+  final Food food;
 
   @override
-  State<AddFoodPage> createState() => _AddFoodPageState();
+  State<EditFoodPage> createState() => _EditFoodPageState();
 }
 
-class _AddFoodPageState extends State<AddFoodPage> {
+class _EditFoodPageState extends State<EditFoodPage> {
   final _formKey = GlobalKey<FormState>();
   String? _foodName;
   double? _price;
@@ -24,20 +26,24 @@ class _AddFoodPageState extends State<AddFoodPage> {
   int? _qty;
   final RxString _imagePath = ''.obs;
   XFile? _image;
-
-  late final AddFoodVM pageVM;
+  late final EditFoodVM pageVM;
 
   @override
   void initState() {
     // TODO: implement initState
-    pageVM = Get.put(AddFoodVM());
+    pageVM = Get.put(EditFoodVM());
+    // _foodName = widget.food.foodName;
+    // _price = widget.food.price;
+    // _description = widget.food.detailNotes;
+    // _qty = widget.food.qty;
+    // _imagePath.value = widget.food.foodImageURL;
     super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    Get.delete<AddFoodVM>();
+    Get.delete<EditFoodVM>();
     super.dispose();
   }
 
@@ -45,7 +51,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Share Food'),
+        title: const Text('Edit Food'),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -82,6 +88,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         return Image.file(
                           File(_imagePath.value),
                         );
+                      } else if (pageVM.initialImageActive.value) {
+                        return Image.network(widget.food.foodImageURL);
                       } else {
                         return const Icon(
                             Icons.photo_size_select_actual_outlined);
@@ -107,6 +115,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         ),
                       ),
                       TextFormField(
+                        initialValue: widget.food.foodName,
                         decoration: const InputDecoration(
                           hintText: 'Food Name',
                         ),
@@ -131,6 +140,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         ),
                       ),
                       TextFormField(
+                        initialValue: widget.food.price.toString(),
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           hintText: 'Rp. 99.999',
@@ -163,17 +173,18 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         ),
                       ),
                       TextFormField(
+                        initialValue: widget.food.qty.toString(),
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                            hintText: 'Food Qty',
-                            // prefix: Text(
-                            //   'Rp. ',
-                            //   style: TextStyle(
-                            //     color: Colors.black54,
-                            //   ),
-                            // ),
-                            // prefixIcon: Icon(Icons.attach_money_rounded),
-                            ),
+                          hintText: 'Food Qty',
+                          // prefix: Text(
+                          //   'Rp. ',
+                          //   style: TextStyle(
+                          //     color: Colors.black54,
+                          //   ),
+                          // ),
+                          // prefixIcon: Icon(Icons.attach_money_rounded),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input food quantity';
@@ -198,6 +209,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         height: 10,
                       ),
                       TextFormField(
+                        initialValue: widget.food.detailNotes,
                         decoration: const InputDecoration(
                           hintText: 'Input descriptions',
                           border: OutlineInputBorder(
@@ -234,6 +246,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             _image = await pageVM.foodController.pickImage();
                             _imagePath.value = _image!.path;
                             pageVM.hasImage.value = true;
+                            pageVM.initialImageActive.value = false;
                             print('_image : ${_imagePath.value}');
                           },
                           child: const Text(
@@ -248,27 +261,86 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         height: 30,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // SizedBox(
-                          //   height: 40,
-                          //   width: 150,
-                          //   child: ElevatedButton(
-                          //     style: const ButtonStyle(
-                          //       backgroundColor:
-                          //           MaterialStatePropertyAll<Color>(
-                          //         Colors.redAccent,
-                          //       ),
-                          //     ),
-                          //     onPressed: () {},
-                          //     child: const Text(
-                          //       'Cancel',
-                          //       style: TextStyle(
-                          //         color: Colors.white,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
+                          SizedBox(
+                            height: 40,
+                            width: 150,
+                            child: ElevatedButton(
+                              style: const ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll<Color>(
+                                  Colors.redAccent,
+                                ),
+                              ),
+                              onPressed: () async {
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text(
+                                        'Confirm food deletion',
+                                        style: TextStyle(
+                                          fontSize: 25,
+                                        ),
+                                      ),
+                                      content: Text(
+                                        'Food Name : ${widget.food.foodName}',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            await EasyLoading.show(
+                                              dismissOnTap: false,
+                                              maskType:
+                                                  EasyLoadingMaskType.black,
+                                            );
+                                            var deleteSuccess = await pageVM
+                                                .foodController
+                                                .deleteFoodImage({
+                                              'shopID': pageVM.shopController
+                                                  .shop.value.shopID,
+                                              'imgName': widget.food.foodID,
+                                            });
+
+                                            if (deleteSuccess) {
+                                              await pageVM.foodController
+                                                  .deleteFoodData({
+                                                'foodID': widget.food.foodID,
+                                              });
+                                            }
+
+                                            if (mounted) {
+                                              EasyLoading.dismiss();
+                                              Navigator.pop(context, 'OK');
+                                            }
+                                            // Navigator.pop(context, 'OK');
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Text(
+                                'Delete',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                           SizedBox(
                             height: 40,
                             width: 150,
@@ -283,41 +355,52 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 await EasyLoading.show(
                                   dismissOnTap: false,
                                   maskType: EasyLoadingMaskType.black,
-
                                 );
                                 final form = _formKey.currentState;
                                 if (_image == null) {
-                                  if(mounted) {
+                                  if (mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                          content:
-                                              Text('Please input an image')));
+                                        content: Text('Please input an image'),
+                                      ),
+                                    );
                                   }
                                 } else if (form!.validate()) {
                                   form.save();
                                   print('valid');
-                                  var uuid = const Uuid();
-                                  String foodID = uuid.v4();
-                                  var foodImageURL = await pageVM.foodController
-                                      .imgFoodDataToStorage({
-                                    'file': _image!,
+
+                                  var deleteSuccess = await pageVM
+                                      .foodController
+                                      .deleteFoodImage({
                                     'shopID':
                                         pageVM.shopController.shop.value.shopID,
-                                    'imgName': foodID,
+                                    'imgName': widget.food.foodID,
                                   });
+                                  String? foodImageURL;
+                                  if (deleteSuccess) {
+                                    foodImageURL = await pageVM.foodController
+                                        .imgFoodDataToStorage({
+                                      'file': _image!,
+                                      'shopID': pageVM
+                                          .shopController.shop.value.shopID,
+                                      'imgName': widget.food.foodID,
+                                    });
+                                  } else {
+                                    foodImageURL = widget.food.foodImageURL;
+                                  }
+
                                   var food = Food(
                                     price: _price ?? 0,
                                     detailNotes: _description ?? '',
                                     foodName: _foodName ?? '',
-                                    foodID: foodID,
+                                    foodID: widget.food.foodID,
                                     foodImageURL: foodImageURL!,
                                     qty: _qty ?? 0,
-                                    shopID: pageVM.shopController.shop.value.shopID
+                                    shopID: '',
                                   );
-                                  // // print(sf.toMap());
-                                  //
                                   await pageVM.foodController
-                                      .addNewFoodData(food.toMap());
+                                      .updateFoodData(food.toMap());
+
                                   if (mounted) {
                                     EasyLoading.dismiss();
                                     Navigator.pop(context);
@@ -350,9 +433,47 @@ class _AddFoodPageState extends State<AddFoodPage> {
   }
 }
 
-class AddFoodVM extends GetxController {
+class EditFoodVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final ShopController shopController = Get.find<ShopController>();
 
   final RxBool hasImage = false.obs;
+  final RxBool initialImageActive = true.obs;
+
+  Future<void> _showMyDialog(
+      BuildContext context, String foodName, Function() func) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Confirm food deletion',
+            style: TextStyle(
+              fontSize: 25,
+            ),
+          ),
+          content: Text(
+            'Food Name : $foodName',
+            style: const TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await func();
+                // Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
