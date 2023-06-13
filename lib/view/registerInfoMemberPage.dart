@@ -102,6 +102,8 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
         bool a = await registerController.addMemberToFirebase(m);
         print('a : $a');
         if (a) {
+          m.latitude = x.latitude;
+          m.longitude = x.longitude;
           memberController.member.value = m;
           print(
               'memberController.member.value : ${memberController.member.value}');

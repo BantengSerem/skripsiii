@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class SharedFood {
   late final String sharedFoodID;
@@ -7,6 +8,10 @@ class SharedFood {
   late final String detailNotes;
   late final String memberID;
   late final double price;
+  late final String status;
+  late final DateTime date;
+  late final String memberName;
+  late double distance;
 
   SharedFood({
     required this.sharedFoodID,
@@ -15,15 +20,22 @@ class SharedFood {
     required this.detailNotes,
     required this.price,
     required this.memberID,
+    required this.status,
+    required this.date,
+    required this.memberName,
   });
 
   SharedFood.fromMap(DocumentSnapshot<Object?> data) {
+    Timestamp firebaseTimestamp = data['date'];
     sharedFoodID = data['sharedFoodID'];
     sharedFoodName = data['sharedFoodName'];
     sharedFoodImageURL = data['sharedFoodImageURL'];
     detailNotes = data['detailNotes'];
     memberID = data['memberID'];
     price = data['price'];
+    status = data['status'];
+    date = firebaseTimestamp.toDate();
+    memberName = data['memberName'];
   }
 
   Map<String, dynamic> toMap() {
@@ -34,6 +46,9 @@ class SharedFood {
       'sharedFoodImageURL': sharedFoodImageURL,
       'detailNotes': detailNotes,
       'price': price,
+      'status': status,
+      'date': date,
+      'memberName': memberName,
     };
   }
 }

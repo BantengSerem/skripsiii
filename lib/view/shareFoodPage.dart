@@ -262,6 +262,10 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                     sharedFoodImageURL: sharedFoodImageURL!,
                                     memberID:
                                         memberController.member.value.memberID,
+                                    status: 'onsale',
+                                    date: DateTime.now(),
+                                    memberName:
+                                        memberController.member.value.name,
                                   );
 
                                   print(sf.toMap());

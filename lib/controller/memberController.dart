@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
+import 'package:skripsiii/model/addressModel.dart';
 import 'package:skripsiii/model/cart.dart';
 import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/memberModel.dart';
@@ -187,5 +188,18 @@ class MemberController extends GetxController {
       'foodList': t.foodList,
       'status': t.status,
     });
+  }
+
+  Future<Address> getMemberAddress(String memberID) async {
+    var res = await fireStoreInstance
+        .collection('address')
+        .where('userID', isEqualTo: memberID)
+        .get();
+
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+    });
+    // print(res.docs[0].data());
+    return Address.fromMap(res.docs[0]);
   }
 }

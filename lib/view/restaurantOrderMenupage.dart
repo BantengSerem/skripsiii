@@ -437,7 +437,7 @@ class RestaurantOrderMenuVM extends GetxController {
 
   void init() async {
     isLoading.value = true;
-    foodController.getFoodList(shop.essentialMap());
+    await foodController.getFoodList(shop.essentialMap());
     isLoading.value = false;
   }
 

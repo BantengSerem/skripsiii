@@ -184,13 +184,13 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       String transacID = uuid.v4();
 
                       var transaction = TransactionModel(
-                        shopID: pageVM.shop.shopID,
-                        memberID: pageVM.memberController.member.value.memberID,
-                        transactionID: transacID,
-                        foodList: l,
-                        date: DateTime.now(),
-                        status: 'ongoing'
-                      );
+                          shopID: pageVM.shop.shopID,
+                          memberID:
+                              pageVM.memberController.member.value.memberID,
+                          transactionID: transacID,
+                          foodList: l,
+                          date: DateTime.now(),
+                          status: 'ongoing');
                       await pageVM.memberController
                           .createTransction(transaction);
                       await pageVM.memberController.deleteCart(
@@ -213,7 +213,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       }
                     }
                   },
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
                   child: Container(
                     // width: MediaQuery.of(context).size.width * 0.85,
                     height: 40,
@@ -258,17 +258,21 @@ class MemberCartVM extends GetxController {
     // TODO: implement onInit
     super.onInit();
     isLoading.value = true;
-    var sid = await memberController
-        .getCartListShopID(memberController.member.value.memberID);
-    shop = await shopController.getShopData(sid);
-    cartList = await memberController.getMemberCartList(
+    var a = await memberController.checkMemberCart(
         memberID: memberController.member.value.memberID);
-    cartList.forEach((element) async {
-      var food = await foodController.getFoodData(element.foodID);
-      foodList.add(food);
-    });
-    for (var element in cartList) {
-      _totalPrice.value += element.subPrice;
+    if (!a) {
+      var sid = await memberController
+          .getCartListShopID(memberController.member.value.memberID);
+      shop = await shopController.getShopData(sid);
+      cartList = await memberController.getMemberCartList(
+          memberID: memberController.member.value.memberID);
+      cartList.forEach((element) async {
+        var food = await foodController.getFoodData(element.foodID);
+        foodList.add(food);
+      });
+      for (var element in cartList) {
+        _totalPrice.value += element.subPrice;
+      }
     }
     if (cartList.isNotEmpty) isCartEmpty.value = false;
     isLoading.value = false;
