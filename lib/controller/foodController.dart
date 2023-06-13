@@ -341,6 +341,7 @@ class FoodController extends GetxController {
       query = fireStoreInstance
           .collection('sharedFood')
           .where('memberID', isNotEqualTo: memberID)
+          .where('status', isEqualTo: 'onsale')
           .orderBy('memberID')
           // .where('sharedFoodID', isEqualTo: data['sharedFoodID'])
           .orderBy('date', descending: true)
@@ -351,6 +352,7 @@ class FoodController extends GetxController {
       query = fireStoreInstance
           .collection('sharedFood')
           .where('memberID', isNotEqualTo: memberID)
+          .where('status', isEqualTo: 'onsale')
           .orderBy('memberID')
           // .where('sharedFoodID', isEqualTo: data['sharedFoodID'])
           .orderBy('date', descending: true)

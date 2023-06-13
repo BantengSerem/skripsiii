@@ -155,7 +155,8 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                     ),
                     Obx(
                       () => Text(
-                        'Distance ${pageVM.distance.value.toString().substring(0, 2)}.${pageVM.distance.value.toString().substring(2, 4)} KM',
+                        'Distanec ${pageVM.distance.value.toString()}',
+                        // 'Distance ${pageVM.distance.value.toString().substring(0, 2)}.${pageVM.distance.value.toString().substring(2, 4)} K',
                         style: const TextStyle(
                           // fontWeight: FontWeight.bold,
                           fontSize: 20,
