@@ -72,6 +72,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
           sellingTime: -1,
           shopID: userId!,
           isOpen: 'false',
+          totalReview: 0,
         );
 
         var uuid = const Uuid();

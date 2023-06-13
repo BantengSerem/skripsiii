@@ -322,8 +322,10 @@ class _EditFoodPageState extends State<EditFoodPage> {
 
                                             if (mounted) {
                                               EasyLoading.dismiss();
-                                              int count = 2;
-                                              Navigator.of(context).popUntil((_) => count-- <= 0);
+                                              // int count = 2;
+                                              // Navigator.of(context).popUntil((_) => count-- <= 0);
+                                              Navigator.of(context).popUntil(
+                                                  (route) => route.isFirst);
                                             }
                                             // Navigator.pop(context, 'OK');
                                           },
