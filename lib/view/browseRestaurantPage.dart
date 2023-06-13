@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/memberCartPage.dart';
 import 'package:skripsiii/widget/shopListCard.dart';
 
 class BrowseRestaurantPage extends StatefulWidget {
@@ -100,9 +102,14 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
               // var m = pageVM.memberController.member.value;
               // await pageVM.shopController.getBrowseSoon(m);
               // print(pageVM.shopController.browseSoonList);
-              pageVM.shopController.browseSoonList.forEach((element) {
-                print(element.shopID);
-              });
+              // pageVM.shopController.browseSoonList.forEach((element) {
+              //   print(element.shopID);
+              // });
+              Navigator.push(
+                  context,
+                  SlideFadeTransition(
+                    child: const MemberCartPage(),
+                  ));
             },
             child: const Icon(Icons.shopping_cart),
           ),

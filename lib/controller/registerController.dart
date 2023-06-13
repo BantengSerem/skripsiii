@@ -114,6 +114,7 @@ class RegisterController extends GetxController {
         'closingTime': s.closingTime,
         'sellingTime': s.sellingTime,
         'isOpen': 'false',
+        'totalReview': s.totalReview,
       });
       return true;
     } catch (e) {

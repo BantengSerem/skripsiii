@@ -136,7 +136,6 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                       return FoodCustomListCard(
                           food: pageVM.foodController.foodList[idx],
                           func: () async {
-                            pageVM.foodController.foodList[idx].toMap();
                             Navigator.push(
                                 context,
                                 SlideFadeTransition(

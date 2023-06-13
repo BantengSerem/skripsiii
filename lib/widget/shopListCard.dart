@@ -20,7 +20,7 @@ class ShopListCard extends StatelessWidget {
           border: Border.all(color: Colors.grey, width: 1),
           // color: Colors.green,
         ),
-        height: 300,
+        height: 100,
         child: Row(
           children: [
             Container(

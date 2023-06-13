@@ -4,6 +4,7 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
@@ -39,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Get.delete<BottomNavController>();
                 Get.delete<HistoryPageVM>();
                 Get.delete<HomePageVM>();
+                Get.delete<FindFoodVM>();
                 Get.offAll(const WelcomePage());
                 // Navigator.of(context)
                 //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);

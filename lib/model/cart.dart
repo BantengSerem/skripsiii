@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:skripsiii/model/foodModel.dart';
 
 class Cart {
-  late final String cartID;
-  late final double totalPrice;
-  late final List<Map<String, dynamic>> foodList;
+  late final int qty;
+  late final double subPrice;
+  late final String foodID;
 
   Cart({
-    required this.cartID,
-    required this.totalPrice,
-    required this.foodList,
+    required this.qty,
+    required this.subPrice,
+    required this.foodID,
   });
 
   Cart.fromMap(DocumentSnapshot<Object> data){
-    cartID = data['cartID'];
-    totalPrice = data['totalPrice'];
-    foodList = data['foodList'];
+    qty = data['qty'];
+    subPrice = data['subPrice'];
+    foodID = data['foodID'];
   }
 }

@@ -13,6 +13,7 @@ class Shop extends UserParent {
   late final int closingTime;
   late final int sellingTime;
   late final String isOpen;
+  late final int totalReview;
   late double distance;
 
   Shop.blank({
@@ -27,6 +28,7 @@ class Shop extends UserParent {
     this.sellingTime = 0,
     this.shopID = '',
     this.isOpen = '',
+    this.totalReview = 0,
   }) :
         // closingTime = closingTime ?? DateTime.now(),
         // sellingTime = sellingTime ?? DateTime.now(),
@@ -42,6 +44,7 @@ class Shop extends UserParent {
     required this.sellingTime,
     required this.shopID,
     required this.isOpen,
+    required this.totalReview,
   }) : super(email: email, password: password);
 
   Shop.fromMap(DocumentSnapshot<Object?> data)
@@ -53,6 +56,7 @@ class Shop extends UserParent {
     closingTime = data['closingTime'] ?? 0;
     sellingTime = data['sellingTime'] ?? 0;
     isOpen = data['isOpen'] ?? '';
+    totalReview = data['totalReview'];
   }
 
   factory Shop.fromJson(Map<String, dynamic>? json) => Shop(
@@ -65,11 +69,12 @@ class Shop extends UserParent {
         closingTime: json['closingTime'] ?? 0,
         sellingTime: json['sellingTime'] ?? 0,
         isOpen: json['isOpen'] ?? '',
+        totalReview: json['totalReview'] ?? 0,
       );
 
   @override
   String toString() {
-    return 'Shop: { email: $email, password: $password, shopID: $shopID, shopName: $shopName, contacts: $contacts, ratingAVG: $ratingAVG, closingTime: $closingTime, sellingTime: $sellingTime, isOpen: $isOpen }';
+    return 'Shop: { email: $email, password: $password, shopID: $shopID, shopName: $shopName, contacts: $contacts, ratingAVG: $ratingAVG, closingTime: $closingTime, sellingTime: $sellingTime, isOpen: $isOpen, totalReview: $totalReview }';
   }
 
   Map<String, dynamic> toMap() {
@@ -84,8 +89,10 @@ class Shop extends UserParent {
       'sellingTime': sellingTime,
       'isOpen': isOpen,
       'distance': distance,
+      'totalReview': totalReview,
     };
   }
+
   Map<String, dynamic> essentialMap() {
     return {
       'email': email,

@@ -9,8 +9,11 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/browseRestaurantPage.dart';
+import 'package:skripsiii/view/restaurantOrderMenupage.dart';
+import 'package:skripsiii/view/restaurantUpdatePage.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
@@ -138,20 +141,20 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellNowList.isEmpty) {
-                                // return const Center(
-                                //   child: Text('No Data'),
-                                // );
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.black38,
-                                  highlightColor: Colors.white,
-                                  period: const Duration(milliseconds: 1500),
-                                  child: Container(
-                                    color: Colors.white,
-                                    height: 220,
-                                    width:
-                                    MediaQuery.of(context).size.width * 0.8,
-                                  ),
+                                return const Center(
+                                  child: Text('No Data'),
                                 );
+                                // return Shimmer.fromColors(
+                                //   baseColor: Colors.black38,
+                                //   highlightColor: Colors.white,
+                                //   period: const Duration(milliseconds: 1500),
+                                //   child: Container(
+                                //     color: Colors.white,
+                                //     height: 220,
+                                //     width:
+                                //         MediaQuery.of(context).size.width * 0.8,
+                                //   ),
+                                // );
                               } else {
                                 return ListView.builder(
                                   key: const Key('sellingNow'),
@@ -163,7 +166,12 @@ class HomePage extends StatelessWidget {
                                     type: 'sellingNow',
                                     data: pageVM.shopController.sellNowList[idx]
                                         .toMap(),
-                                    func: () async {},
+                                    func: () async {
+                                      Get.to(RestaurantOrderMenuPage(
+                                          shop: pageVM.shopController
+                                              .sellNowList[idx]));
+                                      // print(pageVM.shopController.sellNowList[idx].essentialMap());
+                                    },
                                   ),
                                 );
                               }
@@ -242,20 +250,20 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellSoonList.isEmpty) {
-                                // return const Center(
-                                //   child: Text('No Data'),
-                                // );
-                                return Shimmer.fromColors(
-                                  baseColor: Colors.black38,
-                                  highlightColor: Colors.white,
-                                  period: const Duration(milliseconds: 1500),
-                                  child: Container(
-                                    color: Colors.white,
-                                    height: 220,
-                                    width:
-                                    MediaQuery.of(context).size.width * 0.8,
-                                  ),
+                                return const Center(
+                                  child: Text('No Data'),
                                 );
+                                // return Shimmer.fromColors(
+                                //   baseColor: Colors.black38,
+                                //   highlightColor: Colors.white,
+                                //   period: const Duration(milliseconds: 1500),
+                                //   child: Container(
+                                //     color: Colors.white,
+                                //     height: 220,
+                                //     width:
+                                //         MediaQuery.of(context).size.width * 0.8,
+                                //   ),
+                                // );
                               } else {
                                 return ListView.builder(
                                   key: const Key('sellingSoon'),
@@ -268,7 +276,11 @@ class HomePage extends StatelessWidget {
                                     data: pageVM
                                         .shopController.sellSoonList[idx]
                                         .toMap(),
-                                    func: () async {},
+                                    func: () async {
+                                      Get.to(RestaurantOrderMenuPage(
+                                          shop: pageVM.shopController
+                                              .sellSoonList[idx]));
+                                    },
                                   ),
                                 );
                               }
@@ -418,6 +430,8 @@ class SearchFood extends SearchDelegate<dynamic> {
                 final restaurantData = snapshot.data!.docs[idx].data();
                 query = restaurantData['name'];
                 close(context, query);
+                final shop = Shop.fromMap(snapshot.data!.docs[idx]);
+                Get.to(RestaurantOrderMenuPage(shop: shop));
               },
             ),
           );
@@ -453,6 +467,8 @@ class SearchFood extends SearchDelegate<dynamic> {
                   final restaurantData = snapshot.data!.docs[idx].data();
                   query = restaurantData['name'];
                   close(context, query);
+                  final shop = Shop.fromMap(snapshot.data!.docs[idx]);
+                  Get.to(RestaurantOrderMenuPage(shop: shop));
                   // showResults(context);
                 },
               ),
