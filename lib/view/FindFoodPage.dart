@@ -64,7 +64,7 @@ class _FindFoodPageState extends State<FindFoodPage> {
                       Navigator.of(context).push(
                         SlideFadeTransition(
                           child: OrderedSharedFoodPage(
-                            sf:sf,
+                            sf: sf,
                           ),
                         ),
                       );
@@ -80,7 +80,7 @@ class _FindFoodPageState extends State<FindFoodPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // print(pageVM.foodController.shareFoodList);
-          await pageVM.foodController.test();
+          print(pageVM.foodController.shareFoodList);
         },
       ),
     );

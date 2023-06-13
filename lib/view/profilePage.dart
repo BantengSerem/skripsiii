@@ -18,9 +18,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late ProfileVM pageVM;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    pageVM = Get.put(ProfileVM());
+  }
+
   @override
   Widget build(BuildContext context) {
-    ProfileVM pageVM = Get.put(ProfileVM());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -134,17 +142,19 @@ class _ProfilePageState extends State<ProfilePage> {
               indent: 20,
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: pageVM.foodController.shareMemberFoodList.length,
-                itemBuilder: (context, idx) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    height: 80,
-                    color: Colors.red,
-                    child: Text(pageVM.foodController.shareMemberFoodList[idx]
-                        .sharedFoodName),
-                  );
-                },
+              child: Obx(
+                () => ListView.builder(
+                  itemCount: pageVM.foodController.shareMemberFoodList.length,
+                  itemBuilder: (context, idx) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      height: 80,
+                      color: Colors.red,
+                      child: Text(pageVM.foodController.shareMemberFoodList[idx]
+                          .sharedFoodName),
+                    );
+                  },
+                ),
               ),
             )
           ],

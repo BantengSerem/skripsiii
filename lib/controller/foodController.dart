@@ -36,7 +36,6 @@ class FoodController extends GetxController {
   bool firstTimeShareFoodList = true;
   bool firstTimeMemberShareFoodList = true;
 
-
   void init() {}
 
   void reset() {
@@ -309,13 +308,17 @@ class FoodController extends GetxController {
   }
 
   void getLastDocSnapshotsFoodList(String shopID) async {
-    var query = fireStoreInstance
-        .collection('food')
-        .doc(foodList.last.foodID.toString());
-    currDocFoodList = await query.get();
+    if(foodList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('food')
+          .doc(foodList.last.foodID.toString());
+      currDocFoodList = await query.get();
+    }
   }
 
   void deleteStreamShareFoodList() {
+    print(streamShareFoodList.isNotEmpty);
+    print(streamShareFoodList.length);
     if (streamShareFoodList.isNotEmpty) {
       streamShareFoodList.last.cancel();
       streamShareFoodList.removeLast();
@@ -324,10 +327,12 @@ class FoodController extends GetxController {
   }
 
   void getLastDocSnapshotsShareFoodList() async {
-    var query = fireStoreInstance
-        .collection('sharedFood')
-        .doc(shareFoodList.last.sharedFoodID.toString());
-    currDocShareFoodList = await query.get();
+    if(shareFoodList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('sharedFood')
+          .doc(shareFoodList.last.sharedFoodID.toString());
+      currDocShareFoodList = await query.get();
+    }
   }
 
   Future<void> getSharedFoodList(String memberID) async {
@@ -356,9 +361,10 @@ class FoodController extends GetxController {
     }
 
     var index = streamShareFoodList.length + 1;
-
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStreamShareFoodList();
+      if (event.size == 0) {
+        return deleteStreamShareFoodList();
+      }
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -406,7 +412,7 @@ class FoodController extends GetxController {
         currDocShareFoodList = null;
       }
     });
-    streamShareFoodList.add(snapshot);
+   streamShareFoodList.add(snapshot);
   }
 
   Future<void> getFoodList(Map<String, dynamic> data) async {
@@ -584,15 +590,13 @@ class FoodController extends GetxController {
     });
   }
 
-
-
-
-
   void getLastDocSnapshotsMemberShareFoodList() async {
-    var query = fireStoreInstance
-        .collection('sharedFood')
-        .doc(shareMemberFoodList.last.sharedFoodID.toString());
-    currDocMemberShareFoodList = await query.get();
+    if(shareMemberFoodList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('sharedFood')
+          .doc(shareMemberFoodList.last.sharedFoodID.toString());
+      currDocMemberShareFoodList = await query.get();
+    }
   }
 
   void deleteStreamMemberShareFoodList() {
@@ -602,6 +606,7 @@ class FoodController extends GetxController {
       getLastDocSnapshotsMemberShareFoodList();
     }
   }
+
   // shareMemberFoodList.clear();
   // currDocMemberShareFoodList = null;
   // firstTimeMemberShareFoodList = true;
@@ -609,7 +614,7 @@ class FoodController extends GetxController {
   // element.cancel();
   // }
   // streamMemberShareFoodList.clear();
-  Future<void> getMemberShareFoodList(String memberID)async{
+  Future<void> getMemberShareFoodList(String memberID) async {
     late Query query;
     if (firstTimeMemberShareFoodList) {
       query = fireStoreInstance
@@ -638,7 +643,7 @@ class FoodController extends GetxController {
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
           case DocumentChangeType.added:
-          // if (addData == false) addData = true;
+            // if (addData == false) addData = true;
             debugPrint("added : ${SharedFood.fromMap(value.doc).sharedFoodID}");
             // When a data is deleted in the database, it will trigger
             // changes (type = added) to retrieve more data and then it
@@ -646,7 +651,7 @@ class FoodController extends GetxController {
             // retrieve thus, there'll be duplication inside the list
             // so it has to be removed
             shareMemberFoodList.removeWhere((element) =>
-            element.sharedFoodID ==
+                element.sharedFoodID ==
                 SharedFood.fromMap(value.doc).sharedFoodID);
             shareMemberFoodList.add(SharedFood.fromMap(value.doc));
             print(shareMemberFoodList);
@@ -655,16 +660,16 @@ class FoodController extends GetxController {
             debugPrint(
                 "modified : ${SharedFood.fromMap(value.doc).sharedFoodID}");
             int i = shareMemberFoodList.indexWhere((element) =>
-            element.sharedFoodID ==
+                element.sharedFoodID ==
                 SharedFood.fromMap(value.doc).sharedFoodID);
             shareMemberFoodList[i] = SharedFood.fromMap(value.doc);
             break;
           case DocumentChangeType.removed:
-          // if (removeData == false) removeData = true;
+            // if (removeData == false) removeData = true;
             debugPrint(
                 "removed : ${SharedFood.fromMap(value.doc).sharedFoodID}");
             shareMemberFoodList.removeWhere((element) =>
-            element.sharedFoodID ==
+                element.sharedFoodID ==
                 SharedFood.fromMap(value.doc).sharedFoodID);
             break;
         }

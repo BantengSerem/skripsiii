@@ -35,10 +35,12 @@ class TransactionController extends GetxController {
   }
 
   void getLastDocSnapshots() async {
-    var query = fireStoreInstance
-        .collection('shop')
-        .doc(listItem.last.transactionID.toString());
-    currDoc = await query.get();
+    if(listItem.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('shop')
+          .doc(listItem.last.transactionID.toString());
+      currDoc = await query.get();
+    }
   }
 
   Future<void> getAllData() async {

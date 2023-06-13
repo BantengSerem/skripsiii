@@ -220,17 +220,21 @@ class ShopController extends GetxController {
   }
 
   void getLastDocSnapshotsNow() async {
-    var query = fireStoreInstance
-        .collection('shop')
-        .doc(browseNowList.last.shopID.toString());
-    currDocNow = await query.get();
+    if(browseNowList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('shop')
+          .doc(browseNowList.last.shopID.toString());
+      currDocNow = await query.get();
+    }
   }
 
   void getLastDocSnapshotsSoon() async {
-    var query = fireStoreInstance
-        .collection('shop')
-        .doc(browseSoonList.last.shopID.toString());
-    currDocSoon = await query.get();
+    if(browseSoonList.isNotEmpty){
+      var query = fireStoreInstance
+          .collection('shop')
+          .doc(browseSoonList.last.shopID.toString());
+      currDocSoon = await query.get();
+    }
   }
 
   Future<void> getBrowseSoon(Member member) async {
