@@ -79,7 +79,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
         //   return LoginPage();
       },
       duration: 2000,
-      backgroundColor: Theme.of(context).backgroundColor,
+      // backgroundColor: Theme.of(context).,
       centered: true,
       splashTransition: SplashTransition.scaleTransition,
       animationDuration: const Duration(milliseconds: 2000),

@@ -53,6 +53,53 @@ class _ShopHomePageState extends State<ShopHomePage> {
                 style: TextStyle(),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 20),
+              child: Row(
+                children: [
+                  Container(
+                    height: 35,
+                    width: 90,
+                    child: ElevatedButton(
+                      style: const ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                          Colors.red,
+                        ),
+                      ),
+                      child: const Text('Close'),
+                      onPressed: () async {
+                        await pageVM.shopController.closeShop();
+                        await pageVM.shopController.zeroingAllFoodQty();
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  SizedBox(
+                    height: 35,
+                    width: 90,
+                    child: ElevatedButton(
+                      style: const ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                          Colors.green,
+                        ),
+                      ),
+                      child: const Text('Open'),
+                      onPressed: () async {
+                        await pageVM.shopController.openShop();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             Container(
               padding: const EdgeInsets.only(left: 20),
               // width: MediaQuery.of(context).size.width * 0.8,
@@ -117,12 +164,12 @@ class _ShopHomePageState extends State<ShopHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          pageVM.transactionController
-              .test(pageVM.shopController.shop.value.shopID);
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     pageVM.transactionController
+      //         .test(pageVM.shopController.shop.value.shopID);
+      //   },
+      // ),
     );
   }
 }
@@ -144,6 +191,9 @@ class ShopHomeVM extends GetxController {
     await transactionController
         .getAllDataShop(shopController.shop.value.shopID);
     scrollController = ScrollController();
+    // print("=====================================");
+    // print(transactionController.currDoc);
+    // print("=====================================");
     isLoading.value = false;
   }
 
@@ -161,5 +211,13 @@ class ShopHomeVM extends GetxController {
         isLoading.value = false;
       }
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    print('dispose =======================');
+    transactionController.resetShopHome();
+    super.dispose();
   }
 }

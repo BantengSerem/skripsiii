@@ -63,7 +63,7 @@ class FoodController extends GetxController {
     // streamList.clear();
   }
 
-  void resetShareFoodPage(){
+  void resetShareFoodPage() {
     shareFoodList.clear();
     currDocShareFoodList = null;
     firstTimeShareFoodList = true;
@@ -73,7 +73,7 @@ class FoodController extends GetxController {
     streamShareFoodList.clear();
   }
 
-  void resetProfileSharedFood(){
+  void resetProfileSharedFood() {
     shareMemberFoodList.clear();
     currDocMemberShareFoodList = null;
     firstTimeMemberShareFoodList = true;
@@ -324,15 +324,19 @@ class FoodController extends GetxController {
       streamFoodList.last.cancel();
       streamFoodList.removeLast();
       getLastDocSnapshotsFoodList(shopID);
+    } else {
+      firstTimeFoodList = true;
     }
   }
 
   void getLastDocSnapshotsFoodList(String shopID) async {
-    if(foodList.isNotEmpty){
+    if (foodList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('food')
           .doc(foodList.last.foodID.toString());
       currDocFoodList = await query.get();
+    } else {
+      firstTimeFoodList = true;
     }
   }
 
@@ -343,15 +347,19 @@ class FoodController extends GetxController {
       streamShareFoodList.last.cancel();
       streamShareFoodList.removeLast();
       getLastDocSnapshotsShareFoodList();
+    } else {
+      firstTimeShareFoodList = true;
     }
   }
 
   void getLastDocSnapshotsShareFoodList() async {
-    if(shareFoodList.isNotEmpty){
+    if (shareFoodList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('sharedFood')
           .doc(shareFoodList.last.sharedFoodID.toString());
       currDocShareFoodList = await query.get();
+    } else {
+      firstTimeShareFoodList = true;
     }
   }
 
@@ -434,7 +442,7 @@ class FoodController extends GetxController {
         currDocShareFoodList = null;
       }
     });
-   streamShareFoodList.add(snapshot);
+    streamShareFoodList.add(snapshot);
   }
 
   Future<void> getFoodList(Map<String, dynamic> data) async {
@@ -613,11 +621,13 @@ class FoodController extends GetxController {
   }
 
   void getLastDocSnapshotsMemberShareFoodList() async {
-    if(shareMemberFoodList.isNotEmpty){
+    if (shareMemberFoodList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('sharedFood')
           .doc(shareMemberFoodList.last.sharedFoodID.toString());
       currDocMemberShareFoodList = await query.get();
+    } else {
+      firstTimeMemberShareFoodList = true;
     }
   }
 
@@ -626,6 +636,8 @@ class FoodController extends GetxController {
       streamMemberShareFoodList.last.cancel();
       streamMemberShareFoodList.removeLast();
       getLastDocSnapshotsMemberShareFoodList();
+    } else {
+      firstTimeMemberShareFoodList = true;
     }
   }
 

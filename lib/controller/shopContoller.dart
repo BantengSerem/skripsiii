@@ -207,6 +207,8 @@ class ShopController extends GetxController {
       streamListNow.last.cancel();
       streamListNow.removeLast();
       getLastDocSnapshotsNow();
+    } else{
+      firstTimeNow = true;
     }
     // print('streamList : ${streamListNow}');
   }
@@ -216,6 +218,8 @@ class ShopController extends GetxController {
       streamListSoon.last.cancel();
       streamListSoon.removeLast();
       getLastDocSnapshotsSoon();
+    }else{
+      firstTimeNow = true;
     }
     // print('streamList : ${streamListSoon}');
   }
@@ -226,6 +230,8 @@ class ShopController extends GetxController {
           .collection('shop')
           .doc(browseNowList.last.shopID.toString());
       currDocNow = await query.get();
+    }else {
+      firstTimeSoon = true;
     }
   }
 
@@ -235,6 +241,8 @@ class ShopController extends GetxController {
           .collection('shop')
           .doc(browseSoonList.last.shopID.toString());
       currDocSoon = await query.get();
+    }else {
+      firstTimeSoon = true;
     }
   }
 
@@ -406,6 +414,59 @@ class ShopController extends GetxController {
         }
       });
       streamListNow.add(snapshot);
+    }
+  }
+
+  Future<bool> closeShop() async {
+    try {
+      await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
+        'isOpen': 'false',
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> openShop() async {
+    try {
+      await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
+        'isOpen': 'true',
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> zeroingFoodQty(String foodID) async {
+    try {
+      await fireStoreInstance.collection('food').doc(foodID).update({
+        'qty': 0,
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> zeroingAllFoodQty() async {
+    try {
+      var res = await fireStoreInstance
+          .collection('food')
+          .where('shopID', isEqualTo: shop.value.shopID)
+          .where('qty', isNotEqualTo: 0)
+          .get();
+
+      res.docs.asMap().forEach((key, value) async {
+        print(value.data()['foodName']);
+        await zeroingFoodQty(value.data()['foodID']);
+      });
+
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

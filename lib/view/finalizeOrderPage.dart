@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/foodController.dart';
@@ -32,6 +33,118 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
     // TODO: implement dispose
     super.dispose();
     Get.delete<FinalizeOrderVM>();
+  }
+
+  Future<void> alertComplete({required BuildContext context}) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            textAlign: TextAlign.center,
+            'Confirm to complete this order',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Confirm'),
+              onPressed: () async {
+                await EasyLoading.show(
+                  dismissOnTap: false,
+                  maskType: EasyLoadingMaskType.clear,
+                );
+                var res = await pageVM.transactionController
+                    .statusToCompleted(widget.t.transactionID);
+                if (res) {
+                  EasyLoading.dismiss();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Transaction Complete')));
+                  }
+                } else {
+                  EasyLoading.dismiss();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Something went wrong')));
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> alertCanceled({required BuildContext context}) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            textAlign: TextAlign.center,
+            'Confirm to cancel this order',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Confirm'),
+              onPressed: () async {
+                await EasyLoading.show(
+                  dismissOnTap: false,
+                  maskType: EasyLoadingMaskType.clear,
+                );
+                var res = await pageVM.transactionController
+                    .statusToCanceled(widget.t.transactionID);
+                if (res) {
+                  EasyLoading.dismiss();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Transaction Canceled')));
+                  }
+                } else {
+                  EasyLoading.dismiss();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Something went wrong')));
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -75,6 +188,9 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                 ],
               ),
             ),
+          ),
+          const SizedBox(
+            height: 15,
           ),
           Expanded(
             child: Obx(
@@ -136,19 +252,24 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
                         splashColor: Colors.redAccent,
-                        onTap: () {},
+                        onTap: () async{
+                          await alertCanceled(context: context);
+                          if(mounted){
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          }
+                        },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
                         child: Container(
                           // width: MediaQuery.of(context).size.width * 0.85,
                           height: 40,
                           decoration: const BoxDecoration(
-                              color: Colors.grey,
+                              color: Colors.red,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           alignment: Alignment.center,
                           child: const Text(
-                            'Order',
+                            'Canceled',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -158,19 +279,24 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
                         splashColor: Colors.redAccent,
-                        onTap: () {},
+                        onTap: () async {
+                          await alertComplete(context: context);
+                          if(mounted){
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          }
+                        },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
                         child: Container(
                           // width: MediaQuery.of(context).size.width * 0.85,
                           height: 40,
                           decoration: const BoxDecoration(
-                              color: Colors.grey,
+                              color: Colors.green,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           alignment: Alignment.center,
                           child: const Text(
-                            'Order',
+                            'Completed',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -186,12 +312,6 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     print(pageVM.foodListMap);
-      //     pageVM.init();
-      //   },
-      // ),
     );
   }
 }

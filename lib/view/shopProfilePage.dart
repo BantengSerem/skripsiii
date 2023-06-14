@@ -4,9 +4,11 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/controller/transactionController.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/restaurantUpdatePage.dart';
+import 'package:skripsiii/view/shopHistoryPage.dart';
 import 'package:skripsiii/view/shopHomepage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 import 'package:skripsiii/widget/profileButton.dart';
@@ -23,6 +25,8 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
   final ShopController shopController = Get.find<ShopController>();
+  final TransactionController transactionController = Get.find<
+      TransactionController>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +45,10 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                 foodController.reset();
                 shopController.reset();
                 memberController.reset();
+                transactionController.reset();
                 Get.delete<BottomNavController>();
                 Get.delete<ShopHomeVM>();
-                // Get.delete<HomePageVM>();
+                Get.delete<ShopHistoryVM>();
                 Get.offAll(const WelcomePage());
                 // Navigator.of(context)
                 //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
@@ -90,15 +95,16 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                         ),
                       ),
                       Obx(
-                        () => Text(
-                          shopController.shop.value.shopName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            // fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
+                            () =>
+                            Text(
+                              shopController.shop.value.shopName,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                // fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                       ),
                       const Text(
                         'Email',
@@ -108,15 +114,16 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                         ),
                       ),
                       Obx(
-                        () => Text(
-                          shopController.shop.value.email,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            // fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
+                            () =>
+                            Text(
+                              shopController.shop.value.email,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                // fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                       ),
                     ],
                   )
