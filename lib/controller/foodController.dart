@@ -588,7 +588,7 @@ class FoodController extends GetxController {
         .collection('sharedFood')
         .doc(sf.sharedFoodID)
         .update({
-      'status': 'Bought',
+      'status': 'bought',
     });
   }
 

@@ -42,7 +42,7 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                 shopController.reset();
                 memberController.reset();
                 Get.delete<BottomNavController>();
-                Get.delete<ShopHomePage>();
+                Get.delete<ShopHomeVM>();
                 // Get.delete<HomePageVM>();
                 Get.offAll(const WelcomePage());
                 // Navigator.of(context)

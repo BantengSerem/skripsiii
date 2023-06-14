@@ -106,6 +106,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 );
               } else {
                 return ListView.builder(
+                  controller: pageVM.scrollController,
                   itemCount: pageVM.foodList.length,
                   itemBuilder: (context, idx) =>
                       CartListCard(food: pageVM.foodList[idx]),
@@ -176,9 +177,15 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       pageVM.foodList.clear();
                     }
                     if (isCorrect) {
-                      List<String> l = [];
+                      List<Map<String, dynamic>> l = [];
                       for (var element in pageVM.cartList) {
-                        l.add(element.foodID);
+                        l.add({
+                          'foodID': element.foodID,
+                          'subPrice': element.subPrice,
+                          'qty': element.qty,
+                        });
+                        await pageVM.shopController
+                            .updateFoodQty(element.foodID, element.qty);
                       }
                       var uuid = const Uuid();
                       String transacID = uuid.v4();
@@ -196,6 +203,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       await pageVM.memberController.deleteCart(
                         memberID: pageVM.memberController.member.value.memberID,
                       );
+
                       pageVM.isCartEmpty.value = true;
                       pageVM.foodList.clear();
 
@@ -245,6 +253,7 @@ class MemberCartVM extends GetxController {
   final MemberController memberController = Get.find<MemberController>();
   late List<Cart> cartList = [];
   RxList<Food> foodList = RxList<Food>();
+  late ScrollController scrollController;
 
   RxBool isCartEmpty = true.obs;
   RxBool isLoading = false.obs;
@@ -261,6 +270,7 @@ class MemberCartVM extends GetxController {
     var a = await memberController.checkMemberCart(
         memberID: memberController.member.value.memberID);
     if (!a) {
+      scrollController = ScrollController();
       var sid = await memberController
           .getCartListShopID(memberController.member.value.memberID);
       shop = await shopController.getShopData(sid);
@@ -278,5 +288,25 @@ class MemberCartVM extends GetxController {
     isLoading.value = false;
 
     // shop = await memberController.getCartListShop();
+  }
+
+  void scrollListener() async {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      print("reach the bottom");
+      try {
+        isLoading.value = true;
+        cartList = await memberController.getMemberCartList(
+            memberID: memberController.member.value.memberID);
+        cartList.forEach((element) async {
+          var food = await foodController.getFoodData(element.foodID);
+          foodList.add(food);
+        });
+      } catch (e) {
+        print(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
   }
 }

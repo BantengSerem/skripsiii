@@ -220,7 +220,7 @@ class ShopController extends GetxController {
   }
 
   void getLastDocSnapshotsNow() async {
-    if(browseNowList.isNotEmpty){
+    if (browseNowList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('shop')
           .doc(browseNowList.last.shopID.toString());
@@ -229,7 +229,7 @@ class ShopController extends GetxController {
   }
 
   void getLastDocSnapshotsSoon() async {
-    if(browseSoonList.isNotEmpty){
+    if (browseSoonList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('shop')
           .doc(browseSoonList.last.shopID.toString());
@@ -544,5 +544,17 @@ class ShopController extends GetxController {
         .get();
 
     return Shop.fromMap(res.docs[0]);
+  }
+
+  Future<bool> updateFoodQty(String foodID, int qty) async {
+    try {
+      await fireStoreInstance
+          .collection('food')
+          .doc(foodID)
+          .update({'qty': qty});
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

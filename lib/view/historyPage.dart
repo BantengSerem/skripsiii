@@ -126,4 +126,20 @@ class HistoryPageVM extends GetxController {
   }
 
   Future<void> init() async {}
+
+  // void scrollListener() async {
+  //   if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+  //       !scrollController.position.outOfRange) {
+  //     print("reach the bottom");
+  //     try {
+  //       isLoading.value = true;
+  //       await transactionController
+  //           .getAllDataShop(shopController.shop.value.shopID);
+  //     } catch (e) {
+  //       print(e);
+  //     } finally {
+  //       isLoading.value = false;
+  //     }
+  //   }
+  // }
 }

@@ -14,7 +14,18 @@ class TransactionController extends GetxController {
 
   bool firstTime = true;
 
-  final MemberController memberController = Get.find<MemberController>();
+  // final MemberController memberController = Get.find<MemberController>();
+
+  void reset() {
+    for (var element in streamList) {
+      element.cancel();
+    }
+    streamList.clear();
+    print('streamList : ${streamList}');
+    listItem.clear();
+    currDoc = null;
+    firstTime = true;
+  }
 
   void refreshAllData() {
     for (var element in streamList) {
@@ -28,14 +39,16 @@ class TransactionController extends GetxController {
   }
 
   void deleteStream() {
-    streamList.last.cancel();
-    streamList.removeLast();
-    getLastDocSnapshots();
+    if (streamList.isNotEmpty) {
+      streamList.last.cancel();
+      streamList.removeLast();
+      getLastDocSnapshots();
+    }
     print('streamList : ${streamList}');
   }
 
   void getLastDocSnapshots() async {
-    if(listItem.isNotEmpty){
+    if (listItem.isNotEmpty) {
       var query = fireStoreInstance
           .collection('shop')
           .doc(listItem.last.transactionID.toString());
@@ -43,19 +56,21 @@ class TransactionController extends GetxController {
     }
   }
 
-  Future<void> getAllData() async {
+  Future<void> getAllDataShop(String shopID) async {
     late Query query;
     if (firstTime) {
       query = fireStoreInstance
           .collection('transaction')
-          .where('memberID', isEqualTo: memberController.member.value.memberID)
-          .orderBy('date', descending: false)
+          .where('shopID', isEqualTo: shopID)
+          .where('status', isEqualTo: 'ongoing')
+          .orderBy('date', descending: true)
           .limit(10);
     } else if (currDoc != null) {
       query = fireStoreInstance
           .collection('transaction')
-          .where('memberID', isEqualTo: memberController.member.value.memberID)
-          .orderBy('date', descending: false)
+          .where('shopID', isEqualTo: shopID)
+          .where('status', isEqualTo: 'ongoing')
+          .orderBy('date', descending: true)
           .limit(10)
           .startAfterDocument(currDoc!);
     } else {
@@ -94,7 +109,7 @@ class TransactionController extends GetxController {
             break;
         }
       });
-      listItem.sort((a, b) => b.transactionID.compareTo(a.transactionID));
+      listItem.sort((a, b) => b.date.compareTo(a.date));
 
       if (index == streamList.length && event.size == 10) {
         currDoc = event.docs.last;
@@ -105,5 +120,24 @@ class TransactionController extends GetxController {
       }
     });
     streamList.add(snapshot);
+  }
+
+  Future<void> test(String shopID) async {
+    var res = await fireStoreInstance
+        .collection('transaction')
+        .where('shopID', isEqualTo: shopID)
+        .where('status', isEqualTo: 'ongoing')
+        .orderBy('date', descending: true)
+        .limit(10)
+        .get();
+
+    List<TransactionModel> l = [];
+
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+      l.add(TransactionModel.fromMap(value));
+    });
+
+    print(l);
   }
 }

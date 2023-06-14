@@ -4,6 +4,7 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/controller/transactionController.dart';
 import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
@@ -23,8 +24,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     pageVM = Get.put(ProfileVM());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    Get.delete<ProfileVM>();
   }
 
   @override
@@ -41,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 pageVM.foodController.reset();
                 pageVM.shopController.reset();
                 pageVM.memberController.reset();
+                pageVM.transactionController.reset();
                 Get.delete<BottomNavController>();
                 Get.delete<HistoryPageVM>();
                 Get.delete<HomePageVM>();
@@ -144,6 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Obx(
                 () => ListView.builder(
+                  controller: pageVM.scrollController,
                   itemCount: pageVM.foodController.shareMemberFoodList.length,
                   itemBuilder: (context, idx) {
                     return Container(
@@ -164,6 +174,11 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print(pageVM.foodController.streamMemberShareFoodList);
+        },
+      ),
     );
   }
 }
@@ -173,16 +188,37 @@ class ProfileVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
   final ShopController shopController = Get.find<ShopController>();
+  final TransactionController transactionController =
+      Get.find<TransactionController>();
+  ScrollController scrollController = ScrollController();
 
   RxBool isLoading = true.obs;
 
   @override
   void onInit() async {
     // TODO: implement onInit
-    super.onInit();
+
     isLoading.value = true;
     await foodController
         .getMemberShareFoodList(memberController.member.value.memberID);
+    // scrollController = ScrollController();
+    super.onInit();
     isLoading.value = false;
+  }
+
+  void scrollListener() async {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      print("reach the bottom");
+      try {
+        isLoading.value = true;
+        await foodController
+            .getMemberShareFoodList(memberController.member.value.memberID);
+      } catch (e) {
+        print(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
   }
 }

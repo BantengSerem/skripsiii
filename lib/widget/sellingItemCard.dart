@@ -32,7 +32,7 @@ class SellingItemCard extends StatelessWidget {
               width: 150,
               height: 130,
               child: Image.network(
-                'https://kbu-cdn.com/dk/wp-content/uploads/rendang-daging-sapi-pedas.jpg',
+                'https://cdn-icons-png.flaticon.com/512/5223/5223909.png',
                 fit: BoxFit.cover,
               ),
             ),

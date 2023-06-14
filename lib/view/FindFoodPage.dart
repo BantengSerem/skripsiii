@@ -30,8 +30,8 @@ class _FindFoodPageState extends State<FindFoodPage> {
   @override
   void dispose() {
     // TODO: implement dispose
-    Get.delete<FindFoodVM>();
     super.dispose();
+    Get.delete<FindFoodVM>();
   }
 
   @override
@@ -56,6 +56,7 @@ class _FindFoodPageState extends State<FindFoodPage> {
               );
             } else {
               return ListView.builder(
+                controller: pageVM.scrollController,
                 itemCount: pageVM.foodController.shareFoodList.length,
                 itemBuilder: (context, idx) {
                   return HistoryCard(
@@ -77,12 +78,12 @@ class _FindFoodPageState extends State<FindFoodPage> {
           }
         }),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // print(pageVM.foodController.shareFoodList);
-          print(pageVM.foodController.shareFoodList);
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     // print(pageVM.foodController.shareFoodList);
+      //     print(pageVM.foodController.shareFoodList);
+      //   },
+      // ),
     );
   }
 }
@@ -91,14 +92,17 @@ class FindFoodVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
 
+  late ScrollController scrollController;
   RxBool isLoading = true.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     // TODO: implement onInit
     super.onInit();
     isLoading.value = true;
-    foodController.getSharedFoodList(memberController.member.value.memberID);
+    await foodController
+        .getSharedFoodList(memberController.member.value.memberID);
+    scrollController = ScrollController();
     isLoading.value = false;
   }
 
@@ -108,5 +112,21 @@ class FindFoodVM extends GetxController {
     foodController.reset();
 
     return super.onDelete;
+  }
+
+  void scrollListener() async {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      print("reach the bottom");
+      try {
+        isLoading.value = true;
+        await foodController
+            .getSharedFoodList(memberController.member.value.memberID);
+      } catch (e) {
+        print(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
   }
 }

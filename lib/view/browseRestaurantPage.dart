@@ -174,4 +174,5 @@ class BrowseRestaurantVM extends GetxController {
 
     return super.onDelete;
   }
+
 }
