@@ -106,7 +106,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 );
               } else {
                 return ListView.builder(
-                  controller: pageVM.scrollController,
+                  // controller: pageVM.scrollController,
                   itemCount: pageVM.foodList.length,
                   itemBuilder: (context, idx) =>
                       CartListCard(food: pageVM.foodList[idx]),
@@ -253,7 +253,7 @@ class MemberCartVM extends GetxController {
   final MemberController memberController = Get.find<MemberController>();
   late List<Cart> cartList = [];
   RxList<Food> foodList = RxList<Food>();
-  late ScrollController scrollController;
+  // late ScrollController scrollController;
 
   RxBool isCartEmpty = true.obs;
   RxBool isLoading = false.obs;
@@ -270,7 +270,7 @@ class MemberCartVM extends GetxController {
     var a = await memberController.checkMemberCart(
         memberID: memberController.member.value.memberID);
     if (!a) {
-      scrollController = ScrollController();
+      // scrollController = ScrollController();
       var sid = await memberController
           .getCartListShopID(memberController.member.value.memberID);
       shop = await shopController.getShopData(sid);
@@ -290,23 +290,23 @@ class MemberCartVM extends GetxController {
     // shop = await memberController.getCartListShop();
   }
 
-  void scrollListener() async {
-    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
-        !scrollController.position.outOfRange) {
-      print("reach the bottom");
-      try {
-        isLoading.value = true;
-        cartList = await memberController.getMemberCartList(
-            memberID: memberController.member.value.memberID);
-        cartList.forEach((element) async {
-          var food = await foodController.getFoodData(element.foodID);
-          foodList.add(food);
-        });
-      } catch (e) {
-        print(e);
-      } finally {
-        isLoading.value = false;
-      }
-    }
-  }
+  // void scrollListener() async {
+  //   if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+  //       !scrollController.position.outOfRange) {
+  //     print("reach the bottom");
+  //     try {
+  //       isLoading.value = true;
+  //       cartList = await memberController.getMemberCartList(
+  //           memberID: memberController.member.value.memberID);
+  //       cartList.forEach((element) async {
+  //         var food = await foodController.getFoodData(element.foodID);
+  //         foodList.add(food);
+  //       });
+  //     } catch (e) {
+  //       print(e);
+  //     } finally {
+  //       isLoading.value = false;
+  //     }
+  //   }
+  // }
 }
