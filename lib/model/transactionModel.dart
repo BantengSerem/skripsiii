@@ -9,6 +9,7 @@ class TransactionModel {
   late final String status;
   late final double totalPrice;
   late final String memberName;
+  late final String shopName;
 
 
   TransactionModel({
@@ -20,6 +21,7 @@ class TransactionModel {
     required this.status,
     required this.memberName,
     required this.totalPrice,
+    required this.shopName,
   });
 
   TransactionModel.fromMap(DocumentSnapshot<Object?> data) {
@@ -32,5 +34,6 @@ class TransactionModel {
     status = data['status'];
     memberName = data['memberName'];
     totalPrice = data['totalPrice'];
+    shopName = data['shopName'];
   }
 }

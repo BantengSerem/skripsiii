@@ -15,6 +15,7 @@ import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/restaurantOrderMenupage.dart';
 import 'package:skripsiii/view/restaurantUpdatePage.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
+import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
 class HomePage extends StatelessWidget {
@@ -32,56 +33,74 @@ class HomePage extends StatelessWidget {
           child: Container(
             alignment: Alignment.center,
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      // color: Colors.yellow,
-                      height: 60,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Welcome, ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  color: const Color.fromRGBO(255, 164, 91, 1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        // color: Colors.yellow,
+                        height: 60,
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                              width: 20,
                             ),
-                          ),
-                          Obx(
-                            () => Text(
-                              memberController.member.value.username,
-                              style: const TextStyle(
-                                fontSize: 20,
+                            const Text(
+                              'Welcome, ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                                color: Color.fromRGBO(56, 56, 56, 1),
                               ),
                             ),
+                            Obx(
+                              () => Text(
+                                memberController.member.value.username,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Color.fromRGBO(56, 56, 56, 1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 50,
+                        color: const Color.fromRGBO(255, 218, 119, 1),
+                        // alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        child: ElevatedButton(
+                          style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                Color.fromRGBO(255, 218, 119, 1)),
                           ),
-                        ],
+                          onPressed: () async {
+                            // FocusScope.of(context).unfocus();
+                            var a = await showSearch(
+                                context: context, delegate: SearchFood());
+                            print('result : $a');
+                            pageVM.getSearch(a);
+                            // pageVM.openSeachBar();
+                          },
+                          child: const Text(
+                            'Search',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromRGBO(56, 56, 56, 1),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    Container(
-                      height: 50,
-                      color: Colors.blueGrey,
-                      // alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // FocusScope.of(context).unfocus();
-                          var a = await showSearch(
-                              context: context, delegate: SearchFood());
-                          print('result : $a');
-                          pageVM.getSearch(a);
-                          // pageVM.openSeachBar();
-                        },
-                        child: const Text('Search'),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(
                   // color: Colors.red,
@@ -98,8 +117,9 @@ class HomePage extends StatelessWidget {
                             const Text(
                               'Selling Now',
                               style: TextStyle(
-                                fontSize: 18,
-                              ),
+                                  fontSize: 18,
+                                  color: Color.fromRGBO(56, 56, 56, 1),
+                                  fontWeight: FontWeight.w700),
                             ),
                             TextButton(
                               onPressed: () {
@@ -141,9 +161,7 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellNowList.isEmpty) {
-                                return const Center(
-                                  child: Text('No Data'),
-                                );
+                                return const NoDataWidget();
                                 // return Shimmer.fromColors(
                                 //   baseColor: Colors.black38,
                                 //   highlightColor: Colors.white,
@@ -197,8 +215,9 @@ class HomePage extends StatelessWidget {
                             const Text(
                               'Selling Soon',
                               style: TextStyle(
-                                fontSize: 18,
-                              ),
+                                  fontSize: 18,
+                                  color: Color.fromRGBO(56, 56, 56, 1),
+                                  fontWeight: FontWeight.w700),
                             ),
                             TextButton(
                               onPressed: () {
@@ -211,16 +230,6 @@ class HomePage extends StatelessWidget {
                                         type: 'soon',
                                       ),
                                     ));
-
-                                // Navigator.push(
-                                //     context,
-                                //     SlideFadeTransition(
-                                //       child: const BrowseRestaurantPage(
-                                //           title: 'Selling Now'),
-                                //     ));
-
-                                // Get.to(const BrowseRestaurantPage(
-                                //     title: 'Selling Now'));
                               },
                               child: const Text(
                                 'View All',
@@ -250,9 +259,7 @@ class HomePage extends StatelessWidget {
                               );
                             } else {
                               if (pageVM.shopController.sellSoonList.isEmpty) {
-                                return const Center(
-                                  child: Text('No Data'),
-                                );
+                                return const NoDataWidget();
                                 // return Shimmer.fromColors(
                                 //   baseColor: Colors.black38,
                                 //   highlightColor: Colors.white,
@@ -297,6 +304,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color.fromRGBO(255, 218, 119, 1),
         onPressed: () async {
           // await pageVM.shopController.test();
           Get.to(const SharedFoodPage());
@@ -306,6 +314,7 @@ class HomePage extends StatelessWidget {
             Text(
               'Share Food',
               style: TextStyle(
+                color: Color.fromRGBO(56, 56, 56, 1),
                 fontSize: 15,
               ),
             ),

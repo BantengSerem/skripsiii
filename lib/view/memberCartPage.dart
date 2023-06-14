@@ -204,6 +204,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                         status: 'ongoing',
                         totalPrice: pageVM._totalPrice.value,
                         memberName: pageVM.memberController.member.value.name,
+                        shopName: pageVM.shop.shopName,
                       );
                       await pageVM.memberController
                           .createTransction(transaction);

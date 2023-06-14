@@ -29,6 +29,19 @@ class ShopController extends GetxController {
   late DocumentSnapshot? currDocNow;
 
   // final MemberController memberController = Get.find();
+  Future<bool> changeShopTime(int closingTime, int sellingTime) async{
+    try{
+      print(closingTime);
+      print(sellingTime);
+      await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
+        'closingTime': closingTime,
+        'sellingTime': sellingTime,
+      });
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
 
   void reset() {
     shop = Shop.blank().obs;
@@ -422,6 +435,7 @@ class ShopController extends GetxController {
       await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
         'isOpen': 'false',
       });
+      shop.value.isOpen ='false';
       return true;
     } catch (e) {
       return false;
@@ -433,6 +447,7 @@ class ShopController extends GetxController {
       await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
         'isOpen': 'true',
       });
+      shop.value.isOpen ='true';
       return true;
     } catch (e) {
       return false;

@@ -20,22 +20,26 @@ class BottomNavigationPage extends StatelessWidget {
 
   List<SalomonBottomBarItem> memberList = [
     SalomonBottomBarItem(
-      icon: const Icon(Icons.home),
+      icon: const Icon(Icons.home, color: Colors.white),
+      activeIcon: const Icon(Icons.home),
       title: const Text("Home"),
       selectedColor: Colors.purple,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.food_bank_outlined),
+      icon: const Icon(Icons.food_bank_outlined, color: Colors.white),
+      activeIcon: const Icon(Icons.food_bank_outlined),
       title: const Text("Find Food"),
       selectedColor: Colors.red,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.history_rounded),
+      icon: const Icon(Icons.history_rounded, color: Colors.white),
+      activeIcon: const Icon(Icons.history_rounded),
       title: const Text("History"),
       selectedColor: Colors.pink,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.person),
+      icon: const Icon(Icons.person, color: Colors.white),
+      activeIcon: const Icon(Icons.person),
       title: const Text("Profile"),
       selectedColor: Colors.teal,
     ),
@@ -43,17 +47,20 @@ class BottomNavigationPage extends StatelessWidget {
 
   List<SalomonBottomBarItem> shopList = [
     SalomonBottomBarItem(
-      icon: const Icon(Icons.home),
+      icon: const Icon(Icons.home, color: Colors.white),
+      activeIcon: const Icon(Icons.home),
       title: const Text("Home"),
       selectedColor: Colors.purple,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.food_bank_outlined),
+      icon: const Icon(Icons.food_bank_outlined, color: Colors.white),
+      activeIcon: const Icon(Icons.food_bank_outlined),
       title: const Text("Find Food"),
       selectedColor: Colors.red,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.history_rounded),
+      icon: const Icon(Icons.history_rounded, color: Colors.white),
+      activeIcon: const Icon(Icons.history_rounded),
       title: const Text("History"),
       selectedColor: Colors.pink,
     ),
@@ -114,6 +121,7 @@ class BottomNavigationPage extends StatelessWidget {
                 ),
               ),
               child: SalomonBottomBar(
+                backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
                 currentIndex: pageVM.idx.value,
                 onTap: (i) {
                   pageVM.changeIdx(i);

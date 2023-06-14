@@ -1,23 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/controller/transactionController.dart';
+import 'package:skripsiii/model/transctionShareFood.dart';
+import 'package:skripsiii/widget/historyCartListShareFoodBuy.dart';
+import 'package:skripsiii/widget/historyCartListSharedFood.dart';
+import 'package:skripsiii/widget/historyListCard.dart';
+import 'package:skripsiii/widget/nodata.dart';
 
 class HistoryPage extends StatelessWidget {
   HistoryPage({Key? key}) : super(key: key);
-  final LoginController loginController = Get.find<LoginController>();
-  final MemberController memberController = Get.find<MemberController>();
-  final ShopController shopController = Get.find<ShopController>();
+
+  // final LoginController loginController = Get.find<LoginController>();
+  // final MemberController memberController = Get.find<MemberController>();
+  // final ShopController shopController = Get.find<ShopController>();
 
   @override
   Widget build(BuildContext context) {
     HistoryPageVM pageVM = Get.put(HistoryPageVM());
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'History',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         elevation: 0,
       ),
       body: Column(
@@ -25,7 +40,7 @@ class HistoryPage extends StatelessWidget {
           Material(
             elevation: 5,
             child: Container(
-              color: Colors.blue,
+              color: const Color.fromRGBO(255, 164, 91, 1),
               height: 50,
               child: Row(
                 children: [
@@ -75,9 +90,37 @@ class HistoryPage extends StatelessWidget {
                                 Colors.black26),
                       ),
                       child: Text(
-                        'Sell',
+                        'Shared Food',
                         style: TextStyle(
                           color: pageVM.activeButton[1]
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Obx(
+                    () => TextButton(
+                      onPressed: () {
+                        if (pageVM.currButton.value != 2) {
+                          pageVM.buttonPressed(2);
+                        }
+                        pageVM.activeButton[2];
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: pageVM.activeButton[2]
+                            ? const MaterialStatePropertyAll<Color>(
+                                Colors.black)
+                            : const MaterialStatePropertyAll<Color>(
+                                Colors.black26),
+                      ),
+                      child: Text(
+                        'Buy Shared Food',
+                        style: TextStyle(
+                          color: pageVM.activeButton[2]
                               ? Colors.white
                               : Colors.black,
                         ),
@@ -88,58 +131,120 @@ class HistoryPage extends StatelessWidget {
               ),
             ),
           ),
-          Obx(
-            () => pageVM.isLoading.value
-                ? LoadingAnimationWidget.threeArchedCircle(
-                    color: Colors.lightBlue,
-                    size: 50,
-                  )
-                : Expanded(
+          Obx(() {
+            if (pageVM.isLoading.value) {
+              return Center(
+                child: LoadingAnimationWidget.threeArchedCircle(
+                  color: Colors.lightBlue,
+                  size: 50,
+                ),
+              );
+            } else {
+              if (pageVM.currButton.value == 0) {
+                if (pageVM.transactionController.listHistoryItem.isNotEmpty) {
+                  return Expanded(
                     child: ListView.builder(
-                      itemCount: 10,
+                      itemCount:
+                          pageVM.transactionController.listHistoryItem.length,
                       itemBuilder: (context, idx) {
-                        return Container(
-                          height: 90,
-                          color: Colors.green,
-                          margin: const EdgeInsets.symmetric(vertical: 5),
+                        return HistoryListCardBuy(
+                            t: pageVM
+                                .transactionController.listHistoryItem[idx]);
+                      },
+                    ),
+                  );
+                } else {
+                  return const Expanded(child: NoDataWidget());
+                }
+              } else if (pageVM.currButton.value == 1) {
+                if (pageVM.sellSharedFoodMemberList.isNotEmpty) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: pageVM.sellSharedFoodMemberList.length,
+                      itemBuilder: (context, idx) {
+                        return HistoryCartListShareFoodSell(
+                            tsf: pageVM.sellSharedFoodMemberList[idx]);
+                      },
+                    ),
+                  );
+                } else {
+                  return const Expanded(child: NoDataWidget());
+                }
+              } else {
+                if (pageVM.buySharedFoodMemberList.isNotEmpty) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: pageVM.buySharedFoodMemberList.length,
+                      itemBuilder: (context, idx) {
+                        return HistoryCartListShareFoodBuy(
+                          tsf: pageVM.buySharedFoodMemberList[idx],
                         );
                       },
                     ),
-                  ),
-          ),
+                  );
+                } else {
+                  return  const Expanded(child: NoDataWidget());
+                }
+              }
+            }
+          }),
         ],
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     pageVM.transactionController.getSellSharedFoodMember(
+      //         pageVM.memberController.member.value.memberID);
+      //   },
+      // ),
     );
   }
 }
 
 class HistoryPageVM extends GetxController {
-  RxList<bool> activeButton = [true, false].obs;
+  RxList<bool> activeButton = [true, false, false].obs;
   RxInt currButton = 0.obs;
   RxBool isLoading = false.obs;
 
-  void buttonPressed(int i) {
+  final FoodController foodController = Get.find<FoodController>();
+  final MemberController memberController = Get.find<MemberController>();
+  final ShopController shopController = Get.find<ShopController>();
+  final TransactionController transactionController =
+      Get.find<TransactionController>();
+  RxBool isLoading1 = true.obs;
+  late ScrollController scrollController;
+
+  List<TransactionShareFoodModel> sellSharedFoodMemberList =
+      RxList<TransactionShareFoodModel>();
+  List<TransactionShareFoodModel> buySharedFoodMemberList =
+      RxList<TransactionShareFoodModel>();
+
+  Future<void> buttonPressed(int i) async {
     activeButton[currButton.value] = false;
     activeButton[i] = true;
     currButton.value = i;
-    print(activeButton);
+    if (i == 0) {
+      await transactionController
+          .getMemberHistoryList(memberController.member.value.memberID);
+    } else if (i == 1) {
+      sellSharedFoodMemberList = await transactionController
+          .getSellSharedFoodMember(memberController.member.value.memberID);
+    } else if (i == 2) {
+      buySharedFoodMemberList = await transactionController
+          .getBuySharedFoodMember(memberController.member.value.memberID);
+    }
+    // print(activeButton);
   }
 
-  Future<void> init() async {}
+// Future<void> init1() async {
+//   isLoading.value = true;
+//   await transactionController.getMemberHistoryList(shopID)
+// }
 
-  // void scrollListener() async {
-  //   if (scrollController.offset >= scrollController.position.maxScrollExtent &&
-  //       !scrollController.position.outOfRange) {
-  //     print("reach the bottom");
-  //     try {
-  //       isLoading.value = true;
-  //       await transactionController
-  //           .getAllDataShop(shopController.shop.value.shopID);
-  //     } catch (e) {
-  //       print(e);
-  //     } finally {
-  //       isLoading.value = false;
-  //     }
-  //   }
-  // }
+  @override
+  void onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    await transactionController
+        .getMemberHistoryList(memberController.member.value.memberID);
+  }
 }

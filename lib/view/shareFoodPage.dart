@@ -33,7 +33,14 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
     ShareFoodVM pageVM = Get.put(ShareFoodVM());
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Share Food'),
+        title: const Text(
+          'Share Food',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -57,7 +64,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
               children: [
                 Container(
                   color: Colors.black38,
-                  height: 250,
+                  height: 220,
                   width: MediaQuery.of(context).size.width,
                   // child: _image == null
                   //     ? const Icon(Icons.photo_size_select_actual_outlined)

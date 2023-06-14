@@ -6,6 +6,7 @@ import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/finalizeOrderPage.dart';
+import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/restauranOrderCardList.dart';
 
 class ShopHomePage extends StatefulWidget {
@@ -37,9 +38,14 @@ class _ShopHomePageState extends State<ShopHomePage> {
     // ShopHomeVM pageVM = Get.put(ShopHomeVM());
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         title: const Text(
           'Home',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -48,50 +54,74 @@ class _ShopHomePageState extends State<ShopHomePage> {
           children: [
             Container(
               padding: const EdgeInsets.only(left: 20),
-              child: const Text(
-                'Selling Hour',
-                style: TextStyle(),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 35,
-                    width: 90,
-                    child: ElevatedButton(
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          Colors.red,
-                        ),
-                      ),
-                      child: const Text('Close'),
-                      onPressed: () async {
-                        await pageVM.shopController.closeShop();
-                        await pageVM.shopController.zeroingAllFoodQty();
-                      },
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Selling Hour",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(56, 56, 56, 1),
                     ),
                   ),
                   const SizedBox(
-                    width: 20,
+                    height: 10,
                   ),
-                  SizedBox(
-                    height: 35,
-                    width: 90,
-                    child: ElevatedButton(
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          Colors.green,
+                  Obx(
+                    () => Row(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(7),
+                              ),
+                              color: Color.fromARGB(171, 178, 178, 178)),
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 60,
+                          child: Text(
+                            pageVM.sellingTime.value,
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: const Text('Open'),
-                      onPressed: () async {
-                        await pageVM.shopController.openShop();
-                      },
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          'To',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(56, 56, 56, 1),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(7),
+                            ),
+                            color: Color.fromARGB(171, 178, 178, 178),
+                          ),
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 60,
+                          child: Text(
+                            pageVM.closingTime.value,
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -108,6 +138,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(56, 56, 56, 1),
                 ),
               ),
             ),
@@ -120,7 +151,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
               // width: MediaQuery.of(context).size.width * 0.95,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey, width: 1),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Obx(
                 () {
@@ -133,9 +164,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
                     );
                   } else {
                     if (pageVM.transactionController.listItem.isEmpty) {
-                      return const Center(
-                        child: Text('no Data'),
-                      );
+                      return const NoDataWidget();
                     } else {
                       return ListView.builder(
                         controller: pageVM.scrollController,
@@ -166,8 +195,9 @@ class _ShopHomePageState extends State<ShopHomePage> {
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {
-      //     pageVM.transactionController
-      //         .test(pageVM.shopController.shop.value.shopID);
+      //     // pageVM.transactionController
+      //     //     .test(pageVM.shopController.shop.value.shopID);
+      //     print(pageVM.shopController.shop.value.isOpen);
       //   },
       // ),
     );
@@ -182,6 +212,8 @@ class ShopHomeVM extends GetxController {
   late ScrollController scrollController;
 
   RxBool isLoading = true.obs;
+  RxString sellingTime = ''.obs;
+  RxString closingTime = ''.obs;
 
   @override
   void onInit() async {
@@ -191,9 +223,22 @@ class ShopHomeVM extends GetxController {
     await transactionController
         .getAllDataShop(shopController.shop.value.shopID);
     scrollController = ScrollController();
-    // print("=====================================");
-    // print(transactionController.currDoc);
-    // print("=====================================");
+    if (shopController.shop.value.sellingTime != -1) {
+      var s = shopController.shop.value.sellingTime.toString();
+      var slen = s.length;
+      sellingTime.value =
+          '${s.substring(0, slen - 4)}.${s.substring(slen - 4, slen - 2)}';
+    } else {
+      sellingTime.value = '-1';
+    }
+    if (shopController.shop.value.closingTime != -1) {
+      var c = shopController.shop.value.closingTime.toString();
+      var clen = c.length;
+      closingTime.value =
+          '${c.substring(0, clen - 4)}.${c.substring(clen - 4, clen - 2)}';
+    } else {
+      closingTime.value = '-1';
+    }
     isLoading.value = false;
   }
 
@@ -216,7 +261,6 @@ class ShopHomeVM extends GetxController {
   @override
   void dispose() {
     // TODO: implement dispose
-    print('dispose =======================');
     transactionController.resetShopHome();
     super.dispose();
   }

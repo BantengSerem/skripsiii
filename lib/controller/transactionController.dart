@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/model/transactionModel.dart';
+import 'package:skripsiii/model/transctionShareFood.dart';
 
 class TransactionController extends GetxController {
   List<StreamSubscription<QuerySnapshot>> streamList = [];
@@ -81,7 +82,7 @@ class TransactionController extends GetxController {
       streamList.last.cancel();
       streamList.removeLast();
       getLastDocSnapshots();
-    }else {
+    } else {
       firstTime = true;
     }
     print('streamList : ${streamList}');
@@ -93,7 +94,7 @@ class TransactionController extends GetxController {
           .collection('shop')
           .doc(listItem.last.transactionID.toString());
       currDoc = await query.get();
-    }else {
+    } else {
       firstTime = true;
     }
   }
@@ -194,7 +195,7 @@ class TransactionController extends GetxController {
     }
   }
 
-  Future<void> getHistoryList(String shopID) async {
+  Future<void> getShopHistoryList(String shopID) async {
     late Query query;
     if (firstTimeHistory) {
       query = fireStoreInstance
@@ -263,12 +264,75 @@ class TransactionController extends GetxController {
     streamHistoryList.add(snapshot);
   }
 
-  Future<void> test(String shopID) async {
+  Future<void> getMemberHistoryList(String memberID) async {
+    late Query query;
+    if (firstTimeHistory) {
+      query = fireStoreInstance
+          .collection('transaction')
+          .where('memberID', isEqualTo: memberID)
+          .orderBy('date', descending: true)
+          .limit(10);
+      firstTimeHistory = false;
+    } else if (currDocHistory != null) {
+      query = fireStoreInstance
+          .collection('transaction')
+          .where('memberID', isEqualTo: memberID)
+          .orderBy('date', descending: true)
+          .limit(10)
+          .startAfterDocument(currDocHistory!);
+    } else {
+      return;
+    }
+
+    var index = streamHistoryList.length + 1;
+
+    var snapshot = query.snapshots().listen((event) {
+      if (event.size == 0) return deleteStreamHistory();
+
+      event.docChanges.asMap().forEach((key, value) {
+        switch (value.type) {
+          case DocumentChangeType.added:
+            debugPrint(
+                "added : ${TransactionModel.fromMap(value.doc).transactionID}");
+            listHistoryItem.removeWhere((element) =>
+                element.transactionID ==
+                TransactionModel.fromMap(value.doc).transactionID);
+            listHistoryItem.add(TransactionModel.fromMap(value.doc));
+            break;
+          case DocumentChangeType.modified:
+            debugPrint(
+                "modified : ${TransactionModel.fromMap(value.doc).transactionID}");
+            int i = listHistoryItem.indexWhere((element) =>
+                element.transactionID ==
+                TransactionModel.fromMap(value.doc).transactionID);
+            listHistoryItem[i] = TransactionModel.fromMap(value.doc);
+            break;
+          case DocumentChangeType.removed:
+            // if (removeData == false) removeData = true;
+            //   debugPrint("removed : ${Food.fromMap(value.doc).foodID}");
+            listHistoryItem.removeWhere((element) =>
+                element.transactionID ==
+                TransactionModel.fromMap(value.doc).transactionID);
+            break;
+        }
+      });
+      listHistoryItem.sort((a, b) => b.date.compareTo(a.date));
+
+      if (index == streamHistoryList.length && event.size == 10) {
+        currDocHistory = event.docs.last;
+        debugPrint(
+            'change the currDocHistory on stream : $index, with the streamHistoryList.length : ${streamHistoryList.length}');
+      } else if (index == streamHistoryList.length && event.size < 10) {
+        currDocHistory = null;
+      }
+    });
+    streamHistoryList.add(snapshot);
+  }
+
+  Future<void> test(String memberID) async {
     var res = await fireStoreInstance
         .collection('transaction')
-        .where('shopID', isEqualTo: shopID)
-        .where('status', isNotEqualTo: 'ongoing')
-        .orderBy('status')
+        .where('memberID', isEqualTo: memberID)
         .orderBy('date', descending: true)
         .limit(10)
         .get();
@@ -309,5 +373,37 @@ class TransactionController extends GetxController {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<List<TransactionShareFoodModel>> getSellSharedFoodMember(
+      String memberID) async {
+    List<TransactionShareFoodModel> l = [];
+
+    var res = await fireStoreInstance
+        .collection('shareFoodTransaction')
+        .where('memberSellID', isEqualTo: memberID)
+        .get();
+
+    res.docs.asMap().forEach((key, value) {
+      var a = TransactionShareFoodModel.fromMap(value);
+      l.add(a);
+    });
+    return l;
+  }
+
+  Future<List<TransactionShareFoodModel>> getBuySharedFoodMember(
+      String memberID) async {
+    List<TransactionShareFoodModel> l = [];
+
+    var res = await fireStoreInstance
+        .collection('shareFoodTransaction')
+        .where('memberBuyID', isEqualTo: memberID)
+        .get();
+
+    res.docs.asMap().forEach((key, value) {
+      var a = TransactionShareFoodModel.fromMap(value);
+      l.add(a);
+    });
+    return l;
   }
 }

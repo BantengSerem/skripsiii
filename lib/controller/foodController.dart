@@ -201,6 +201,7 @@ class FoodController extends GetxController {
       'memberID': data['memberID'],
       'status': data['status'],
       'date': data['date'],
+      'memberName': data['memberName'],
     }).whenComplete(() {
       debugPrint('adding new data is successful');
     }).catchError((error) {
@@ -534,24 +535,6 @@ class FoodController extends GetxController {
     return false;
   }
 
-  Future<void> test() async {
-    var res = await fireStoreInstance
-        .collection('sharedFood')
-        .where('memberID', isNotEqualTo: 'cr8mVrJeYBbmDHJ6gNywIOPws7H3')
-        .where('status', isEqualTo: 'onsale')
-        .orderBy('memberID')
-        // .where('sharedFoodID', isEqualTo: data['sharedFoodID'])
-        .orderBy('date', descending: true)
-        .get();
-    res.docs.asMap().forEach((key, value) {
-      print(value.data());
-    });
-    // var l = res.docs.map((doc) {
-    //   return Food.fromMap(doc);
-    // }).toList();
-    // print(l);
-  }
-
   double calculateDistance(
       {required double lat1,
       required double lon1,
@@ -604,6 +587,9 @@ class FoodController extends GetxController {
         'date': tsf.date,
         'shareFoodID': tsf.shareFoodID,
         'status': tsf.status,
+        'memberBuyName': tsf.memberBuyName,
+        'memberSellName': tsf.memberSellName,
+        'price': tsf.price,
       });
       return true;
     } catch (e) {
@@ -641,33 +627,29 @@ class FoodController extends GetxController {
     }
   }
 
-  // shareMemberFoodList.clear();
-  // currDocMemberShareFoodList = null;
-  // firstTimeMemberShareFoodList = true;
-  // for (var element in streamMemberShareFoodList) {
-  // element.cancel();
-  // }
-  // streamMemberShareFoodList.clear();
   Future<void> getMemberShareFoodList(String memberID) async {
     late Query query;
     if (firstTimeMemberShareFoodList) {
       query = fireStoreInstance
           .collection('sharedFood')
           .where('memberID', isEqualTo: memberID)
+          .where('status', isEqualTo: 'onsale')
           .orderBy('date', descending: true)
           .limit(10);
-
-      firstTimeMemberShareFoodList = false;
+      // firstTimeMemberShareFoodList = false;
     } else if (currDocMemberShareFoodList != null) {
       query = fireStoreInstance
-          .collection('shop')
+          .collection('sharedFood')
           .where('memberID', isEqualTo: memberID)
+          .where('status', isEqualTo: 'onsale')
           .orderBy('date', descending: true)
           .limit(10)
           .startAfterDocument(currDocMemberShareFoodList!);
     } else {
       return;
     }
+
+    print(currDocMemberShareFoodList);
 
     var index = streamMemberShareFoodList.length + 1;
 
@@ -721,5 +703,26 @@ class FoodController extends GetxController {
       }
     });
     streamMemberShareFoodList.add(snapshot);
+  }
+
+  Future<void> getSharedFood() async {}
+
+  Future<void> test(String memberID) async {
+    // print(currDocMemberShareFoodList != null);
+    print(firstTimeMemberShareFoodList);
+    var res = await fireStoreInstance
+        .collection('sharedFood')
+        .where('memberID', isEqualTo: memberID)
+        .where('status', isEqualTo: 'onsale')
+        .orderBy('date', descending: true)
+        .limit(10)
+        .get();
+    res.docs.asMap().forEach((key, value) {
+      print(value.data());
+    });
+    // var l = res.docs.map((doc) {
+    //   return Food.fromMap(doc);
+    // }).toList();
+    // print(l);
   }
 }

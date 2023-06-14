@@ -9,11 +9,11 @@ class Shop extends UserParent {
   late final String shopID;
   late final String shopName;
   late final String contacts;
-  late final double ratingAVG;
-  late final int closingTime;
-  late final int sellingTime;
-  late final String isOpen;
-  late final int totalReview;
+  late double ratingAVG;
+  late int closingTime;
+  late int sellingTime;
+  late String isOpen;
+  late int totalReview;
   late double distance;
 
   Shop.blank({

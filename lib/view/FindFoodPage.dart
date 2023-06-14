@@ -6,6 +6,7 @@ import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/oderSharedFoodPage.dart';
 import 'package:skripsiii/widget/historyCard.dart';
+import 'package:skripsiii/widget/nodata.dart';
 
 class FindFoodPage extends StatefulWidget {
   const FindFoodPage({Key? key}) : super(key: key);
@@ -38,46 +39,50 @@ class _FindFoodPageState extends State<FindFoodPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find Food'),
+        title: const Text(
+          'Find Food',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
       ),
-      body: Container(
-        child: Obx(() {
-          if (pageVM.isLoading.value) {
-            return Center(
-              child: LoadingAnimationWidget.threeArchedCircle(
-                color: Colors.lightBlue,
-                size: 50,
-              ),
-            );
+      body: Obx(() {
+        if (pageVM.isLoading.value) {
+          return Center(
+            child: LoadingAnimationWidget.threeArchedCircle(
+              color: Colors.lightBlue,
+              size: 50,
+            ),
+          );
+        } else {
+          if (pageVM.foodController.shareFoodList.isEmpty) {
+            return const NoDataWidget();
           } else {
-            if (pageVM.foodController.shareFoodList.isEmpty) {
-              return const Center(
-                child: Text('no data'),
-              );
-            } else {
-              return ListView.builder(
-                controller: pageVM.scrollController,
-                itemCount: pageVM.foodController.shareFoodList.length,
-                itemBuilder: (context, idx) {
-                  return HistoryCard(
-                    func: () async {
-                      var sf = pageVM.foodController.shareFoodList[idx];
-                      Navigator.of(context).push(
-                        SlideFadeTransition(
-                          child: OrderedSharedFoodPage(
-                            sf: sf,
-                          ),
+            return ListView.builder(
+              controller: pageVM.scrollController,
+              itemCount: pageVM.foodController.shareFoodList.length,
+              itemBuilder: (context, idx) {
+                return HistoryCard(
+                  func: () async {
+                    var sf = pageVM.foodController.shareFoodList[idx];
+                    Navigator.of(context).push(
+                      SlideFadeTransition(
+                        child: OrderedSharedFoodPage(
+                          sf: sf,
                         ),
-                      );
-                    },
-                    sf: pageVM.foodController.shareFoodList[idx],
-                  );
-                },
-              );
-            }
+                      ),
+                    );
+                  },
+                  sf: pageVM.foodController.shareFoodList[idx],
+                );
+              },
+            );
           }
-        }),
-      ),
+        }
+      }),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () async {
       //     // print(pageVM.foodController.shareFoodList);

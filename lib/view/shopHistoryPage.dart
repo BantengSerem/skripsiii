@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
+import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/restauranOrderCardList.dart';
 
 class ShopHistoryPage extends StatefulWidget {
@@ -52,9 +53,7 @@ class _ShopHistoryPageState extends State<ShopHistoryPage> {
             );
           } else {
             if (pageVM.transactionController.listHistoryItem.isEmpty) {
-              return const Center(
-                child: Text('no Data'),
-              );
+              return const NoDataWidget();
             } else {
               return ListView.builder(
                 controller: pageVM.scrollController,
@@ -103,7 +102,7 @@ class ShopHistoryVM extends GetxController {
     super.onInit();
     isLoading.value = true;
     await transactionController
-        .getHistoryList(shopController.shop.value.shopID);
+        .getShopHistoryList(shopController.shop.value.shopID);
     scrollController = ScrollController();
     isLoading.value = false;
   }
@@ -115,7 +114,7 @@ class ShopHistoryVM extends GetxController {
       try {
         isLoading.value = true;
         await transactionController
-            .getHistoryList(shopController.shop.value.shopID);
+            .getShopHistoryList(shopController.shop.value.shopID);
       } catch (e) {
         print(e);
       } finally {
@@ -131,3 +130,4 @@ class ShopHistoryVM extends GetxController {
     super.dispose();
   }
 }
+
