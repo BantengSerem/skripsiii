@@ -106,9 +106,14 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 );
               } else {
                 return ListView.builder(
+                  // controller: pageVM.scrollController,
                   itemCount: pageVM.foodList.length,
-                  itemBuilder: (context, idx) =>
-                      CartListCard(food: pageVM.foodList[idx]),
+                  itemBuilder: (context, idx) => CartListCard(
+                    foodName: pageVM.foodList[idx].foodName,
+                    foodURL: pageVM.foodList[idx].foodImageURL,
+                    qty: pageVM.cartList[idx].qty,
+                    subPrice: pageVM.cartList[idx].subPrice,
+                  ),
                 );
               }
             }),
@@ -146,6 +151,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                   height: 10,
                 ),
                 InkWell(
+                  splashColor: Colors.redAccent,
                   onTap: () async {
                     await EasyLoading.show(
                       dismissOnTap: false,
@@ -176,26 +182,36 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       pageVM.foodList.clear();
                     }
                     if (isCorrect) {
-                      List<String> l = [];
+                      List<Map<String, dynamic>> l = [];
                       for (var element in pageVM.cartList) {
-                        l.add(element.foodID);
+                        l.add({
+                          'foodID': element.foodID,
+                          'subPrice': element.subPrice,
+                          'qty': element.qty,
+                        });
+                        await pageVM.shopController
+                            .updateFoodQty(element.foodID, element.qty);
                       }
                       var uuid = const Uuid();
                       String transacID = uuid.v4();
 
                       var transaction = TransactionModel(
-                          shopID: pageVM.shop.shopID,
-                          memberID:
-                              pageVM.memberController.member.value.memberID,
-                          transactionID: transacID,
-                          foodList: l,
-                          date: DateTime.now(),
-                          status: 'ongoing');
+                        shopID: pageVM.shop.shopID,
+                        memberID: pageVM.memberController.member.value.memberID,
+                        transactionID: transacID,
+                        foodList: l,
+                        date: DateTime.now(),
+                        status: 'ongoing',
+                        totalPrice: pageVM._totalPrice.value,
+                        memberName: pageVM.memberController.member.value.name,
+                        shopName: pageVM.shop.shopName,
+                      );
                       await pageVM.memberController
                           .createTransction(transaction);
                       await pageVM.memberController.deleteCart(
                         memberID: pageVM.memberController.member.value.memberID,
                       );
+
                       pageVM.isCartEmpty.value = true;
                       pageVM.foodList.clear();
 
@@ -204,7 +220,10 @@ class _MemberCartPageState extends State<MemberCartPage> {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content:
-                                    Text('Successfully crate transaction')));
+                                    Text('Successfully create transaction')));
+
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
                       }
                     } else {
                       EasyLoading.dismiss();
@@ -218,7 +237,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                     // width: MediaQuery.of(context).size.width * 0.85,
                     height: 40,
                     decoration: const BoxDecoration(
-                        color: Colors.transparent,
+                        color: Colors.grey,
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     alignment: Alignment.center,
                     child: const Text(
@@ -232,8 +251,11 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 // ),
               ],
             ),
-          )
+          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
       ),
     );
   }
@@ -245,6 +267,8 @@ class MemberCartVM extends GetxController {
   final MemberController memberController = Get.find<MemberController>();
   late List<Cart> cartList = [];
   RxList<Food> foodList = RxList<Food>();
+
+  // late ScrollController scrollController;
 
   RxBool isCartEmpty = true.obs;
   RxBool isLoading = false.obs;
@@ -261,6 +285,7 @@ class MemberCartVM extends GetxController {
     var a = await memberController.checkMemberCart(
         memberID: memberController.member.value.memberID);
     if (!a) {
+      // scrollController = ScrollController();
       var sid = await memberController
           .getCartListShopID(memberController.member.value.memberID);
       shop = await shopController.getShopData(sid);
@@ -279,4 +304,24 @@ class MemberCartVM extends GetxController {
 
     // shop = await memberController.getCartListShop();
   }
+
+// void scrollListener() async {
+//   if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+//       !scrollController.position.outOfRange) {
+//     print("reach the bottom");
+//     try {
+//       isLoading.value = true;
+//       cartList = await memberController.getMemberCartList(
+//           memberID: memberController.member.value.memberID);
+//       cartList.forEach((element) async {
+//         var food = await foodController.getFoodData(element.foodID);
+//         foodList.add(food);
+//       });
+//     } catch (e) {
+//       print(e);
+//     } finally {
+//       isLoading.value = false;
+//     }
+//   }
+// }
 }

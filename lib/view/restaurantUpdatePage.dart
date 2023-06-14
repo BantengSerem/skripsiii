@@ -53,9 +53,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              tooltip: MaterialLocalizations
-                  .of(context)
-                  .openAppDrawerTooltip,
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
           },
         ),
@@ -73,10 +71,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                   Container(
                     color: Colors.black38,
                     height: 170,
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     child: const Icon(Icons.photo_size_select_actual_outlined),
                   ),
                   Container(
@@ -124,6 +119,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
               } else {
                 return Expanded(
                   child: ListView.builder(
+                    controller: pageVM.scrollController,
                     itemCount: pageVM.foodController.foodList.length,
                     itemBuilder: (context, idx) {
                       // return Container(
@@ -139,7 +135,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                             Navigator.push(
                                 context,
                                 SlideFadeTransition(
-                                  child:  EditFoodPage(
+                                  child: EditFoodPage(
                                     food: pageVM.foodController.foodList[idx],
                                   ),
                                 ));
@@ -183,6 +179,7 @@ class RestaurantMenuVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final ShopController shopController = Get.find<ShopController>();
   RxBool isLoading = false.obs;
+  late ScrollController scrollController;
 
   @override
   void onInit() {
@@ -190,6 +187,7 @@ class RestaurantMenuVM extends GetxController {
     super.onInit();
     isLoading.value = true;
     foodController.getFoodList(shopController.shop.value.essentialMap());
+    scrollController = ScrollController();
     isLoading.value = false;
   }
 
@@ -199,5 +197,21 @@ class RestaurantMenuVM extends GetxController {
     foodController.cleanFoodData();
 
     return super.onDelete;
+  }
+
+  void scrollListener() async {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      print("reach the bottom");
+      try {
+        isLoading.value = true;
+        await foodController
+            .getFoodList(shopController.shop.value.essentialMap());
+      } catch (e) {
+        print(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
   }
 }

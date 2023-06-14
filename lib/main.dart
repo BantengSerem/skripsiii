@@ -70,104 +70,104 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class TestController extends GetxController {
-  RxInt i = 0.obs;
-}
-
-class Test1 extends StatelessWidget {
-  const Test1({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('tetspage1'),
-      ),
-      body: const Center(
-        child: Text('tetspage1'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Get.to(Test2());
-
-          Get.offAll(() => Test3());
-          // Navigator.push(
-          //   context,
-          //   SlideFadeTransition(
-          //     child:  Test2(),
-          //   ),
-          // );
-        },
-      ),
-    );
-  }
-}
-
-class Test2 extends StatelessWidget {
-  Test2({Key? key}) : super(key: key);
-
-  // TestController testController = Get.put(TestController());
-
-  @override
-  Widget build(BuildContext context) {
-    print('test2 before controller');
-    TestController testController = Get.put(TestController());
-    print('test2 after controller');
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('tetspage2'),
-      ),
-      body: Center(
-        child: Obx(
-          () => Text('tetspage2 ${testController.i.value}'),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          testController.i.value += 1;
-          // Get.to(Test2());
-          // Navigator.push(
-          //   context,
-          //   SlideFadeTransition(
-          //     child:  Test2(),
-          //   ),
-          // );
-        },
-      ),
-    );
-  }
-}
-
-class Test3 extends StatelessWidget {
-  const Test3({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('tetspage3'),
-      ),
-      body: const Center(
-        child: Text('tetspage3'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.delete<TestController>();
-          // Get.deleteAll();
-          Get.offAll(() => BottomNavigationPage(
-                userType: 'member',
-              ));
-          // Navigator.push(
-          //   context,
-          //   SlideFadeTransition(
-          //     child:  Test2(),
-          //   ),
-          // );
-        },
-      ),
-    );
-  }
-}
+// class TestController extends GetxController {
+//   RxInt i = 0.obs;
+// }
+//
+// class Test1 extends StatelessWidget {
+//   const Test1({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('tetspage1'),
+//       ),
+//       body: const Center(
+//         child: Text('tetspage1'),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () {
+//           // Get.to(Test2());
+//
+//           Get.offAll(() => Test3());
+//           // Navigator.push(
+//           //   context,
+//           //   SlideFadeTransition(
+//           //     child:  Test2(),
+//           //   ),
+//           // );
+//         },
+//       ),
+//     );
+//   }
+// }
+//
+// class Test2 extends StatelessWidget {
+//   Test2({Key? key}) : super(key: key);
+//
+//   // TestController testController = Get.put(TestController());
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     print('test2 before controller');
+//     TestController testController = Get.put(TestController());
+//     print('test2 after controller');
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('tetspage2'),
+//       ),
+//       body: Center(
+//         child: Obx(
+//           () => Text('tetspage2 ${testController.i.value}'),
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () {
+//           testController.i.value += 1;
+//           // Get.to(Test2());
+//           // Navigator.push(
+//           //   context,
+//           //   SlideFadeTransition(
+//           //     child:  Test2(),
+//           //   ),
+//           // );
+//         },
+//       ),
+//     );
+//   }
+// }
+//
+// class Test3 extends StatelessWidget {
+//   const Test3({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('tetspage3'),
+//       ),
+//       body: const Center(
+//         child: Text('tetspage3'),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () {
+//           Get.delete<TestController>();
+//           // Get.deleteAll();
+//           Get.offAll(() => BottomNavigationPage(
+//                 userType: 'member',
+//               ));
+//           // Navigator.push(
+//           //   context,
+//           //   SlideFadeTransition(
+//           //     child:  Test2(),
+//           //   ),
+//           // );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 //
 // class MapSample extends StatefulWidget {

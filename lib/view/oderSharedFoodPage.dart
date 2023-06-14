@@ -70,17 +70,21 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
               onPressed: () async {
                 await EasyLoading.show(
                   dismissOnTap: false,
-                  maskType: EasyLoadingMaskType.clear,
+                  maskType: EasyLoadingMaskType.black,
                 );
                 var uuid = const Uuid();
                 String tsfID = uuid.v4();
                 var tsf = TransactionShareFoodModel(
+                  sharedFoodName: widget.sf.sharedFoodName,
                   shareFoodTransactionID: tsfID,
                   memberBuyID: pageVM.memberController.member.value.memberID,
                   memberSellID: widget.sf.memberID,
                   date: DateTime.now(),
                   shareFoodID: widget.sf.sharedFoodID,
                   status: 'ongoing',
+                  memberBuyName: pageVM.memberController.member.value.name,
+                  memberSellName: widget.sf.memberName,
+                  price: widget.sf.price,
                 );
                 var z = await pageVM.foodController
                     .createShareFoodTransaction(tsf: tsf);
@@ -100,6 +104,11 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                         const SnackBar(content: Text('Something went wrong')));
                   }
                 }
+                EasyLoading.dismiss();
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
+                // EasyLoading.dismiss();
               },
             ),
           ],
@@ -112,11 +121,22 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Share Food'),
+        title: const Text(
+          'Share Food',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -134,34 +154,70 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
             children: [
               Container(
                 color: Colors.black38,
-                height: 250,
+                height: 220,
                 width: MediaQuery.of(context).size.width,
                 child: Image.network(widget.sf.sharedFoodImageURL),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text(
+                      'Food Name ',
+                      style: TextStyle(fontSize: 10
+                          // fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
                     Text(
-                      'Shared by : ${widget.sf.memberName}',
+                      widget.sf.sharedFoodName,
                       style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    const Divider(
+                      color: Color.fromRGBO(56, 56, 56, 1),
+                      thickness: 1,
+                      // indent: 20,
+                      // endIndent: 20,
+                    ),
+                    const Text(
+                      'Shared by',
+                      style: TextStyle(fontSize: 10
+                        // fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    Text(
+                      widget.sf.memberName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    Obx(
-                      () => Text(
-                        'Distanec ${pageVM.distance.value.toString()}',
-                        // 'Distance ${pageVM.distance.value.toString().substring(0, 2)}.${pageVM.distance.value.toString().substring(2, 4)} K',
-                        style: const TextStyle(
-                          // fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
+                    const Text(
+                      'Distance ',
+                      // 'Distance ${pageVM.distance.value.toString().substring(0, 2)}.${pageVM.distance.value.toString().substring(2, 4)} K',
+                      style: TextStyle(
+                        // fontWeight: FontWeight.bold,
+                        fontSize: 10,
                       ),
+                    ),
+                    Text(
+                      pageVM.distance.value.toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    const Divider(
+                      color: Color.fromRGBO(56, 56, 56, 1),
+                      thickness: 1,
+                      // indent: 20,
+                      // endIndent: 20,
                     ),
                     const SizedBox(
                       height: 10,

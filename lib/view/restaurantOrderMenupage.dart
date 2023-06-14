@@ -364,6 +364,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
               } else {
                 return Expanded(
                   child: ListView.builder(
+                    controller: pageVM.scrollController,
                     itemCount: pageVM.foodController.foodList.length,
                     itemBuilder: (context, idx) {
                       return FoodCustomListCard(
@@ -372,7 +373,9 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             var a = DateFormat('HHmmss').format(DateTime.now());
                             var b = int.parse(a);
 
-                            if (pageVM.shop.sellingTime < b) {
+                            print(b);
+                            print(pageVM.shop.sellingTime);
+                            if (pageVM.shop.sellingTime > b) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Store is not open yet')));
@@ -423,6 +426,7 @@ class RestaurantOrderMenuVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final ShopController shopController = Get.find<ShopController>();
   final MemberController memberController = Get.find<MemberController>();
+  late ScrollController scrollController;
 
   final Shop shop;
   RxBool isLoading = false.obs;
@@ -437,7 +441,8 @@ class RestaurantOrderMenuVM extends GetxController {
 
   void init() async {
     isLoading.value = true;
-    await foodController.getFoodList(shop.essentialMap());
+    await foodController.getFoodList(shop.essentialMap());    scrollController = ScrollController();
+
     isLoading.value = false;
   }
 
@@ -447,5 +452,20 @@ class RestaurantOrderMenuVM extends GetxController {
     foodController.cleanFoodData();
 
     return super.onDelete;
+  }
+
+  void scrollListener() async {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      print("reach the bottom");
+      try {
+        isLoading.value = true;
+        await foodController.getFoodList(shop.essentialMap());
+      } catch (e) {
+        print(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
   }
 }

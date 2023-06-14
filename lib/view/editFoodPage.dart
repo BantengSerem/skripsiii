@@ -360,34 +360,30 @@ class _EditFoodPageState extends State<EditFoodPage> {
                                   maskType: EasyLoadingMaskType.black,
                                 );
                                 final form = _formKey.currentState;
-                                if (_image == null) {
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Please input an image'),
-                                      ),
-                                    );
-                                  }
-                                } else if (form!.validate()) {
-                                  form.save();
-                                  print('valid');
 
-                                  var deleteSuccess = await pageVM
-                                      .foodController
-                                      .deleteFoodImage({
-                                    'shopID':
-                                        pageVM.shopController.shop.value.shopID,
-                                    'imgName': widget.food.foodID,
-                                  });
+                                if (form!.validate()) {
+                                  form.save();
+
                                   String? foodImageURL;
-                                  if (deleteSuccess) {
-                                    foodImageURL = await pageVM.foodController
-                                        .imgFoodDataToStorage({
-                                      'file': _image!,
+                                  if (_image != null) {
+                                    var deleteSuccess = await pageVM
+                                        .foodController
+                                        .deleteFoodImage({
                                       'shopID': pageVM
                                           .shopController.shop.value.shopID,
                                       'imgName': widget.food.foodID,
                                     });
+                                    if (deleteSuccess) {
+                                      foodImageURL = await pageVM.foodController
+                                          .imgFoodDataToStorage({
+                                        'file': _image!,
+                                        'shopID': pageVM
+                                            .shopController.shop.value.shopID,
+                                        'imgName': widget.food.foodID,
+                                      });
+                                    } else {
+                                      foodImageURL = widget.food.foodImageURL;
+                                    }
                                   } else {
                                     foodImageURL = widget.food.foodImageURL;
                                   }

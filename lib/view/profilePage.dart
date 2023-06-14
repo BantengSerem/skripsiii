@@ -4,11 +4,13 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/controller/transactionController.dart';
 import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
+import 'package:skripsiii/widget/nodata.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -23,127 +25,160 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     pageVM = Get.put(ProfileVM());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    Get.delete<ProfileVM>();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: const Text('Account'),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
         actions: [
-          TextButton(
-            onPressed: () async {
-              await pageVM.loginController.logout();
-              if (mounted) {
-                pageVM.foodController.reset();
-                pageVM.shopController.reset();
-                pageVM.memberController.reset();
-                Get.delete<BottomNavController>();
-                Get.delete<HistoryPageVM>();
-                Get.delete<HomePageVM>();
-                Get.delete<FindFoodVM>();
-                Get.delete<ProfileVM>();
-                Get.offAll(const WelcomePage());
-                // Navigator.of(context)
-                //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
-              }
-            },
-            child: const Text(
-              'Log Out',
-              style: TextStyle(
-                color: Colors.red,
+          Container(
+            width: 90,
+            margin: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+                // border: Border.all(
+                //   color: const Color.fromRGBO(251, 246, 240, 1),
+                //   width: 1,
+                // ),
+                color: Color.fromRGBO(255, 218, 119, 1),
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: TextButton(
+              onPressed: () async {
+                await pageVM.loginController.logout();
+                if (mounted) {
+                  pageVM.foodController.reset();
+                  pageVM.shopController.reset();
+                  pageVM.memberController.reset();
+                  pageVM.transactionController.reset();
+                  Get.delete<BottomNavController>();
+                  Get.delete<HistoryPageVM>();
+                  Get.delete<HomePageVM>();
+                  Get.delete<FindFoodVM>();
+                  Get.delete<ProfileVM>();
+                  Get.offAll(const WelcomePage());
+                  // Navigator.of(context)
+                  //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
+                }
+              },
+              child: const Text(
+                'Log Out',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
             ),
-          )
+          ),
         ],
       ),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              // color: Colors.red,
-              height: 150,
-              child: Row(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                        left: 20, top: 10, bottom: 10, right: 10),
-                    // color: Colors.yellow,
-                    height: 130,
-                    width: 130,
-                    child: Image.asset(
-                      'data/images/profileIcon.png',
-                      fit: BoxFit.cover,
-                    ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            // color: Colors.red,
+            height: 150,
+            child: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                      left: 20, top: 10, bottom: 10, right: 10),
+                  // color: Colors.yellow,
+                  height: 130,
+                  width: 130,
+                  child: Image.asset(
+                    'data/images/profileIcon.png',
+                    color: const Color.fromRGBO(56, 56, 56, 1),
+                    fit: BoxFit.cover,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Obx(
-                        () => Text(
-                          pageVM.memberController.member.value.username,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            // fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                      const Text(
-                        'Email',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Obx(
-                        () => Text(
-                          pageVM.memberController.member.value.email,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            // fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
-              child: const Text(
-                'Shared Food',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
                 ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Name',
+                      style: TextStyle(
+                        color: Color.fromRGBO(56, 56, 56, 1),
+                        fontSize: 23,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Obx(
+                      () => Text(
+                        pageVM.memberController.member.value.username,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Text(
+                      'Email',
+                      style: TextStyle(
+                        color: Color.fromRGBO(56, 56, 56, 1),
+                        fontSize: 23,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Obx(
+                      () => Text(
+                        pageVM.memberController.member.value.email,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
+            child: const Text(
+              'My shared Food',
+              style: TextStyle(
+                color: Color.fromRGBO(56, 56, 56, 1),
+                fontSize: 23,
+                fontWeight: FontWeight.w900,
               ),
             ),
-            const Divider(
-              color: Colors.grey,
-              thickness: 1.5,
-              endIndent: 20,
-              indent: 20,
-            ),
-            Expanded(
-              child: Obx(
-                () => ListView.builder(
+          ),
+          const Divider(
+            color: Colors.grey,
+            thickness: 1.5,
+            endIndent: 20,
+            indent: 20,
+          ),
+          Expanded(
+            child: Obx(() {
+              if (pageVM.foodController.shareMemberFoodList.isNotEmpty) {
+                return ListView.builder(
+                  controller: pageVM.scrollController,
                   itemCount: pageVM.foodController.shareMemberFoodList.length,
                   itemBuilder: (context, idx) {
                     return Container(
@@ -152,18 +187,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.red,
                       child: Text(
                         '${pageVM.foodController.shareMemberFoodList[idx].sharedFoodName} and ${pageVM.foodController.shareMemberFoodList[idx].status}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                         ),
                       ),
                     );
                   },
-                ),
-              ),
-            )
-          ],
-        ),
+                );
+              } else {
+                return const NoDataWidget();
+              }
+            }),
+          )
+        ],
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     // print(pageVM.foodController.shareMemberFoodList.length);
+      //     await pageVM.foodController
+      //         .test(pageVM.memberController.member.value.memberID);
+      //   },
+      // ),
     );
   }
 }
@@ -173,16 +217,37 @@ class ProfileVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
   final ShopController shopController = Get.find<ShopController>();
+  final TransactionController transactionController =
+      Get.find<TransactionController>();
+  ScrollController scrollController = ScrollController();
 
   RxBool isLoading = true.obs;
 
   @override
   void onInit() async {
     // TODO: implement onInit
-    super.onInit();
+    foodController.resetProfileSharedFood();
     isLoading.value = true;
     await foodController
         .getMemberShareFoodList(memberController.member.value.memberID);
+    // scrollController = ScrollController();
+    super.onInit();
     isLoading.value = false;
+  }
+
+  void scrollListener() async {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      print("reach the bottom");
+      try {
+        isLoading.value = true;
+        await foodController
+            .getMemberShareFoodList(memberController.member.value.memberID);
+      } catch (e) {
+        print(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
   }
 }

@@ -187,6 +187,8 @@ class MemberController extends GetxController {
       'date': t.date,
       'foodList': t.foodList,
       'status': t.status,
+      'memberName': t.memberName,
+      'totalPrice': t.totalPrice,
     });
   }
 

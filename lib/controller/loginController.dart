@@ -17,6 +17,10 @@ class LoginController extends GetxController {
       GoogleSignIn(scopes: <String>["email"]);
   late GoogleSignInAccount? _googleUser;
 
+  Future verifyEmail(String email) async{
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
   Future<bool> checkLogin() async {
     bool res = await DatabaseHelper.instance.checkLogin();
     return res;

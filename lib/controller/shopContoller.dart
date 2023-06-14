@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/model/addressModel.dart';
+import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +29,19 @@ class ShopController extends GetxController {
   late DocumentSnapshot? currDocNow;
 
   // final MemberController memberController = Get.find();
+  Future<bool> changeShopTime(int closingTime, int sellingTime) async{
+    try{
+      print(closingTime);
+      print(sellingTime);
+      await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
+        'closingTime': closingTime,
+        'sellingTime': sellingTime,
+      });
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
 
   void reset() {
     shop = Shop.blank().obs;
@@ -206,6 +220,8 @@ class ShopController extends GetxController {
       streamListNow.last.cancel();
       streamListNow.removeLast();
       getLastDocSnapshotsNow();
+    } else{
+      firstTimeNow = true;
     }
     // print('streamList : ${streamListNow}');
   }
@@ -215,25 +231,31 @@ class ShopController extends GetxController {
       streamListSoon.last.cancel();
       streamListSoon.removeLast();
       getLastDocSnapshotsSoon();
+    }else{
+      firstTimeNow = true;
     }
     // print('streamList : ${streamListSoon}');
   }
 
   void getLastDocSnapshotsNow() async {
-    if(browseNowList.isNotEmpty){
+    if (browseNowList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('shop')
           .doc(browseNowList.last.shopID.toString());
       currDocNow = await query.get();
+    }else {
+      firstTimeSoon = true;
     }
   }
 
   void getLastDocSnapshotsSoon() async {
-    if(browseSoonList.isNotEmpty){
+    if (browseSoonList.isNotEmpty) {
       var query = fireStoreInstance
           .collection('shop')
           .doc(browseSoonList.last.shopID.toString());
       currDocSoon = await query.get();
+    }else {
+      firstTimeSoon = true;
     }
   }
 
@@ -408,6 +430,70 @@ class ShopController extends GetxController {
     }
   }
 
+  Future<bool> closeShop() async {
+    try {
+      await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
+        'isOpen': 'false',
+      });
+      shop.value.isOpen ='false';
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> openShop() async {
+    try {
+      await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
+        'isOpen': 'true',
+      });
+      shop.value.isOpen ='true';
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> zeroingFoodQty(String foodID) async {
+    try {
+      await fireStoreInstance.collection('food').doc(foodID).update({
+        'qty': 0,
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> zeroingAllFoodQty() async {
+    try {
+      var res = await fireStoreInstance
+          .collection('food')
+          .where('shopID', isEqualTo: shop.value.shopID)
+          .where('qty', isNotEqualTo: 0)
+          .get();
+
+      res.docs.asMap().forEach((key, value) async {
+        print(value.data()['foodName']);
+        await zeroingFoodQty(value.data()['foodID']);
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<Food> getFoodData(String foodID) async {
+    var res = await fireStoreInstance
+        .collection('food')
+        .where('foodID', isEqualTo: foodID)
+        .get();
+
+    return Food.fromMap(res.docs[0]);
+  }
+
   Future<void> test() async {
     // calculateDistance();
     // var a = DateFormat('HHmmss').format(DateTime.now());
@@ -544,5 +630,26 @@ class ShopController extends GetxController {
         .get();
 
     return Shop.fromMap(res.docs[0]);
+  }
+
+  Future<bool> updateFoodQty(String foodID, int qty) async {
+    try {
+      // await fireStoreInstance
+      //     .collection('food')
+      //     .doc(foodID)
+      //     .update({'qty': qty});
+      var res = await fireStoreInstance
+          .collection('food')
+          .where('foodID', isEqualTo: foodID)
+          .get();
+      // print(res.docs[0].data()['qty']);
+      await fireStoreInstance
+          .collection('food')
+          .doc(foodID)
+          .update({'qty': res.docs[0].data()['qty'] - qty});
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

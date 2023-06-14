@@ -19,9 +19,7 @@ class ProfileButton extends StatelessWidget {
         },
         child: Container(
           decoration: const BoxDecoration(
-            border: Border.symmetric(
-              horizontal: BorderSide(color: Colors.grey, width: 1.5),
-            ),
+            border: Border(bottom: BorderSide(color: Colors.grey, width: 1.5)),
             // color: Colors.redAccent,
           ),
           alignment: Alignment.centerLeft,

@@ -5,6 +5,8 @@ import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/memberCartPage.dart';
+import 'package:skripsiii/view/restaurantOrderMenupage.dart';
+import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/shopListCard.dart';
 
 class BrowseRestaurantPage extends StatefulWidget {
@@ -41,7 +43,11 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -72,7 +78,10 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
                   return ShopListCard(
                       shop: pageVM.shopController.browseSoonList[idx],
                       type: type,
-                      func: () {});
+                      func: () {
+                        Get.to(RestaurantOrderMenuPage(
+                            shop: pageVM.shopController.browseSoonList[idx]));
+                      });
                 },
               );
             } else if (type == 'now') {
@@ -83,21 +92,23 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
                   return ShopListCard(
                       type: type,
                       shop: pageVM.shopController.browseNowList[idx],
-                      func: () {});
+                      func: () {
+                        Get.to(RestaurantOrderMenuPage(
+                            shop: pageVM.shopController.browseNowList[idx]));
+                      });
                 },
               );
             }
-            return const Center(
-              child: Text('Sorry no data found'),
-            );
+            return const NoDataWidget();
           }
         },
       ),
       floatingActionButton: SizedBox(
-        height: 70,
-        width: 70,
+        height: 60,
+        width: 60,
         child: FittedBox(
           child: FloatingActionButton(
+            backgroundColor: Color.fromRGBO(255, 218, 119, 1),
             onPressed: () async {
               // var m = pageVM.memberController.member.value;
               // await pageVM.shopController.getBrowseSoon(m);
@@ -111,7 +122,10 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
                     child: const MemberCartPage(),
                   ));
             },
-            child: const Icon(Icons.shopping_cart),
+            child: const Icon(
+              Icons.shopping_cart,
+              color: Color.fromRGBO(56, 56, 56, 1),
+            ),
           ),
         ),
       ),

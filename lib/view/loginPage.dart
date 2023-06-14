@@ -10,6 +10,7 @@ import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/helper/location.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
+import 'package:skripsiii/view/forgotPasswordPage.dart';
 import 'package:skripsiii/widget/button36x220.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:get/get.dart';
@@ -48,7 +49,8 @@ class _LoginPageState extends State<LoginPage> {
         x.latitude = location.latitude;
         x.longitude = location.longitude;
         memberController.member.value = x;
-        print('memberController.member.value : ${memberController.member.value}');
+        print(
+            'memberController.member.value : ${memberController.member.value}');
         return 'member';
       } else if (x.runtimeType == Shop) {
         shopController.shop.value = x;
@@ -100,21 +102,36 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          body: Center(
-            child: Obx(
-              () {
-                if (pageVM.isLoading.value) {
-                  return LoadingAnimationWidget.threeArchedCircle(
-                    color: Colors.lightBlue,
-                    size: 50,
-                  );
-                } else {
-                  return Column(
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              );
+            },
+          ),
+        ),
+        body: Center(
+          child: Obx(
+            () {
+              if (pageVM.isLoading.value) {
+                return LoadingAnimationWidget.threeArchedCircle(
+                  color: Colors.lightBlue,
+                  size: 50,
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Form(
@@ -134,8 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                               height: 50,
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
                                 children: [
                                   TextFormField(
@@ -150,6 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                                             ? null
                                             : 'Invalid Email',
                                     onSaved: (newValue) => _email = newValue,
+                                    onTapOutside: (_) =>
+                                        FocusScope.of(context).unfocus(),
                                   ),
                                   const SizedBox(
                                     height: 20,
@@ -170,6 +188,8 @@ class _LoginPageState extends State<LoginPage> {
                                       return null;
                                     },
                                     onSaved: (newValue) => _password = newValue,
+                                    onTapOutside: (_) =>
+                                        FocusScope.of(context).unfocus(),
                                   ),
                                 ],
                               ),
@@ -253,11 +273,19 @@ class _LoginPageState extends State<LoginPage> {
                             } else {
                               // TODO have to complete filling data first (role)
                               await _showExitDialog(context);
+                              if (mounted) {
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              }
                             }
                           }
                           pageVM.doneLoading();
                         },
-                        icon: const Icon(Icons.abc_rounded),
+                        icon: Image.asset(
+                          'data/images/googleIcon.png',
+                          width: 25,
+                          height: 25,
+                        ),
                         label: const Text(
                           'Sign in with Google',
                           style: TextStyle(
@@ -265,11 +293,27 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ForgotPaswordPage(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Forgot password?',
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
                     ],
-                  );
-                }
-              },
-            ),
+                  ),
+                );
+              }
+            },
           ),
         ),
       ),
@@ -286,93 +330,5 @@ class LoginPageVM extends GetxController {
 
   void doneLoading() {
     isLoading.value = false;
-  }
-}
-
-// import 'package:flutter/material.dart';
-
-/// Flutter code sample for [PageStorage].
-
-void main() => runApp(const PageStorageExampleApp());
-
-class PageStorageExampleApp extends StatelessWidget {
-  const PageStorageExampleApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final List<Widget> pages = const <Widget>[
-    ColorBoxPage(
-      key: PageStorageKey<String>('pageOne'),
-    ),
-    ColorBoxPage(
-      key: PageStorageKey<String>('pageTwo'),
-    ),
-  ];
-  int currentTab = 0;
-  final PageStorageBucket _bucket = PageStorageBucket();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Persistence Example'),
-      ),
-      body: PageStorage(
-        bucket: _bucket,
-        child: pages[currentTab],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentTab,
-        onTap: (int index) {
-          setState(() {
-            currentTab = index;
-          });
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'page 1',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'page2',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ColorBoxPage extends StatelessWidget {
-  const ColorBoxPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemExtent: 250.0,
-      itemBuilder: (BuildContext context, int index) => Container(
-        padding: const EdgeInsets.all(10.0),
-        child: Material(
-          color: index.isEven ? Colors.cyan : Colors.deepOrange,
-          child: Center(
-            child: Text(index.toString()),
-          ),
-        ),
-      ),
-    );
   }
 }

@@ -4,6 +4,7 @@ import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/registerController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
+import 'package:skripsiii/controller/transactionController.dart';
 
 class HomeBinding implements Bindings {
   @override
@@ -13,6 +14,8 @@ class HomeBinding implements Bindings {
     Get.lazyPut<ShopController>(() => ShopController(), fenix: true);
     Get.lazyPut<FoodController>(() => FoodController(), fenix: true);
     Get.lazyPut<RegisterController>(() => RegisterController(), fenix: true);
+    Get.lazyPut<TransactionController>(() => TransactionController(),
+        fenix: true);
   }
 }
 

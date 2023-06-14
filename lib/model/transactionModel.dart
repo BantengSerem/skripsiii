@@ -5,8 +5,12 @@ class TransactionModel {
   late final String memberID;
   late final String shopID;
   late final DateTime date;
-  late final List<String> foodList;
+  late final List<dynamic> foodList;
   late final String status;
+  late final double totalPrice;
+  late final String memberName;
+  late final String shopName;
+
 
   TransactionModel({
     required this.transactionID,
@@ -15,14 +19,21 @@ class TransactionModel {
     required this.date,
     required this.foodList,
     required this.status,
+    required this.memberName,
+    required this.totalPrice,
+    required this.shopName,
   });
 
   TransactionModel.fromMap(DocumentSnapshot<Object?> data) {
+    Timestamp firebaseTimestamp = data['date'];
     transactionID = data['transactionID'];
     memberID = data['memberID'];
     shopID = data['shopID'];
-    date = data['date'];
+    date = firebaseTimestamp.toDate();
     foodList = data['foodList'];
     status = data['status'];
+    memberName = data['memberName'];
+    totalPrice = data['totalPrice'];
+    shopName = data['shopName'];
   }
 }
