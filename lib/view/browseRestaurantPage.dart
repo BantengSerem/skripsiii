@@ -5,6 +5,7 @@ import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/memberCartPage.dart';
+import 'package:skripsiii/view/restaurantOrderMenupage.dart';
 import 'package:skripsiii/widget/shopListCard.dart';
 
 class BrowseRestaurantPage extends StatefulWidget {
@@ -72,7 +73,11 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
                   return ShopListCard(
                       shop: pageVM.shopController.browseSoonList[idx],
                       type: type,
-                      func: () {});
+                      func: () {
+                        Get.to(RestaurantOrderMenuPage(
+                            shop: pageVM.shopController
+                                .browseSoonList[idx]));
+                      });
                 },
               );
             } else if (type == 'now') {
@@ -83,7 +88,11 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
                   return ShopListCard(
                       type: type,
                       shop: pageVM.shopController.browseNowList[idx],
-                      func: () {});
+                      func: () {
+                        Get.to(RestaurantOrderMenuPage(
+                            shop: pageVM.shopController
+                                .browseNowList[idx]));
+                      });
                 },
               );
             }

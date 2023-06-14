@@ -109,7 +109,7 @@ class FindFoodVM extends GetxController {
   @override
   // TODO: implement onDelete
   InternalFinalCallback<void> get onDelete {
-    foodController.reset();
+    foodController.resetShareFoodPage();
 
     return super.onDelete;
   }

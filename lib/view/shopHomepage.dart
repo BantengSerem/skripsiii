@@ -4,6 +4,9 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
+import 'package:skripsiii/transition/slideFadeTransition.dart';
+import 'package:skripsiii/view/finalizeOrderPage.dart';
+import 'package:skripsiii/widget/restauranOrderCardList.dart';
 
 class ShopHomePage extends StatefulWidget {
   const ShopHomePage({Key? key}) : super(key: key);
@@ -83,7 +86,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
                     );
                   } else {
                     if (pageVM.transactionController.listItem.isEmpty) {
-                      return Center(
+                      return const Center(
                         child: Text('no Data'),
                       );
                     } else {
@@ -91,11 +94,18 @@ class _ShopHomePageState extends State<ShopHomePage> {
                         controller: pageVM.scrollController,
                         itemCount: pageVM.transactionController.listItem.length,
                         itemBuilder: (context, idx) {
-                          return Container(
-                            color: Colors.yellow,
-                            height: 150,
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
+                          return RestaurantOrderCartList(
+                            func: () async {
+                              Navigator.push(
+                                  context,
+                                  SlideFadeTransition(
+                                    child: FinalizeOrderPage(
+                                      t: pageVM
+                                          .transactionController.listItem[idx],
+                                    ),
+                                  ));
+                            },
+                            t: pageVM.transactionController.listItem[idx],
                           );
                         },
                       );

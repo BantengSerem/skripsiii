@@ -8,7 +8,7 @@ import 'package:skripsiii/model/transactionModel.dart';
 
 class TransactionController extends GetxController {
   List<StreamSubscription<QuerySnapshot>> streamList = [];
-  List<TransactionModel> listItem = [];
+  RxList<TransactionModel> listItem = RxList<TransactionModel>();
   final fireStoreInstance = FirebaseFirestore.instance;
   late DocumentSnapshot? currDoc;
 

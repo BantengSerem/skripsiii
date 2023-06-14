@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/model/addressModel.dart';
+import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:intl/intl.dart';
@@ -408,6 +409,15 @@ class ShopController extends GetxController {
     }
   }
 
+  Future<Food> getFoodData(String foodID) async {
+    var res = await fireStoreInstance
+        .collection('food')
+        .where('foodID', isEqualTo: foodID)
+        .get();
+
+    return Food.fromMap(res.docs[0]);
+  }
+
   Future<void> test() async {
     // calculateDistance();
     // var a = DateFormat('HHmmss').format(DateTime.now());
@@ -548,10 +558,19 @@ class ShopController extends GetxController {
 
   Future<bool> updateFoodQty(String foodID, int qty) async {
     try {
+      // await fireStoreInstance
+      //     .collection('food')
+      //     .doc(foodID)
+      //     .update({'qty': qty});
+      var res = await fireStoreInstance
+          .collection('food')
+          .where('foodID', isEqualTo: foodID)
+          .get();
+      // print(res.docs[0].data()['qty']);
       await fireStoreInstance
           .collection('food')
           .doc(foodID)
-          .update({'qty': qty});
+          .update({'qty': res.docs[0].data()['qty'] - qty});
       return true;
     } catch (e) {
       return false;

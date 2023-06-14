@@ -108,8 +108,12 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 return ListView.builder(
                   // controller: pageVM.scrollController,
                   itemCount: pageVM.foodList.length,
-                  itemBuilder: (context, idx) =>
-                      CartListCard(food: pageVM.foodList[idx]),
+                  itemBuilder: (context, idx) => CartListCard(
+                    foodName: pageVM.foodList[idx].foodName,
+                    foodURL: pageVM.foodList[idx].foodImageURL,
+                    qty: pageVM.cartList[idx].qty,
+                    subPrice: pageVM.cartList[idx].subPrice,
+                  ),
                 );
               }
             }),
@@ -147,6 +151,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                   height: 10,
                 ),
                 InkWell(
+                  splashColor: Colors.redAccent,
                   onTap: () async {
                     await EasyLoading.show(
                       dismissOnTap: false,
@@ -191,13 +196,15 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       String transacID = uuid.v4();
 
                       var transaction = TransactionModel(
-                          shopID: pageVM.shop.shopID,
-                          memberID:
-                              pageVM.memberController.member.value.memberID,
-                          transactionID: transacID,
-                          foodList: l,
-                          date: DateTime.now(),
-                          status: 'ongoing');
+                        shopID: pageVM.shop.shopID,
+                        memberID: pageVM.memberController.member.value.memberID,
+                        transactionID: transacID,
+                        foodList: l,
+                        date: DateTime.now(),
+                        status: 'ongoing',
+                        totalPrice: pageVM._totalPrice.value,
+                        memberName: pageVM.memberController.member.value.name,
+                      );
                       await pageVM.memberController
                           .createTransction(transaction);
                       await pageVM.memberController.deleteCart(
@@ -212,7 +219,10 @@ class _MemberCartPageState extends State<MemberCartPage> {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content:
-                                    Text('Successfully crate transaction')));
+                                    Text('Successfully create transaction')));
+
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
                       }
                     } else {
                       EasyLoading.dismiss();
@@ -226,7 +236,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                     // width: MediaQuery.of(context).size.width * 0.85,
                     height: 40,
                     decoration: const BoxDecoration(
-                        color: Colors.transparent,
+                        color: Colors.grey,
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     alignment: Alignment.center,
                     child: const Text(
@@ -240,8 +250,11 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 // ),
               ],
             ),
-          )
+          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
       ),
     );
   }
@@ -253,6 +266,7 @@ class MemberCartVM extends GetxController {
   final MemberController memberController = Get.find<MemberController>();
   late List<Cart> cartList = [];
   RxList<Food> foodList = RxList<Food>();
+
   // late ScrollController scrollController;
 
   RxBool isCartEmpty = true.obs;
@@ -290,23 +304,23 @@ class MemberCartVM extends GetxController {
     // shop = await memberController.getCartListShop();
   }
 
-  // void scrollListener() async {
-  //   if (scrollController.offset >= scrollController.position.maxScrollExtent &&
-  //       !scrollController.position.outOfRange) {
-  //     print("reach the bottom");
-  //     try {
-  //       isLoading.value = true;
-  //       cartList = await memberController.getMemberCartList(
-  //           memberID: memberController.member.value.memberID);
-  //       cartList.forEach((element) async {
-  //         var food = await foodController.getFoodData(element.foodID);
-  //         foodList.add(food);
-  //       });
-  //     } catch (e) {
-  //       print(e);
-  //     } finally {
-  //       isLoading.value = false;
-  //     }
-  //   }
-  // }
+// void scrollListener() async {
+//   if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+//       !scrollController.position.outOfRange) {
+//     print("reach the bottom");
+//     try {
+//       isLoading.value = true;
+//       cartList = await memberController.getMemberCartList(
+//           memberID: memberController.member.value.memberID);
+//       cartList.forEach((element) async {
+//         var food = await foodController.getFoodData(element.foodID);
+//         foodList.add(food);
+//       });
+//     } catch (e) {
+//       print(e);
+//     } finally {
+//       isLoading.value = false;
+//     }
+//   }
+// }
 }

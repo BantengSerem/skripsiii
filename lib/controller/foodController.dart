@@ -63,6 +63,26 @@ class FoodController extends GetxController {
     // streamList.clear();
   }
 
+  void resetShareFoodPage(){
+    shareFoodList.clear();
+    currDocShareFoodList = null;
+    firstTimeShareFoodList = true;
+    for (var element in streamShareFoodList) {
+      element.cancel();
+    }
+    streamShareFoodList.clear();
+  }
+
+  void resetProfileSharedFood(){
+    shareMemberFoodList.clear();
+    currDocMemberShareFoodList = null;
+    firstTimeMemberShareFoodList = true;
+    for (var element in streamMemberShareFoodList) {
+      element.cancel();
+    }
+    streamMemberShareFoodList.clear();
+  }
+
   void cleanFoodData() {
     foodList.clear();
     currDocFoodList = null;

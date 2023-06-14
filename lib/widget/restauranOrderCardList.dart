@@ -10,27 +10,28 @@ class RestaurantOrderCartList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 90,
       decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          border: Border(bottom: BorderSide(color: Colors.grey, width: 1))),
+        // borderRadius: BorderRadius.all(
+        //   Radius.circular(10),
+        // ),
+        border: Border(
+          bottom: BorderSide(color: Colors.grey, width: 1),
+        ),
+        // color: Colors.redAccent,
+      ),
       child: InkWell(
         onTap: () async {
           await func();
         },
         child: Row(
           children: [
-            Container(
-              color: Colors.redAccent,
-              width: 80,
-              child: Column(
-                children: [
-                  Text(t.transactionID),
-
-                ],
-              ),
+            Column(
+              children: [
+                Text(t.date.toString()),
+                Text(t.memberName),
+                Text(t.totalPrice.toString()),
+              ],
             )
           ],
         ),

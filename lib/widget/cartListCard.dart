@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:skripsiii/model/foodModel.dart';
 
 class CartListCard extends StatelessWidget {
-  const CartListCard({Key? key, required this.food}) : super(key: key);
+  const CartListCard(
+      {Key? key,
+      required this.foodName,
+      required this.qty,
+      required this.subPrice,
+      required this.foodURL})
+      : super(key: key);
 
-  final Food food;
+  final String foodName;
+  final String foodURL;
+  final int qty;
+  final double subPrice;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,9 +31,21 @@ class CartListCard extends StatelessWidget {
             height: 80,
             width: 80,
             child: Image.network(
-              food.foodImageURL,
+              foodURL,
               fit: BoxFit.cover,
             ),
+          ),
+          const SizedBox(width: 5,),
+          Text(
+            qty.toString(),
+          ),
+          const SizedBox(width: 5,),
+          Text(
+            foodName,
+          ),
+          const SizedBox(width: 5,),
+          Text(
+            subPrice.toString(),
           ),
           // Column(
           //   mainAxisAlignment: MainAxisAlignment.center,
