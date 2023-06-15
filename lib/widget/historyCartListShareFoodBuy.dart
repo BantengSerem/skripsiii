@@ -61,7 +61,7 @@ class HistoryCartListShareFoodBuy extends StatelessWidget {
           Container(
             padding: const EdgeInsets.only(right: 20),
             child: Text(
-              'Rp. ${tsf.price}',
+              'Rp. ${NumberFormat("#,##0.00", "en_US").format(tsf.price)}',
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,

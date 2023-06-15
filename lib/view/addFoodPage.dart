@@ -45,11 +45,22 @@ class _AddFoodPageState extends State<AddFoodPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Share Food'),
+        title: const Text(
+          'Add New Food',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -69,7 +80,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
               children: [
                 Container(
                   color: Colors.black38,
-                  height: 250,
+                  height: 220,
                   width: MediaQuery.of(context).size.width,
                   // child: _image == null
                   //     ? const Icon(Icons.photo_size_select_actual_outlined)
@@ -165,15 +176,15 @@ class _AddFoodPageState extends State<AddFoodPage> {
                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                            hintText: 'Food Qty',
-                            // prefix: Text(
-                            //   'Rp. ',
-                            //   style: TextStyle(
-                            //     color: Colors.black54,
-                            //   ),
-                            // ),
-                            // prefixIcon: Icon(Icons.attach_money_rounded),
-                            ),
+                          hintText: 'Food Qty',
+                          // prefix: Text(
+                          //   'Rp. ',
+                          //   style: TextStyle(
+                          //     color: Colors.black54,
+                          //   ),
+                          // ),
+                          // prefixIcon: Icon(Icons.attach_money_rounded),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input food quantity';
@@ -283,15 +294,15 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 await EasyLoading.show(
                                   dismissOnTap: false,
                                   maskType: EasyLoadingMaskType.black,
-
                                 );
                                 final form = _formKey.currentState;
                                 if (_image == null) {
-                                  if(mounted) {
+                                  if (mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('Please input an image')));
+                                        const SnackBar(
+                                            duration: Duration(seconds: 1),
+                                            content:
+                                                Text('Please input an image')));
                                   }
                                 } else if (form!.validate()) {
                                   form.save();
@@ -306,14 +317,14 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                     'imgName': foodID,
                                   });
                                   var food = Food(
-                                    price: _price ?? 0,
-                                    detailNotes: _description ?? '',
-                                    foodName: _foodName ?? '',
-                                    foodID: foodID,
-                                    foodImageURL: foodImageURL!,
-                                    qty: _qty ?? 0,
-                                    shopID: pageVM.shopController.shop.value.shopID
-                                  );
+                                      price: _price ?? 0,
+                                      detailNotes: _description ?? '',
+                                      foodName: _foodName ?? '',
+                                      foodID: foodID,
+                                      foodImageURL: foodImageURL!,
+                                      qty: _qty ?? 0,
+                                      shopID: pageVM
+                                          .shopController.shop.value.shopID);
                                   // // print(sf.toMap());
                                   //
                                   await pageVM.foodController

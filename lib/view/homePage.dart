@@ -316,6 +316,7 @@ class HomePage extends StatelessWidget {
               style: TextStyle(
                 color: Color.fromRGBO(56, 56, 56, 1),
                 fontSize: 15,
+                fontWeight: FontWeight.bold
               ),
             ),
           ],

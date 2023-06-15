@@ -34,11 +34,13 @@ class _ShopHistoryPageState extends State<ShopHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         title: const Text(
           'History',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
           ),
         ),
       ),
@@ -61,14 +63,6 @@ class _ShopHistoryPageState extends State<ShopHistoryPage> {
                 itemBuilder: (context, idx) {
                   return RestaurantOrderCartList(
                     func: () async {
-                      // Navigator.push(
-                      //     context,
-                      //     SlideFadeTransition(
-                      //       child: FinalizeOrderPage(
-                      //         t: pageVM
-                      //             .transactionController.listItem[idx],
-                      //       ),
-                      //     ));
                     },
                     t: pageVM.transactionController.listHistoryItem[idx],
                   );
@@ -130,4 +124,3 @@ class ShopHistoryVM extends GetxController {
     super.dispose();
   }
 }
-

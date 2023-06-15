@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/memberController.dart';
@@ -10,6 +11,7 @@ import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/model/transactionModel.dart';
 import 'package:skripsiii/widget/cartListCard.dart';
+import 'package:skripsiii/widget/nodata.dart';
 import 'package:uuid/uuid.dart';
 
 class MemberCartPage extends StatefulWidget {
@@ -64,11 +66,22 @@ class _MemberCartPageState extends State<MemberCartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: const Text(
+          'Cart',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -101,9 +114,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 );
               }
               if (pageVM.isCartEmpty.value) {
-                return const Center(
-                  child: Text("You don't have any items"),
-                );
+                return const NoDataWidget();
               } else {
                 return ListView.builder(
                   // controller: pageVM.scrollController,
@@ -139,7 +150,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
                     ),
                     Obx(
                       () => Text(
-                        'Rp. ${pageVM._totalPrice.value.toString()}',
+                        'Rp. ${NumberFormat("#,##0.00", "en_US").format(pageVM._totalPrice.value)}',
                         style: const TextStyle(
                           fontSize: 25,
                         ),
@@ -157,92 +168,115 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       dismissOnTap: false,
                       maskType: EasyLoadingMaskType.black,
                     );
-                    // print('asdfasfd');
-                    bool isCorrect = true;
-                    pageVM.cartList.forEach((element) async {
-                      var isFalse = await pageVM.foodController
-                          .checkFoodCartList(element);
-                      if (isFalse) {
-                        isCorrect = false;
-                        await pageVM.memberController.removeCartItem(
+                    if (!pageVM.isCartEmpty.value) {
+                      bool isCorrect = true;
+                      pageVM.cartList.forEach((element) async {
+                        var isFalse = await pageVM.foodController
+                            .checkFoodCartList(element);
+                        if (isFalse) {
+                          isCorrect = false;
+                          await pageVM.memberController.removeCartItem(
+                            memberID:
+                                pageVM.memberController.member.value.memberID,
+                            cart: element,
+                          );
+                          pageVM.cartList
+                              .removeWhere((a) => a.foodID == element.foodID);
+                        }
+                      });
+
+                      if (pageVM.cartList.isEmpty) {
+                        await pageVM.memberController.deleteCart(
                           memberID:
                               pageVM.memberController.member.value.memberID,
-                          cart: element,
                         );
-                        pageVM.cartList
-                            .removeWhere((a) => a.foodID == element.foodID);
+                        pageVM.isCartEmpty.value = true;
+                        pageVM.foodList.clear();
                       }
-                    });
+                      if (isCorrect) {
+                        List<Map<String, dynamic>> l = [];
+                        for (var element in pageVM.cartList) {
+                          l.add({
+                            'foodID': element.foodID,
+                            'subPrice': element.subPrice,
+                            'qty': element.qty,
+                          });
+                          await pageVM.shopController
+                              .updateFoodQty(element.foodID, element.qty);
+                        }
+                        var uuid = const Uuid();
+                        String transacID = uuid.v4();
 
-                    if (pageVM.cartList.isEmpty) {
-                      await pageVM.memberController.deleteCart(
-                        memberID: pageVM.memberController.member.value.memberID,
-                      );
-                      pageVM.isCartEmpty.value = true;
-                      pageVM.foodList.clear();
-                    }
-                    if (isCorrect) {
-                      List<Map<String, dynamic>> l = [];
-                      for (var element in pageVM.cartList) {
-                        l.add({
-                          'foodID': element.foodID,
-                          'subPrice': element.subPrice,
-                          'qty': element.qty,
-                        });
-                        await pageVM.shopController
-                            .updateFoodQty(element.foodID, element.qty);
-                      }
-                      var uuid = const Uuid();
-                      String transacID = uuid.v4();
+                        var transaction = TransactionModel(
+                          shopID: pageVM.shop.shopID,
+                          memberID:
+                              pageVM.memberController.member.value.memberID,
+                          transactionID: transacID,
+                          foodList: l,
+                          date: DateTime.now(),
+                          status: 'ongoing',
+                          totalPrice: pageVM._totalPrice.value,
+                          memberName: pageVM.memberController.member.value.name,
+                          shopName: pageVM.shop.shopName,
+                        );
+                        await pageVM.memberController
+                            .createTransction(transaction);
+                        await pageVM.memberController.deleteCart(
+                          memberID:
+                              pageVM.memberController.member.value.memberID,
+                        );
 
-                      var transaction = TransactionModel(
-                        shopID: pageVM.shop.shopID,
-                        memberID: pageVM.memberController.member.value.memberID,
-                        transactionID: transacID,
-                        foodList: l,
-                        date: DateTime.now(),
-                        status: 'ongoing',
-                        totalPrice: pageVM._totalPrice.value,
-                        memberName: pageVM.memberController.member.value.name,
-                        shopName: pageVM.shop.shopName,
-                      );
-                      await pageVM.memberController
-                          .createTransction(transaction);
-                      await pageVM.memberController.deleteCart(
-                        memberID: pageVM.memberController.member.value.memberID,
-                      );
+                        pageVM.isCartEmpty.value = true;
+                        pageVM.foodList.clear();
 
-                      pageVM.isCartEmpty.value = true;
-                      pageVM.foodList.clear();
+                        EasyLoading.dismiss();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(duration: Duration(seconds: 1),
+                                  content:
+                                      Text('Successfully create transaction')));
 
-                      EasyLoading.dismiss();
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                    Text('Successfully create transaction')));
-
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                        }
+                      } else {
+                        EasyLoading.dismiss();
+                        if (mounted) {
+                          alert(context: context);
+                        }
                       }
                     } else {
-                      EasyLoading.dismiss();
                       if (mounted) {
-                        alert(context: context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(duration: Duration(seconds: 1),
+                            content: Text('Your cart is empty'),
+                          ),
+                        );
                       }
                     }
+                    EasyLoading.dismiss();
                   },
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   child: Container(
                     // width: MediaQuery.of(context).size.width * 0.85,
                     height: 40,
-                    decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    decoration: BoxDecoration(
+                        color: pageVM.isCartEmpty.value
+                            ? Colors.grey
+                            : Colors.greenAccent,
+                        borderRadius: const BorderRadius.all(Radius.circular(10))),
                     alignment: Alignment.center,
-                    child: const Text(
+                    child: Text(
                       'Order',
                       textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: pageVM.isCartEmpty.value
+                            ? const Color.fromRGBO(56, 56, 56, 1)
+                            : Colors.black,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        // color: Color
+                      ),
                     ),
                   ),
                 ),
@@ -253,9 +287,6 @@ class _MemberCartPageState extends State<MemberCartPage> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
       ),
     );
   }

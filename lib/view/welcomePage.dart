@@ -20,13 +20,46 @@ class WelcomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Welcome To \n [App Name]',
-              style: TextStyle(
-                fontSize: 44,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+            Column(
+              children:  const [
+                Text(
+                  'Welcome To',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                // Center(
+                //   child: ShaderMask(
+                //     shaderCallback: (Rect bounds) {
+                //       return const LinearGradient(
+                //         colors: [Color.fromRGBO(255, 164, 91, 1), Colors.blue],
+                //         begin: Alignment.centerLeft,
+                //         end: Alignment.centerRight,
+                //       ).createShader(bounds);
+                //     },
+                //     child: const Text(
+                //       'GigaBites',
+                //       style: TextStyle(
+                //         fontSize: 44,
+                //         fontWeight: FontWeight.bold,
+                //         color: Color.fromRGBO(255, 164, 91, 1),
+                //       ),
+                //       textAlign: TextAlign.center,
+                //     ),
+                //   ),
+                // ),
+                Text(
+                  'GigaBites',
+                  style: TextStyle(
+                    fontSize: 44,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(255, 164, 91, 1),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
             const SizedBox(
               height: 70,

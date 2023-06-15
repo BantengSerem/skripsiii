@@ -101,6 +101,7 @@ class _ForgotPaswordPageState extends State<ForgotPaswordPage> {
                           // Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                  duration: Duration(seconds: 1),
                                   content: Text('Password Reset Email Sent')));
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);
@@ -108,8 +109,9 @@ class _ForgotPaswordPageState extends State<ForgotPaswordPage> {
                       } catch (e) {
                         if (mounted) {
                           // Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              duration: Duration(seconds: 1),
+                              content: Text(e.toString())));
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);
                         }

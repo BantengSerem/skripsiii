@@ -70,7 +70,7 @@ class HistoryCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.only(right: 20),
               child: Text(
-                'Rp. ${sf.price}',
+                'Rp. ${NumberFormat("#,##0.00", "en_US").format(sf.price)}',
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,

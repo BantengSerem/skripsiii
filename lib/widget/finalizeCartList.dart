@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skripsiii/model/cart.dart';
 
 class FinalizeCartList extends StatelessWidget {
@@ -52,7 +53,7 @@ class FinalizeCartList extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Rp. : ${c.subPrice}',
+                      'Rp. : ${NumberFormat("#,##0.00", "en_US").format(c.subPrice)}',
                       style: const TextStyle(
                         fontSize: 17,
                       ),

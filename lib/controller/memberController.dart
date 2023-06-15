@@ -6,6 +6,7 @@ import 'package:skripsiii/model/addressModel.dart';
 import 'package:skripsiii/model/cart.dart';
 import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/memberModel.dart';
+import 'package:skripsiii/model/ratingModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/model/transactionModel.dart';
 
@@ -203,5 +204,56 @@ class MemberController extends GetxController {
     });
     // print(res.docs[0].data());
     return Address.fromMap(res.docs[0]);
+  }
+
+  double calculateAVG(double rateAVG, int total, int newRate) {
+    double a = ((rateAVG * total) + newRate) / (total + 1);
+
+    return a;
+  }
+
+  Future<bool> createRating({required Rating rating}) async {
+    try {
+      await fireStoreInstance.collection('rating').doc(rating.ratingID).set({
+        'ratingID': rating.ratingID,
+        'shopID': rating.shopID,
+        'memberID': rating.memberID,
+        'rating': rating.rating,
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> setShopRating(
+      {required Rating rating, required Shop shop}) async {
+    try {
+      await fireStoreInstance.collection('shop').doc(rating.shopID).update({
+        'ratingAVG': shop.ratingAVG,
+        'totalReview': shop.totalReview + 1,
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> isRated(String shopID) async {
+    var res = await fireStoreInstance
+        .collection('rating')
+        .where('shopID', isEqualTo: shopID)
+        .where('memberID', isEqualTo: member.value.memberID)
+        .get();
+
+    // print(res.docs.asMap().isNotEmpty);
+    res.docs.asMap().forEach((key, value) {
+      var a = Rating.fromMap(value);
+      print(a == null);
+    });
+
+    return res.docs.asMap().isNotEmpty;
   }
 }

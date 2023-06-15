@@ -4,14 +4,15 @@ import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+class SellingTimeSettingsPage extends StatefulWidget {
+  const SellingTimeSettingsPage({Key? key}) : super(key: key);
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  State<SellingTimeSettingsPage> createState() =>
+      _SellingTimeSettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
   late SettingsPageVM pageVM;
 
   @override
@@ -32,11 +33,22 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text(
+          'Your Selling Time',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -65,13 +77,24 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  Container(
+                  SizedBox(
                     height: 60,
                     child: Row(
                       children: [
-                        const Text('Selling Time : '),
+                        const Text(
+                          'Selling Time : ',
+                          style: TextStyle(
+                            color: Color.fromRGBO(56, 56, 56, 1),
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Obx(
                           () => ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(255, 164, 91, 1),
+                            ),
                             onPressed: () async {
                               final TimeOfDay selectedTime = TimeOfDay.now();
                               final TimeOfDay? timeOfDay = await showTimePicker(
@@ -91,19 +114,37 @@ class _SettingsPageState extends State<SettingsPage> {
                                 pageVM.isChange.value = true;
                               }
                             },
-                            child: Text(pageVM.sellingTime.value),
+                            child: Text(
+                              pageVM.sellingTime.value,
+                              style: const TextStyle(
+                                color: Color.fromRGBO(56, 56, 56, 1),
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 60,
                     child: Row(
                       children: [
-                        const Text('Closing Time : '),
+                        const Text(
+                          'Closing Time : ',
+                          style: TextStyle(
+                            color: Color.fromRGBO(56, 56, 56, 1),
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Obx(
                           () => ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(255, 164, 91, 1),
+                            ),
                             onPressed: () async {
                               final TimeOfDay selectedTime = TimeOfDay.now();
                               final TimeOfDay? timeOfDay = await showTimePicker(
@@ -123,7 +164,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                 pageVM.isChange.value = true;
                               }
                             },
-                            child: Text(pageVM.closingTime.value),
+                            child: Text(
+                              pageVM.closingTime.value,
+                              style: const TextStyle(
+                                color: Color.fromRGBO(56, 56, 56, 1),
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -148,20 +196,24 @@ class _SettingsPageState extends State<SettingsPage> {
                           await pageVM.shopController.changeShopTime(
                               pageVM.changeClose.value,
                               pageVM.changeSell.value);
-                          pageVM.shopController.shop.value.closingTime = pageVM.changeClose.value;
-                          pageVM.shopController.shop.value.sellingTime = pageVM.changeSell.value;
-                          if(mounted) {
+                          pageVM.shopController.shop.value.closingTime =
+                              pageVM.changeClose.value;
+                          pageVM.shopController.shop.value.sellingTime =
+                              pageVM.changeSell.value;
+                          if (mounted) {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text('Save Changes'),
-                          ));
+                                .showSnackBar(const SnackBar(
+                              duration: Duration(seconds: 1),
+                              content: Text('Save Changes'),
+                            ));
                           }
                           print(pageVM.changeClose.value);
-                          print( pageVM.changeSell.value);
+                          print(pageVM.changeSell.value);
                         } else {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
+                            duration: Duration(seconds: 1),
                             content: Text('No Changes'),
                           ));
                         }

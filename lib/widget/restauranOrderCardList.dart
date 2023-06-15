@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skripsiii/model/transactionModel.dart';
 
 class RestaurantOrderCartList extends StatelessWidget {
@@ -11,28 +12,49 @@ class RestaurantOrderCartList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 90,
+      margin: EdgeInsets.symmetric(horizontal: 15),
       decoration: const BoxDecoration(
-        // borderRadius: BorderRadius.all(
-        //   Radius.circular(10),
-        // ),
         border: Border(
-          bottom: BorderSide(color: Colors.grey, width: 1),
+          bottom: BorderSide(color: Colors.grey, width: 1,),
         ),
-        // color: Colors.redAccent,
+        // color: Colors.red,
       ),
       child: InkWell(
         onTap: () async {
           await func();
         },
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(t.date.toString()),
-                Text(t.memberName),
-                Text(t.totalPrice.toString()),
+                Text(
+                  t.memberName,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  DateFormat('dd MMMM yyyy, HH:mm').format(t.date),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
               ],
-            )
+            ),
+            Text(
+              'Rp. ${NumberFormat("#,##0.00", "en_US").format(t.totalPrice)}',
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

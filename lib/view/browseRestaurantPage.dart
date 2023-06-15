@@ -45,13 +45,20 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
       appBar: AppBar(
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
         ),
         backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },

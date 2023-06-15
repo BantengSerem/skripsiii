@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skripsiii/model/foodModel.dart';
 
 class CartListCard extends StatelessWidget {
@@ -45,7 +46,7 @@ class CartListCard extends StatelessWidget {
           ),
           const SizedBox(width: 5,),
           Text(
-            subPrice.toString(),
+            '${NumberFormat("#,##0.00", "en_US").format(subPrice)}',
           ),
           // Column(
           //   mainAxisAlignment: MainAxisAlignment.center,

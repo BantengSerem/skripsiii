@@ -38,13 +38,17 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
           ),
         ),
         backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -99,6 +103,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
+                          color: Color.fromRGBO(56, 56, 56, 1),
                         ),
                       ),
                       TextFormField(
@@ -123,6 +128,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
+                          color: Color.fromRGBO(56, 56, 56, 1),
                         ),
                       ),
                       TextFormField(
@@ -155,6 +161,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
+                          color: Color.fromRGBO(56, 56, 56, 1),
                         ),
                       ),
                       const SizedBox(
@@ -180,6 +187,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
+                          color: Color.fromRGBO(56, 56, 56, 1),
                         ),
                       ),
                       const SizedBox(
@@ -202,7 +210,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                           child: const Text(
                             'Add Image',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Color.fromRGBO(56, 56, 56, 1),
                             ),
                           ),
                         ),
@@ -246,7 +254,7 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                 final form = _formKey.currentState;
                                 if (_image == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                                      const SnackBar(duration: Duration(seconds: 1),
                                           content:
                                               Text('Please input an image')));
                                 } else if (form!.validate()) {

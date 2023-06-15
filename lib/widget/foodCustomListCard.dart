@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skripsiii/model/foodModel.dart';
 
 class FoodCustomListCard extends StatelessWidget {
@@ -62,7 +63,7 @@ class FoodCustomListCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Rp. ${food.price}',
+                        'Rp. ${NumberFormat("#,##0.00", "en_US").format(food.price)}',
                         style: const TextStyle(
                           fontSize: 17,
                         ),

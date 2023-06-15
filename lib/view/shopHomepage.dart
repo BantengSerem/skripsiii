@@ -64,7 +64,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
                     "Selling Hour",
                     style: TextStyle(
                       fontSize: 25,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                       color: Color.fromRGBO(56, 56, 56, 1),
                     ),
                   ),
@@ -128,16 +128,16 @@ class _ShopHomePageState extends State<ShopHomePage> {
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             Container(
               padding: const EdgeInsets.only(left: 20),
               // width: MediaQuery.of(context).size.width * 0.8,
               child: const Text(
-                'Incoming Order',
+                'Incoming Orders',
                 style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  fontWeight: FontWeight.w900,
                   color: Color.fromRGBO(56, 56, 56, 1),
                 ),
               ),
@@ -193,13 +193,6 @@ class _ShopHomePageState extends State<ShopHomePage> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // pageVM.transactionController
-      //     //     .test(pageVM.shopController.shop.value.shopID);
-      //     print(pageVM.shopController.shop.value.isOpen);
-      //   },
-      // ),
     );
   }
 }

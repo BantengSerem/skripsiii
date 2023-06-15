@@ -41,7 +41,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
   Widget build(BuildContext context) {
     return AnimatedSplashScreen.withScreenFunction(
       splash: Image.asset(
-        'data/images/splashImage.png',
+        'data/images/appLogo.png',
         width: Get.width * 0.6,
         height: Get.height * 0.4,
       ),
@@ -79,6 +79,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
         //   return LoginPage();
       },
       duration: 2000,
+      backgroundColor: const Color.fromRGBO(42, 42, 42, 1.0),
       // backgroundColor: Theme.of(context).,
       centered: true,
       splashTransition: SplashTransition.scaleTransition,

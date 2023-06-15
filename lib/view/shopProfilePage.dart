@@ -22,7 +22,6 @@ class ShopProfilePage extends StatefulWidget {
 }
 
 class _ShopProfilePageState extends State<ShopProfilePage> {
-
   late ShopProfileVM pageVM;
 
   @override
@@ -38,37 +37,48 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
     super.dispose();
     Get.delete<ShopProfileVM>();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         title: const Text(
           'Restaurant Profile',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
         ),
         actions: [
-          TextButton(
-            onPressed: () async {
-              await pageVM.loginController.logout();
-              if (mounted) {
-                pageVM.foodController.reset();
-                pageVM.shopController.reset();
-                pageVM.memberController.reset();
-                pageVM.transactionController.reset();
-                Get.delete<BottomNavController>();
-                Get.delete<ShopHomeVM>();
-                Get.delete<ShopHistoryVM>();
-                Get.delete<ShopProfileVM>();
-                Get.offAll(const WelcomePage());
-                // Navigator.of(context)
-                //     .pushNamedAndRemoveUntil(welcomeRoute, (route) => false);
-              }
-            },
-            child: const Text(
-              'Log Out',
-              style: TextStyle(
-                color: Colors.red,
+          Container(
+            width: 90,
+            margin: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+                color: Color.fromRGBO(255, 218, 119, 1),
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: TextButton(
+              onPressed: () async {
+                await pageVM.loginController.logout();
+                if (mounted) {
+                  pageVM.foodController.reset();
+                  pageVM.shopController.reset();
+                  pageVM.memberController.reset();
+                  pageVM.transactionController.reset();
+                  Get.delete<BottomNavController>();
+                  Get.delete<ShopHomeVM>();
+                  Get.delete<ShopHistoryVM>();
+                  Get.delete<ShopProfileVM>();
+                  Get.offAll(const WelcomePage());
+                }
+              },
+              child: const Text(
+                'Log Out',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           )
@@ -92,6 +102,7 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                     child: Image.asset(
                       'data/images/profileIcon.png',
                       fit: BoxFit.cover,
+                      color: const Color.fromRGBO(56, 56, 56, 1),
                     ),
                   ),
                   Column(
@@ -103,6 +114,7 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
+                          color: Color.fromRGBO(56, 56, 56, 1),
                         ),
                       ),
                       Obx(
@@ -116,11 +128,15 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                           maxLines: 1,
                         ),
                       ),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       const Text(
                         'Email',
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
+                          color: Color.fromRGBO(56, 56, 56, 1),
                         ),
                       ),
                       Obx(
@@ -150,9 +166,24 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
               padding: const EdgeInsets.only(left: 20),
               child: Obx(
                 () {
-                  return Text(
-                    'Your shop is ${pageVM.shopController.shop.value.isOpen == 'false' ? 'Close' : 'Open'} now',
-                    style: const TextStyle(fontSize: 20),
+                  return Row(
+                    children: [
+                      const Text(
+                        'Your shop is ',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      Text(
+                        pageVM.shopController.shop.value.isOpen == 'false'
+                            ? 'CLOSE'
+                            : 'OPEN',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Text(
+                        ' now',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -211,7 +242,9 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
             ),
             const Divider(
               color: Colors.grey,
-              thickness: 1.5,indent: 20,endIndent: 20,
+              thickness: 1.5,
+              indent: 20,
+              endIndent: 20,
             ),
             ProfileButton(
               func: () async {
@@ -227,11 +260,11 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                 func: () async {
                   Navigator.of(context).push(
                     SlideFadeTransition(
-                      child: const SettingsPage(),
+                      child: const SellingTimeSettingsPage(),
                     ),
                   );
                 },
-                title: 'Settings'),
+                title: 'Selling Time Setting'),
           ],
         ),
       ),

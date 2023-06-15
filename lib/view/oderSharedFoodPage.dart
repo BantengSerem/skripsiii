@@ -94,14 +94,16 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
 
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        duration: Duration(seconds: 1),
                         content: Text('Successfully create transaction')));
                   }
                 } else {
                   EasyLoading.dismiss();
                   if (mounted) {
                     Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Something went wrong')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        duration: Duration(seconds: 1),
+                        content: Text('Something went wrong')));
                   }
                 }
                 EasyLoading.dismiss();
@@ -186,30 +188,38 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                       // indent: 20,
                       // endIndent: 20,
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     const Text(
                       'Shared by',
                       style: TextStyle(fontSize: 10
-                        // fontWeight: FontWeight.bold,
-                      ),
+                          // fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Text(
                       widget.sf.memberName,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 20),
                     ),
+                    const Divider(
+                      color: Color.fromRGBO(56, 56, 56, 1),
+                      thickness: 1,
+                      // indent: 20,
+                      // endIndent: 20,
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
                     const Text(
-                      'Distance ',
-                      // 'Distance ${pageVM.distance.value.toString().substring(0, 2)}.${pageVM.distance.value.toString().substring(2, 4)} K',
+                      'Distance',
                       style: TextStyle(
                         // fontWeight: FontWeight.bold,
                         fontSize: 10,
                       ),
                     ),
                     Text(
-                      pageVM.distance.value.toString(),
+                      '${pageVM.distance.value.toStringAsFixed(2)} Km',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -250,8 +260,10 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: Colors.green),
+                        border: Border.all(width: 1, color: const Color.fromRGBO(
+                            173, 173, 173, 1.0)),
                         borderRadius: BorderRadius.circular(10),
+                        color: Colors.greenAccent
                       ),
                       height: 35,
                       width: MediaQuery.of(context).size.width,
@@ -267,7 +279,11 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                           child: const Text(
                             'Order',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.green),
+                            style: TextStyle(
+                              color: Color.fromRGBO(56, 56, 56, 1),
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),

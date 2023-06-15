@@ -9,7 +9,6 @@ import 'package:skripsiii/view/profilePage.dart';
 import 'package:skripsiii/view/shopHistoryPage.dart';
 import 'package:skripsiii/view/shopHomepage.dart';
 import 'package:skripsiii/view/shopProfilePage.dart';
-import 'package:skripsiii/view/testpage3.dart';
 
 class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({Key? key, required this.userType}) : super(key: key);
@@ -20,49 +19,98 @@ class BottomNavigationPage extends StatelessWidget {
 
   List<SalomonBottomBarItem> memberList = [
     SalomonBottomBarItem(
-      icon: const Icon(Icons.home, color: Colors.white),
-      activeIcon: const Icon(Icons.home),
-      title: const Text("Home"),
-      selectedColor: Colors.purple,
+      icon: const Icon(Icons.home),
+      activeIcon: const Icon(
+        Icons.home,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      title: const Text(
+        "Home",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.food_bank_outlined, color: Colors.white),
-      activeIcon: const Icon(Icons.food_bank_outlined),
-      title: const Text("Find Food"),
-      selectedColor: Colors.red,
+      icon: const Icon(Icons.food_bank_outlined),
+      activeIcon: const Icon(
+        Icons.food_bank_outlined,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      title: const Text(
+        "Find Food",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.history_rounded, color: Colors.white),
-      activeIcon: const Icon(Icons.history_rounded),
-      title: const Text("History"),
-      selectedColor: Colors.pink,
+      icon: const Icon(Icons.history_rounded),
+      activeIcon: const Icon(
+        Icons.history_rounded,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      title: const Text(
+        "History",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.person, color: Colors.white),
-      activeIcon: const Icon(Icons.person),
-      title: const Text("Profile"),
-      selectedColor: Colors.teal,
+      icon: const Icon(Icons.person),
+      activeIcon: const Icon(
+        Icons.person,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      title: const Text(
+        "History",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
     ),
   ];
 
   List<SalomonBottomBarItem> shopList = [
     SalomonBottomBarItem(
-      icon: const Icon(Icons.home, color: Colors.white),
-      activeIcon: const Icon(Icons.home),
-      title: const Text("Home"),
-      selectedColor: Colors.purple,
+      icon: const Icon(Icons.home),
+      activeIcon: const Icon(
+        Icons.home,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      title: const Text(
+        "Home",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.food_bank_outlined, color: Colors.white),
-      activeIcon: const Icon(Icons.food_bank_outlined),
-      title: const Text("Find Food"),
-      selectedColor: Colors.red,
+      icon: const Icon(Icons.history_rounded),
+      activeIcon: const Icon(
+        Icons.history_rounded,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      title: const Text(
+        "History",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.history_rounded, color: Colors.white),
-      activeIcon: const Icon(Icons.history_rounded),
-      title: const Text("History"),
-      selectedColor: Colors.pink,
+      icon: const Icon(Icons.person),
+      activeIcon: const Icon(
+        Icons.person,
+        color: Color.fromRGBO(56, 56, 56, 1),
+      ),
+      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      title: const Text(
+        "History",
+        style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
+      ),
+      selectedColor: Color.fromRGBO(255, 218, 119, 1),
     ),
   ];
 
@@ -77,13 +125,8 @@ class BottomNavigationPage extends StatelessWidget {
       key: PageStorageKey<String>('ShopProfilePage'),
     )
   ];
+
   final List<Widget> userPages = [
-    // Test1(
-    //   key: PageStorageKey<String>('HomePage'),
-    // ),
-    // Test2(
-    //   key: PageStorageKey<String>('HomePage'),
-    // ),c
     HomePage(
       key: const PageStorageKey<String>('HomePage'),
     ),
@@ -114,20 +157,14 @@ class BottomNavigationPage extends StatelessWidget {
         child: Obx(
           () {
             print('rebuld bottom nav');
-            return Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.blueAccent, width: 2),
-                ),
-              ),
-              child: SalomonBottomBar(
-                backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
-                currentIndex: pageVM.idx.value,
-                onTap: (i) {
-                  pageVM.changeIdx(i);
-                },
-                items: userType == 'member' ? memberList : shopList,
-              ),
+            return SalomonBottomBar(
+              selectedColorOpacity: 0.6,
+              backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
+              currentIndex: pageVM.idx.value,
+              onTap: (i) {
+                pageVM.changeIdx(i);
+              },
+              items: userType == 'member' ? memberList : shopList,
             );
           },
         ),

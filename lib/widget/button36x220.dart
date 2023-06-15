@@ -15,10 +15,17 @@ class Button36x220 extends StatelessWidget {
       height: 36,
       width: 220,
       child: ElevatedButton(
-        onPressed: () async{
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromRGBO(174, 230, 230, 1.0)),
+        onPressed: () async {
           func();
         },
-        child: Text(text),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
       ),
     );
   }

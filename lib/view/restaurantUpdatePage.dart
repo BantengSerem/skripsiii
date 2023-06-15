@@ -42,14 +42,19 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
         title: const Text(
           'Your Menus',
           style: TextStyle(
-            fontSize: 25,
             fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
           ),
         ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -99,6 +104,10 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                               Icons.star,
                               color: Colors.yellow,
                             ),
+                            Text(
+                              'review (${pageVM.shopController.shop.value.totalReview.toString()})',
+                              style: const TextStyle(fontSize: 18),
+                            ),
                             // Text('(${pageVM.shopController.shop.value.})'),
                           ],
                         )
@@ -107,6 +116,9 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             Obx(() {
               if (pageVM.isLoading.value) {
@@ -149,10 +161,11 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
         ),
       ),
       floatingActionButton: SizedBox(
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         child: FittedBox(
           child: FloatingActionButton(
+            backgroundColor: const Color.fromRGBO(255, 218, 119, 1),
             onPressed: () async {
               Navigator.push(
                 context,
@@ -160,13 +173,11 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                   builder: (context) => const AddFoodPage(),
                 ),
               );
-              // await pageVM.foodController
-              //     .test(pageVM.shopController.shop.value.shopID);
-              // print(pageVM.foodController.foodList);
             },
             child: const Icon(
               Icons.add,
               size: 35,
+              color: Color.fromRGBO(56, 56, 56, 1),
             ),
           ),
         ),

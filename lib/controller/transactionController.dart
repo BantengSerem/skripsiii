@@ -125,7 +125,7 @@ class TransactionController extends GetxController {
     var index = streamList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStream();
+      if (event.size == 0 && streamList.length > 1) return deleteStream();
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -222,7 +222,7 @@ class TransactionController extends GetxController {
     var index = streamHistoryList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStreamHistory();
+      if (event.size == 0 && streamHistoryList.length > 1) return deleteStreamHistory();
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -287,7 +287,7 @@ class TransactionController extends GetxController {
     var index = streamHistoryList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0) return deleteStreamHistory();
+      if (event.size == 0 && streamHistoryList.length > 1) return deleteStreamHistory();
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {

@@ -287,7 +287,7 @@ class ShopController extends GetxController {
       var index = streamListSoon.length + 1;
 
       var snapshot = query.snapshots().listen((event) {
-        if (event.size == 0) return deleteStreamSoon();
+        if (event.size == 0 && streamListSoon.length > 1) return deleteStreamSoon();
 
         // print(event.docChanges.asMap());
         event.docChanges.asMap().forEach((key, value) async {
@@ -375,7 +375,7 @@ class ShopController extends GetxController {
       var index = streamListNow.length + 1;
 
       var snapshot = query.snapshots().listen((event) {
-        if (event.size == 0) return deleteStreamNow();
+        if (event.size == 0 && streamListNow.length > 1) return deleteStreamNow();
 
         // print(event.docChanges.asMap());
         event.docChanges.asMap().forEach((key, value) async {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
@@ -51,11 +52,22 @@ class _EditFoodPageState extends State<EditFoodPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Food'),
+        title: const Text(
+          'Edit Food',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -140,7 +152,8 @@ class _EditFoodPageState extends State<EditFoodPage> {
                         ),
                       ),
                       TextFormField(
-                        initialValue: widget.food.price.toString(),
+                        initialValue:
+                            '${NumberFormat("#,##0.00", "en_US").format(widget.food.price)}',
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           hintText: 'Rp. 99.999',
@@ -325,7 +338,8 @@ class _EditFoodPageState extends State<EditFoodPage> {
                                               // int count = 2;
                                               // Navigator.of(context).popUntil((_) => count-- <= 0);
                                               //
-                                              Navigator.of(context).popUntil((route) => route.isFirst);
+                                              Navigator.of(context).popUntil(
+                                                  (route) => route.isFirst);
                                             }
                                             // Navigator.pop(context, 'OK');
                                           },

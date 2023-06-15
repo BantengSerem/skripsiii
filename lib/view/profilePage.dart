@@ -54,10 +54,6 @@ class _ProfilePageState extends State<ProfilePage> {
             width: 90,
             margin: const EdgeInsets.all(10),
             decoration: const BoxDecoration(
-                // border: Border.all(
-                //   color: const Color.fromRGBO(251, 246, 240, 1),
-                //   width: 1,
-                // ),
                 color: Color.fromRGBO(255, 218, 119, 1),
                 borderRadius: BorderRadius.all(Radius.circular(20))),
             child: TextButton(
@@ -90,8 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            // color: Colors.red,
+          SizedBox(
             height: 150,
             child: Row(
               children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
@@ -44,23 +45,39 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
           title: const Text(
             textAlign: TextAlign.center,
             'Confirm to complete this order',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
               ),
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
             ),
             TextButton(
               style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
               ),
-              child: const Text('Confirm'),
+              child: const Text(
+                'Confirm',
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
               onPressed: () async {
                 await EasyLoading.show(
                   dismissOnTap: false,
@@ -71,16 +88,16 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                 if (res) {
                   EasyLoading.dismiss();
                   if (mounted) {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Transaction Complete')));
+                        const SnackBar(duration: Duration(seconds: 1),content: Text('Transaction Complete')));
                   }
                 } else {
                   EasyLoading.dismiss();
                   if (mounted) {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Something went wrong')));
+                        const SnackBar(duration: Duration(seconds: 1),content: Text('Something went wrong')));
                   }
                 }
               },
@@ -100,23 +117,39 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
           title: const Text(
             textAlign: TextAlign.center,
             'Confirm to cancel this order',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
               ),
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
               ),
-              child: const Text('Confirm'),
+              child: const Text(
+                'Confirm',
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
               onPressed: () async {
                 await EasyLoading.show(
                   dismissOnTap: false,
@@ -129,14 +162,14 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                   if (mounted) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Transaction Canceled')));
+                        const SnackBar(duration: Duration(seconds: 1),content: Text('Transaction Canceled')));
                   }
                 } else {
                   EasyLoading.dismiss();
                   if (mounted) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Something went wrong')));
+                        const SnackBar(duration: Duration(seconds: 1),content: Text('Something went wrong')));
                   }
                 }
               },
@@ -153,37 +186,62 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
       appBar: AppBar(
         title: const Text(
           'Finalize Order',
-          style: TextStyle(fontSize: 25),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: Color.fromRGBO(56, 56, 56, 1),
+          ),
         ),
+        backgroundColor: const Color.fromRGBO(255, 164, 91, 1),
         elevation: 0,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color.fromRGBO(56, 56, 56, 1),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
       ),
       body: Column(
         children: [
           Material(
             elevation: 5,
             child: Container(
-              height: 70,
+              height: 110,
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              // color: Colors.redAccent,
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              // color: const Color.fromRGBO(255, 218, 119, 1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Oder by : ${widget.t.memberName}',
+                    'ID : ${widget.t.transactionID}',
                     style: const TextStyle(
-                      fontSize: 19,
-                    ),
+                        fontSize: 17, color: Color.fromRGBO(56, 56, 56, 1)),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   Text(
-                    widget.t.date.toString(),
+                    'Oder by : ${widget.t.memberName}',
                     style: const TextStyle(
-                      fontSize: 15,
-                    ),
+                        fontSize: 17, color: Color.fromRGBO(56, 56, 56, 1)),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Ordered date : ${DateFormat('dd MMMM yyyy, HH:mm').format(widget.t.date)}',
+                    style: const TextStyle(
+                        fontSize: 17, color: Color.fromRGBO(56, 56, 56, 1)),
                   ),
                 ],
               ),
@@ -217,9 +275,13 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
           ),
           Container(
             height: 100,
-            // color: Colors.greenAccent,
+            // color: const Color.fromRGBO(255, 164, 91, 1),
             decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.grey, width: 1))),
+              border: Border(
+                top: BorderSide(color: Colors.grey, width: 1),
+              ),
+              color: const Color.fromRGBO(255, 164, 91, 1),
+            ),
             padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05),
             child: Column(
@@ -232,12 +294,14 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                       'Total',
                       style: TextStyle(
                         fontSize: 25,
+                        color: Color.fromRGBO(56, 56, 56, 1),
                       ),
                     ),
                     Text(
-                      'Rp. ${widget.t.totalPrice}',
+                      'Rp. ${NumberFormat("#,##0.00", "en_US").format(widget.t.totalPrice)}',
                       style: const TextStyle(
                         fontSize: 25,
+                        color: Color.fromRGBO(56, 56, 56, 1),
                       ),
                     ),
                   ],
@@ -251,12 +315,13 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
-                        splashColor: Colors.redAccent,
-                        onTap: () async{
+                        // splashColor: Colors.redAccent,
+                        onTap: () async {
                           await alertCanceled(context: context);
-                          if(mounted){
-                            Navigator.popUntil(context, (route) => route.isFirst);
-                          }
+                          // if (mounted) {
+                          //   Navigator.popUntil(
+                          //       context, (route) => route.isFirst);
+                          // }
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
@@ -264,7 +329,7 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                           // width: MediaQuery.of(context).size.width * 0.85,
                           height: 40,
                           decoration: const BoxDecoration(
-                              color: Colors.red,
+                              color: Color.fromRGBO(241, 59, 59, 1.0),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           alignment: Alignment.center,
@@ -278,12 +343,13 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
-                        splashColor: Colors.redAccent,
+                        // splashColor: Colors.redAccent,
                         onTap: () async {
                           await alertComplete(context: context);
-                          if(mounted){
-                            Navigator.popUntil(context, (route) => route.isFirst);
-                          }
+                          // if (mounted) {
+                          //   Navigator.popUntil(
+                          //       context, (route) => route.isFirst);
+                          // }
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
@@ -291,13 +357,16 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                           // width: MediaQuery.of(context).size.width * 0.85,
                           height: 40,
                           decoration: const BoxDecoration(
-                              color: Colors.green,
+                              color: Color.fromRGBO(152, 227, 109, 1.0),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           alignment: Alignment.center,
                           child: const Text(
                             'Completed',
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color.fromRGBO(56, 56, 56, 1),
+                            ),
                           ),
                         ),
                       ),
