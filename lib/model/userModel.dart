@@ -1,6 +1,6 @@
 abstract class UserParent {
-  late final String email;
-  late final String password;
+  late  String email;
+  late  String password;
 
   UserParent({required this.email, required this.password});
 }

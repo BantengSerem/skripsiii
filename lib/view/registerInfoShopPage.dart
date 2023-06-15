@@ -1,7 +1,8 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:skripsiii/constants/indonesiaRepo.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/registerController.dart';
@@ -25,7 +26,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
   final String role = 'shop';
   final IndoRepo repo = IndoRepo();
   final RegisterController registerController = RegisterController();
-  final ShopController shopController = ShopController();
+  final ShopController shopController = Get.find<ShopController>();
 
   String? _email;
   String? _password;
@@ -57,10 +58,54 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
       //   'postalCode': _postalCode
       // };
       // devtools.log(data.toString());
-      var userCred =
-      await registerController.registerMember(_email!, _password!);
-      var userId = userCred?.user!.uid.toString();
-      if (userCred != null) {
+      if (FirebaseAuth.instance.currentUser == null) {
+        var userCred =
+            await registerController.registerMember(_email!, _password!);
+        var userId = userCred?.user!.uid.toString();
+        if (userCred != null) {
+          Shop shopData = Shop(
+            password: '',
+            email: _email!,
+            shopName: _shopName!,
+            contacts: _phone!,
+            closingTime: -1,
+            ratingAVG: 0,
+            sellingTime: -1,
+            shopID: userId!,
+            isOpen: 'false',
+            totalReview: 0,
+          );
+
+          var uuid = const Uuid();
+          String addressID = uuid.v4();
+          var location = await LocationHelper.instance.getCurrentLocation();
+
+          Address x = Address(
+            addressID: addressID,
+            userID: userId,
+            address: _address!,
+            province: _province!,
+            city: _city!,
+            poscode: _postalCode!,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          );
+
+          bool a = await registerController.addShopToFirebase(shopData);
+          if (a) {
+            shopController.shop = shopData.obs;
+            devtools.log(
+                'memberController.member.value : ${shopController.shop.value}');
+          }
+          bool b = await registerController.addAddressToFirebase(x);
+          devtools.log('b : $b');
+          devtools.log('Submitted');
+          return a && b;
+        } else {
+          await EasyLoading.dismiss();
+        }
+      } else {
+        var user = FirebaseAuth.instance.currentUser;
         Shop shopData = Shop(
           password: '',
           email: _email!,
@@ -69,18 +114,17 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
           closingTime: -1,
           ratingAVG: 0,
           sellingTime: -1,
-          shopID: userId!,
+          shopID: user!.uid.toString(),
           isOpen: 'false',
           totalReview: 0,
         );
-
         var uuid = const Uuid();
         String addressID = uuid.v4();
         var location = await LocationHelper.instance.getCurrentLocation();
 
         Address x = Address(
           addressID: addressID,
-          userID: userId,
+          userID: user.uid.toString(),
           address: _address!,
           province: _province!,
           city: _city!,
@@ -91,7 +135,8 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
 
         bool a = await registerController.addShopToFirebase(shopData);
         if (a) {
-          shopController.shop.value = shopData;
+          shopController.shop = shopData.obs;
+
           devtools.log(
               'memberController.member.value : ${shopController.shop.value}');
         }
@@ -99,182 +144,321 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
         devtools.log('b : $b');
         devtools.log('Submitted');
         return a && b;
-      } else {
-        await EasyLoading.dismiss();
       }
     }
   }
 
-  List<Step> stepListMember() => [
-    Step(
-      state: _activeStepIndex <= 0 ? StepState.editing : StepState.complete,
-      title: const Text('Credentials'),
-      content: Column(
-        children: [
-          TextFormField(
-            decoration: const InputDecoration(hintText: 'Email'),
-            validator: (value) =>
-            EmailValidator.validate(value!) ? null : 'Invalid Email',
-            onSaved: (newValue) => _email = newValue,
+  List<Step> stepListMember() => _email == null
+      ? [
+          Step(
+            state:
+                _activeStepIndex <= 0 ? StepState.editing : StepState.complete,
+            title: const Text('Credentials'),
+            content: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(hintText: 'Email'),
+                  validator: (value) =>
+                      EmailValidator.validate(value!) ? null : 'Invalid Email',
+                  onSaved: (newValue) => _email = newValue,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(hintText: 'Password'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 6) {
+                      return 'Please enter password';
+                    }
+                    return null;
+                  },obscureText: true,
+                  onSaved: (newValue) => _password = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(
-            height: 10,
+          Step(
+            state: _activeStepIndex == 1
+                ? StepState.editing
+                : _activeStepIndex > 1
+                    ? StepState.complete
+                    : StepState.indexed,
+            title: const Text('Info'),
+            content: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(hintText: 'Name'),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please enter name'
+                      : null,
+                  onSaved: (newValue) => _shopName = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: const InputDecoration(hintText: 'Phone'),
+                  validator: (value) =>
+                      (value == null || value.isEmpty || value.length < 10)
+                          ? 'Please enter phone number'
+                          : null,
+                  onSaved: (newValue) => _phone = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
-          TextFormField(
-            decoration: const InputDecoration(hintText: 'Password'),
-            validator: (value) {
-              if (value == null || value.isEmpty || value.length < 6) {
-                return 'Please enter password';
-              }
-              return null;
-            },
-            onSaved: (newValue) => _password = newValue,
+          Step(
+            state: _activeStepIndex == 2
+                ? StepState.editing
+                : _activeStepIndex > 2
+                    ? StepState.complete
+                    : StepState.indexed,
+            title: const Text('Address'),
+            content: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(hintText: 'Address'),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please enter address'
+                      : null,
+                  onSaved: (newValue) => _address = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(hintText: 'Province'),
+                  value: _dropDownProvinceValue,
+                  elevation: 16,
+                  menuMaxHeight: 300,
+                  icon: const Icon(Icons.expand_more),
+                  items: provinces.map<DropdownMenuItem<String>>(
+                    (String? provinceValue) {
+                      return DropdownMenuItem(
+                        value: provinceValue,
+                        child: Text(provinceValue!),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (String? provinceValue) {
+                    setState(() {
+                      cities = [];
+                      _dropDownCityValue = null;
+                      _dropDownProvinceValue = provinceValue!;
+                      // devtools.log(provinceValue);
+                      cities = repo.getCityByProvince(provinceValue);
+                      // devtools.log(cities.toString());
+                    });
+                  },
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please select province'
+                      : null,
+                  onSaved: (newValue) => _province = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(hintText: 'City'),
+                  value: _dropDownCityValue,
+                  elevation: 16,
+                  menuMaxHeight: 300,
+                  icon: const Icon(Icons.expand_more),
+                  items: cities.map<DropdownMenuItem<String>>(
+                    (dynamic cityValue) {
+                      return DropdownMenuItem(
+                        value: cityValue,
+                        child: Text(cityValue!),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (String? cityValue) {
+                    setState(() {
+                      _dropDownCityValue = cityValue!;
+                    });
+                  },
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please select city'
+                      : null,
+                  onSaved: (newValue) => _city = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: const InputDecoration(hintText: 'Postal Code'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 5) {
+                      return 'Please enter postal code';
+                    }
+                    return null;
+                  },
+                  onSaved: (newValue) => _postalCode = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          )
+        ]
+      : [
+          Step(
+            state:
+                _activeStepIndex <= 0 ? StepState.editing : StepState.complete,
+            title: const Text('Info'),
+            content: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(hintText: 'Name'),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please enter name'
+                      : null,
+                  onSaved: (newValue) => _shopName = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: const InputDecoration(hintText: 'Phone'),
+                  validator: (value) =>
+                      (value == null || value.isEmpty || value.length < 10)
+                          ? 'Please enter phone number'
+                          : null,
+                  onSaved: (newValue) => _phone = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(
-            height: 10,
+          Step(
+            state: _activeStepIndex == 1
+                ? StepState.editing
+                : _activeStepIndex > 1
+                    ? StepState.complete
+                    : StepState.indexed,
+            title: const Text('Address'),
+            content: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(hintText: 'Address'),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please enter address'
+                      : null,
+                  onSaved: (newValue) => _address = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(hintText: 'Province'),
+                  value: _dropDownProvinceValue,
+                  elevation: 16,
+                  menuMaxHeight: 300,
+                  icon: const Icon(Icons.expand_more),
+                  items: provinces.map<DropdownMenuItem<String>>(
+                    (String? provinceValue) {
+                      return DropdownMenuItem(
+                        value: provinceValue,
+                        child: Text(provinceValue!),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (String? provinceValue) {
+                    setState(() {
+                      cities = [];
+                      _dropDownCityValue = null;
+                      _dropDownProvinceValue = provinceValue!;
+                      // devtools.log(provinceValue);
+                      cities = repo.getCityByProvince(provinceValue);
+                      // devtools.log(cities.toString());
+                    });
+                  },
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please select province'
+                      : null,
+                  onSaved: (newValue) => _province = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(hintText: 'City'),
+                  value: _dropDownCityValue,
+                  elevation: 16,
+                  menuMaxHeight: 300,
+                  icon: const Icon(Icons.expand_more),
+                  items: cities.map<DropdownMenuItem<String>>(
+                    (dynamic cityValue) {
+                      return DropdownMenuItem(
+                        value: cityValue,
+                        child: Text(cityValue!),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (String? cityValue) {
+                    setState(() {
+                      _dropDownCityValue = cityValue!;
+                    });
+                  },
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please select city'
+                      : null,
+                  onSaved: (newValue) => _city = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: const InputDecoration(hintText: 'Postal Code'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 5) {
+                      return 'Please enter postal code';
+                    }
+                    return null;
+                  },
+                  onSaved: (newValue) => _postalCode = newValue,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-    ),
-    Step(
-      state: _activeStepIndex == 1
-          ? StepState.editing
-          : _activeStepIndex > 1
-          ? StepState.complete
-          : StepState.indexed,
-      title: const Text('Info'),
-      content: Column(
-        children: [
-          TextFormField(
-            decoration: const InputDecoration(hintText: 'Name'),
-            validator: (value) => (value == null || value.isEmpty)
-                ? 'Please enter name'
-                : null,
-            onSaved: (newValue) => _shopName = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            keyboardType: TextInputType.phone,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: const InputDecoration(hintText: 'Phone'),
-            validator: (value) =>
-            (value == null || value.isEmpty || value.length < 10)
-                ? 'Please enter phone number'
-                : null,
-            onSaved: (newValue) => _phone = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-    ),
-    Step(
-      state: _activeStepIndex == 2
-          ? StepState.editing
-          : _activeStepIndex > 2
-          ? StepState.complete
-          : StepState.indexed,
-      title: const Text('Address'),
-      content: Column(
-        children: [
-          TextFormField(
-            decoration: const InputDecoration(hintText: 'Address'),
-            validator: (value) => (value == null || value.isEmpty)
-                ? 'Please enter address'
-                : null,
-            onSaved: (newValue) => _address = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          DropdownButtonFormField(
-            decoration: const InputDecoration(hintText: 'Province'),
-            value: _dropDownProvinceValue,
-            elevation: 16,
-            menuMaxHeight: 300,
-            icon: const Icon(Icons.expand_more),
-            items: provinces.map<DropdownMenuItem<String>>(
-                  (String? provinceValue) {
-                return DropdownMenuItem(
-                  value: provinceValue,
-                  child: Text(provinceValue!),
-                );
-              },
-            ).toList(),
-            onChanged: (String? provinceValue) {
-              setState(() {
-                cities = [];
-                _dropDownCityValue = null;
-                _dropDownProvinceValue = provinceValue!;
-                // devtools.log(provinceValue);
-                cities = repo.getCityByProvince(provinceValue);
-                // devtools.log(cities.toString());
-              });
-            },
-            validator: (value) => (value == null || value.isEmpty)
-                ? 'Please select province'
-                : null,
-            onSaved: (newValue) => _province = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          DropdownButtonFormField(
-            decoration: const InputDecoration(hintText: 'City'),
-            value: _dropDownCityValue,
-            elevation: 16,
-            menuMaxHeight: 300,
-            icon: const Icon(Icons.expand_more),
-            items: cities.map<DropdownMenuItem<String>>(
-                  (dynamic cityValue) {
-                return DropdownMenuItem(
-                  value: cityValue,
-                  child: Text(cityValue!),
-                );
-              },
-            ).toList(),
-            onChanged: (String? cityValue) {
-              setState(() {
-                _dropDownCityValue = cityValue!;
-              });
-            },
-            validator: (value) => (value == null || value.isEmpty)
-                ? 'Please select city'
-                : null,
-            onSaved: (newValue) => _city = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: const InputDecoration(hintText: 'Postal Code'),
-            validator: (value) {
-              if (value == null || value.isEmpty || value.length < 5) {
-                return 'Please enter postal code';
-              }
-              return null;
-            },
-            onSaved: (newValue) => _postalCode = newValue,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-    )
-  ];
+        ];
 
   @override
   void initState() {
+    if (FirebaseAuth.instance.currentUser != null) {
+      _email = FirebaseAuth.instance.currentUser?.email;
+      _password = '';
+    }
     provinces = repo.getProvinces();
     // devtools.log(provinces.toString());
     super.initState();
@@ -308,7 +492,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
                 } else {
                   await EasyLoading.show(
                     dismissOnTap: false,
-                    maskType: EasyLoadingMaskType.clear,
+                    maskType: EasyLoadingMaskType.black,
                   );
                   var a = await submitCommand();
                   if (a) {
@@ -316,7 +500,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
                       // TODO change to botNavRouteShop
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         botNavRouteShop,
-                            (route) => false,
+                        (route) => false,
                       );
                     }
                   }
@@ -334,7 +518,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
               },
               onStepTapped: (int index) {
                 setState(
-                      () {
+                  () {
                     _activeStepIndex = index;
                   },
                 );

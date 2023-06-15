@@ -97,7 +97,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
             () => pageVM.isCartEmpty.value
                 ? const SizedBox.shrink()
                 : Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     alignment: Alignment.centerLeft,
                     height: 50,
                     child: Text(

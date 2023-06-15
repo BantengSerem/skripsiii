@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 
 class ShopController extends GetxController {
-  late Rx<Shop> shop = Shop.blank().obs;
+  Rx<Shop> shop = Shop.blank().obs;
   final fireStoreInstance = FirebaseFirestore.instance;
   final RxList<Shop> sellSoonList = RxList<Shop>();
   final RxList<Shop> sellNowList = RxList<Shop>();

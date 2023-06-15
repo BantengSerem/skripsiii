@@ -11,6 +11,9 @@ import 'package:skripsiii/widget/button36x220.dart';
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
+  // final String? email;
+  // final String? password;
+
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
@@ -22,6 +25,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final List<String> option = ['Member', 'Shop'];
   String? dropDownValue;
   String? role;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   // String? dropDownValue;
 
@@ -43,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 color: Color.fromRGBO(56, 56, 56, 1),
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );

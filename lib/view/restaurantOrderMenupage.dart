@@ -197,7 +197,6 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                           );
 
                           if (isMemberCartEmpty) {
-                            print('add data to cart $data');
                             await pageVM.memberController.addMemberShopToCart(
                               memberID:
                                   pageVM.memberController.member.value.memberID,

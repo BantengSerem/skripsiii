@@ -1,10 +1,10 @@
 import 'package:skripsiii/model/userModel.dart';
 
 class Member extends UserParent {
-  late final String memberID;
-  late final String username;
-  late final String name;
-  late final String contacts;
+  late String memberID;
+  late String username;
+  late String name;
+  late String contacts;
   late double latitude;
   late double longitude;
 

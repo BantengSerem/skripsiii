@@ -10,7 +10,7 @@ import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/model/transactionModel.dart';
 
 class MemberController extends GetxController {
-  late Rx<Member> member = Member.blank().obs;
+  Rx<Member> member = Member.blank().obs;
   final Location location = Location();
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;

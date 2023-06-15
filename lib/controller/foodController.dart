@@ -382,8 +382,9 @@ class FoodController extends GetxController {
     var index = streamFoodList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0 && streamFoodList.length > 1)
+      if (event.size == 0 && streamFoodList.length > 1) {
         return deleteStreamFoodList(data['shopID']);
+      }
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -563,8 +564,9 @@ class FoodController extends GetxController {
     var index = streamMemberShareFoodList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0 && streamMemberShareFoodList.length > 1)
+      if (event.size == 0 && streamMemberShareFoodList.length > 1) {
         return deleteStreamMemberShareFoodList();
+      }
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {

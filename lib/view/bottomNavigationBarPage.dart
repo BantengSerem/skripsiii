@@ -61,7 +61,7 @@ class BottomNavigationPage extends StatelessWidget {
       ),
       unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
-        "History",
+        "Profile",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
       selectedColor: const Color.fromRGBO(255, 218, 119, 1),
@@ -103,7 +103,7 @@ class BottomNavigationPage extends StatelessWidget {
       ),
       unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
-        "History",
+        "Profile",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
       selectedColor: const Color.fromRGBO(255, 218, 119, 1),
@@ -129,8 +129,8 @@ class BottomNavigationPage extends StatelessWidget {
     const FindFoodPage(
       key: PageStorageKey<String>('FindFoodPage'),
     ),
-    HistoryPage(
-      key: const PageStorageKey<String>('HistoryPage'),
+    const HistoryPage(
+      key: PageStorageKey<String>('HistoryPage'),
     ),
     const ProfilePage(
       key: PageStorageKey<String>('ProfilePage'),
@@ -143,6 +143,7 @@ class BottomNavigationPage extends StatelessWidget {
     // TODO change later on to shopPages
     final List<Widget> pages = userType == 'member' ? userPages : shopPages;
     BottomNavController pageVM = Get.put(BottomNavController());
+
     return Scaffold(
       body: Obx(() {
         return PageStorage(bucket: bucket, child: pages[pageVM.idx.value]);

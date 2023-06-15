@@ -6,9 +6,9 @@ class Shop extends UserParent {
   // late final String email;
   // @override
   // late final String password;
-  late final String shopID;
-  late final String shopName;
-  late final String contacts;
+  late String shopID;
+  late String shopName;
+  late String contacts;
   late double ratingAVG;
   late int closingTime;
   late int sellingTime;
