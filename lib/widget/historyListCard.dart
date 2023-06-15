@@ -22,7 +22,7 @@ class HistoryListCardBuy extends StatelessWidget {
           Row(
             children: [
               Container(
-                margin: EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
                 // color: Colors.red,
                 height: 80,
                 width: 80,

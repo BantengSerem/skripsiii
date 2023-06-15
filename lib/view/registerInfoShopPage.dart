@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:skripsiii/constants/indonesiaRepo.dart';
 import 'package:skripsiii/constants/route.dart';
@@ -311,9 +310,7 @@ class _RegisterInfoShopPageState extends State<RegisterInfoShopPage> {
                     dismissOnTap: false,
                     maskType: EasyLoadingMaskType.clear,
                   );
-                  print('asdfasdf');
                   var a = await submitCommand();
-                  print(a);
                   if (a) {
                     if (mounted) {
                       // TODO change to botNavRouteShop

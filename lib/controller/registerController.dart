@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:skripsiii/helper/databaseHelper.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'dart:developer' as devtools show log;
-import 'package:http/http.dart' as http;
 import 'package:skripsiii/model/addressModel.dart';
 
 class RegisterController extends GetxController {

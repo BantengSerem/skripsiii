@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:location/location.dart';
 import 'package:skripsiii/model/addressModel.dart';
 import 'package:skripsiii/model/cart.dart';
-import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/ratingModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
@@ -15,7 +14,8 @@ class MemberController extends GetxController {
   final Location location = Location();
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;
-  late LocationData _locationData;
+
+  // late LocationData _locationData;
   final fireStoreInstance = FirebaseFirestore.instance;
 
   void reset() {
@@ -44,9 +44,9 @@ class MemberController extends GetxController {
     }
   }
 
-  Future<void> getLocation() async {
-    _locationData = await location.getLocation();
-  }
+  // Future<void> getLocation() async {
+  //   _locationData = await location.getLocation();
+  // }
 
   Future<bool> checkShopInCart(
       {required String memberID, required String shopID}) async {
@@ -74,7 +74,7 @@ class MemberController extends GetxController {
 
   Future<void> addMemberShopToCart(
       {required String memberID, required String shopID}) async {
-    var res = await fireStoreInstance.collection('cart').doc(memberID).set({
+    await fireStoreInstance.collection('cart').doc(memberID).set({
       'memberID': memberID,
       'shopID': shopID,
     });
@@ -94,37 +94,43 @@ class MemberController extends GetxController {
   }
 
   Future<bool> addDataToCart({required Map<String, dynamic> data}) async {
-    var res = await fireStoreInstance
-        .collection('cart')
-        .doc(data['memberID'])
-        // .collection('cartList')
-        // .doc(data['shopID'])
-        .collection('foodList')
-        .doc(data['foodID'])
-        .set({
-      'foodID': data['foodID'],
-      'qty': data['qty'],
-      'subPrice': data['subPrice'],
-    });
-
-    return false;
+    try {
+      await fireStoreInstance
+          .collection('cart')
+          .doc(data['memberID'])
+          // .collection('cartList')
+          // .doc(data['shopID'])
+          .collection('foodList')
+          .doc(data['foodID'])
+          .set({
+        'foodID': data['foodID'],
+        'qty': data['qty'],
+        'subPrice': data['subPrice'],
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> updateDataToCart({required Map<String, dynamic> data}) async {
-    var res = await fireStoreInstance
-        .collection('cart')
-        .doc(data['memberID'])
-        // .collection('cartList')
-        // .doc(data['shopID'])
-        .collection('foodList')
-        .doc(data['foodID'])
-        .update({
-      'foodID': data['foodID'],
-      'qty': data['qty'],
-      'subPrice': data['subPrice'],
-    });
-
-    return false;
+    try {
+      await fireStoreInstance
+          .collection('cart')
+          .doc(data['memberID'])
+          // .collection('cartList')
+          // .doc(data['shopID'])
+          .collection('foodList')
+          .doc(data['foodID'])
+          .update({
+        'foodID': data['foodID'],
+        'qty': data['qty'],
+        'subPrice': data['subPrice'],
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<String> getCartListShopID(String memberID) async {
@@ -162,22 +168,11 @@ class MemberController extends GetxController {
   }
 
   Future<void> deleteCart({required String memberID}) async {
-    await fireStoreInstance.collection('cart').doc(memberID).delete();
-  }
-
-  Future<void> test({required Map<String, dynamic> data}) async {
-    var res = await fireStoreInstance
-        .collection('cart')
-        .where('memberID', isEqualTo: data['memberID'])
-        .where('shopID', isEqualTo: data['shopID'])
-        .get()
-        .then((result) {
-      result.docs.asMap().forEach((key, value) {
-        // print(value.data()['foodList']);
-        print(value.data());
-      });
-      // result.docs.indexOf(data['list']);
+    var res = await fireStoreInstance.collection('cart').doc(memberID).collection('foodList').get();
+    res.docs.asMap().forEach((key, value) async{
+      await fireStoreInstance.collection('cart').doc(memberID).collection('foodList').doc(value['foodID']).delete();
     });
+    await fireStoreInstance.collection('cart').doc(memberID).delete();
   }
 
   Future<void> createTransction(TransactionModel t) async {
@@ -185,6 +180,7 @@ class MemberController extends GetxController {
       'transactionID': t.transactionID,
       'memberID': t.memberID,
       'shopID': t.shopID,
+      'shopName' : t.shopName,
       'date': t.date,
       'foodList': t.foodList,
       'status': t.status,
@@ -199,10 +195,6 @@ class MemberController extends GetxController {
         .where('userID', isEqualTo: memberID)
         .get();
 
-    res.docs.asMap().forEach((key, value) {
-      print(value.data());
-    });
-    // print(res.docs[0].data());
     return Address.fromMap(res.docs[0]);
   }
 
@@ -248,11 +240,7 @@ class MemberController extends GetxController {
         .where('memberID', isEqualTo: member.value.memberID)
         .get();
 
-    // print(res.docs.asMap().isNotEmpty);
-    res.docs.asMap().forEach((key, value) {
-      var a = Rating.fromMap(value);
-      print(a == null);
-    });
+
 
     return res.docs.asMap().isNotEmpty;
   }

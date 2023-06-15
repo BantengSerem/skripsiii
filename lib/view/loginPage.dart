@@ -1,8 +1,6 @@
-import 'dart:math';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/controller/memberController.dart';
@@ -14,7 +12,6 @@ import 'package:skripsiii/view/forgotPasswordPage.dart';
 import 'package:skripsiii/widget/button36x220.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:get/get.dart';
-import 'dart:developer' as devtools show log;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -49,8 +46,6 @@ class _LoginPageState extends State<LoginPage> {
         x.latitude = location.latitude;
         x.longitude = location.longitude;
         memberController.member.value = x;
-        print(
-            'memberController.member.value : ${memberController.member.value}');
         return 'member';
       } else if (x.runtimeType == Shop) {
         shopController.shop.value = x;
@@ -300,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ForgotPaswordPage(),
+                              builder: (context) => const ForgotPaswordPage(),
                             ),
                           );
                         },

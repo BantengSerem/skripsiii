@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
@@ -213,13 +212,12 @@ class RestaurantMenuVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         await foodController
             .getFoodList(shopController.shop.value.essentialMap());
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       } finally {
         isLoading.value = false;
       }

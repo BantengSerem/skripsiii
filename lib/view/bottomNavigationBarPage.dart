@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:skripsiii/main.dart';
 import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
@@ -14,22 +13,19 @@ class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({Key? key, required this.userType}) : super(key: key);
   final String userType;
 
-  // final HomeVM homeVM = Get.put(HomeVM());
-  // final HistoryPageVM historyVM = Get.put(HistoryPageVM());
-
-  List<SalomonBottomBarItem> memberList = [
+  final List<SalomonBottomBarItem> memberList = [
     SalomonBottomBarItem(
       icon: const Icon(Icons.home),
       activeIcon: const Icon(
         Icons.home,
         color: Color.fromRGBO(56, 56, 56, 1),
       ),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
         "Home",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.food_bank_outlined),
@@ -41,8 +37,8 @@ class BottomNavigationPage extends StatelessWidget {
         "Find Food",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.history_rounded),
@@ -50,12 +46,12 @@ class BottomNavigationPage extends StatelessWidget {
         Icons.history_rounded,
         color: Color.fromRGBO(56, 56, 56, 1),
       ),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
         "History",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.person),
@@ -63,28 +59,28 @@ class BottomNavigationPage extends StatelessWidget {
         Icons.person,
         color: Color.fromRGBO(56, 56, 56, 1),
       ),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
         "History",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
     ),
   ];
 
-  List<SalomonBottomBarItem> shopList = [
+  final List<SalomonBottomBarItem> shopList = [
     SalomonBottomBarItem(
       icon: const Icon(Icons.home),
       activeIcon: const Icon(
         Icons.home,
         color: Color.fromRGBO(56, 56, 56, 1),
       ),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
         "Home",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.history_rounded),
@@ -92,12 +88,12 @@ class BottomNavigationPage extends StatelessWidget {
         Icons.history_rounded,
         color: Color.fromRGBO(56, 56, 56, 1),
       ),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
         "History",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.person),
@@ -105,12 +101,12 @@ class BottomNavigationPage extends StatelessWidget {
         Icons.person,
         color: Color.fromRGBO(56, 56, 56, 1),
       ),
-      unselectedColor: Color.fromRGBO(56, 56, 56, 1),
+      unselectedColor: const Color.fromRGBO(56, 56, 56, 1),
       title: const Text(
         "History",
         style: TextStyle(color: Color.fromRGBO(56, 56, 56, 1)),
       ),
-      selectedColor: Color.fromRGBO(255, 218, 119, 1),
+      selectedColor: const Color.fromRGBO(255, 218, 119, 1),
     ),
   ];
 
@@ -147,16 +143,13 @@ class BottomNavigationPage extends StatelessWidget {
     // TODO change later on to shopPages
     final List<Widget> pages = userType == 'member' ? userPages : shopPages;
     BottomNavController pageVM = Get.put(BottomNavController());
-    print('build whole botNav page');
     return Scaffold(
       body: Obx(() {
-        print('rebuild body');
         return PageStorage(bucket: bucket, child: pages[pageVM.idx.value]);
       }),
       bottomNavigationBar: SafeArea(
         child: Obx(
           () {
-            print('rebuld bottom nav');
             return SalomonBottomBar(
               selectedColorOpacity: 0.6,
               backgroundColor: const Color.fromRGBO(255, 164, 91, 1),

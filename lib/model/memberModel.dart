@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skripsiii/model/userModel.dart';
 
 class Member extends UserParent {

@@ -19,10 +19,4 @@ class HomeBinding implements Bindings {
   }
 }
 
-// class AppPages {
-//   static final pages = [
-//     GetPage(name: '/', page: () => HomePage(), bindings: [
-//
-//     ]),
-//   ];
-// }
+

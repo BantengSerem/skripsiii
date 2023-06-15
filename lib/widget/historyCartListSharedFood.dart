@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:skripsiii/model/sharedFoodModel.dart';
-import 'package:skripsiii/model/transactionModel.dart';
 import 'package:skripsiii/model/transctionShareFood.dart';
 
 class HistoryCartListShareFoodSell extends StatelessWidget {
@@ -13,7 +11,7 @@ class HistoryCartListShareFoodSell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey, width: 1))
         // color: Colors.green,
       ),
@@ -24,7 +22,7 @@ class HistoryCartListShareFoodSell extends StatelessWidget {
           Row(
             children: [
               Container(
-                margin: EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
                 // color: Colors.red,
                 height: 80,
                 width: 80,

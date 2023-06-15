@@ -115,7 +115,7 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
         width: 60,
         child: FittedBox(
           child: FloatingActionButton(
-            backgroundColor: Color.fromRGBO(255, 218, 119, 1),
+            backgroundColor: const Color.fromRGBO(255, 218, 119, 1),
             onPressed: () async {
               // var m = pageVM.memberController.member.value;
               // await pageVM.shopController.getBrowseSoon(m);
@@ -169,7 +169,6 @@ class BrowseRestaurantVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         if (type == 'soon') {
@@ -178,7 +177,7 @@ class BrowseRestaurantVM extends GetxController {
           await shopController.getBrowseNow(memberController.member.value);
         }
       } catch (e) {
-        print(e);
+        isLoading.value = false;
       } finally {
         isLoading.value = false;
       }

@@ -8,8 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/model/foodModel.dart';
-import 'package:skripsiii/model/shopModel.dart';
-import 'package:uuid/uuid.dart';
 
 class EditFoodPage extends StatefulWidget {
   const EditFoodPage({Key? key, required this.food}) : super(key: key);
@@ -96,7 +94,6 @@ class _EditFoodPageState extends State<EditFoodPage> {
                   child: Obx(
                     () {
                       if (pageVM.hasImage.value) {
-                        print("image file being shown");
                         return Image.file(
                           File(_imagePath.value),
                         );
@@ -152,8 +149,8 @@ class _EditFoodPageState extends State<EditFoodPage> {
                         ),
                       ),
                       TextFormField(
-                        initialValue:
-                            '${NumberFormat("#,##0.00", "en_US").format(widget.food.price)}',
+                        initialValue: NumberFormat("#,##0.00", "en_US")
+                            .format(widget.food.price),
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           hintText: 'Rp. 99.999',
@@ -260,7 +257,6 @@ class _EditFoodPageState extends State<EditFoodPage> {
                             _imagePath.value = _image!.path;
                             pageVM.hasImage.value = true;
                             pageVM.initialImageActive.value = false;
-                            print('_image : ${_imagePath.value}');
                           },
                           child: const Text(
                             'Add Image',
@@ -452,41 +448,4 @@ class EditFoodVM extends GetxController {
 
   final RxBool hasImage = false.obs;
   final RxBool initialImageActive = true.obs;
-
-  Future<void> _showMyDialog(
-      BuildContext context, String foodName, Function() func) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Confirm food deletion',
-            style: TextStyle(
-              fontSize: 25,
-            ),
-          ),
-          content: Text(
-            'Food Name : $foodName',
-            style: const TextStyle(
-              fontSize: 20,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                await func();
-                // Navigator.pop(context, 'OK');
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }

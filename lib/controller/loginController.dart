@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:skripsiii/helper/databaseHelper.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
-import 'package:skripsiii/model/userModel.dart';
 import 'dart:developer' as devtools show log;
 
 class LoginController extends GetxController {
@@ -17,7 +16,7 @@ class LoginController extends GetxController {
       GoogleSignIn(scopes: <String>["email"]);
   late GoogleSignInAccount? _googleUser;
 
-  Future verifyEmail(String email) async{
+  Future verifyEmail(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
@@ -30,9 +29,9 @@ class LoginController extends GetxController {
     await DatabaseHelper.instance.updateRole(role, userid);
   }
 
-  Future<void> getUser() async {
-    var res = await DatabaseHelper.instance.getUser();
-  }
+  // Future<void> getUser() async {
+  //   var res = await DatabaseHelper.instance.getUser();
+  // }
 
   Future<void> logout() async {
     await DatabaseHelper.instance.logoutUser();
@@ -53,7 +52,6 @@ class LoginController extends GetxController {
       return userCredential;
     } catch (e) {
       // Handle any errors that occur during authentication
-      print('Sign-in with email and password failed: $e');
       return null;
     }
   }
@@ -82,10 +80,8 @@ class LoginController extends GetxController {
       await DatabaseHelper.instance.loginUser(map);
       return m;
     } else if (shop.docs.isNotEmpty) {
-      print(shop.docs[0].data());
       // Shop s = Shop.fromMap(shop.docs[0]);
       Shop s = Shop.fromJson(shop.docs[0].data());
-      print(s.password);
       var map = {
         'userID': s.shopID,
         // 'password': s.password,
@@ -105,19 +101,15 @@ class LoginController extends GetxController {
     return null;
   }
 
-
   Future<void> registerShop(Map<String, dynamic> data) async {
-    await fireStoreInstance
-        .collection('shop')
-        .doc(data['uid'])
-        .set({
-          'email': data['email'],
-          'shopID': data['uid'],
-        })
-        .then((value) => print('success registering new user'))
-        .onError((error, stackTrace) {
-          print('error while registering new user : $error');
-        });
+    try {
+      await fireStoreInstance.collection('shop').doc(data['uid']).set({
+        'email': data['email'],
+        'shopID': data['uid'],
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future<UserCredential?> registerUserToFirebase(
@@ -133,7 +125,6 @@ class LoginController extends GetxController {
       return userCredential;
     } catch (e) {
       // Handle any errors that occur during authentication
-      print('Sign-in with email and password failed: $e');
       return null;
     }
   }
@@ -214,11 +205,8 @@ class LoginController extends GetxController {
 
   Future<dynamic> googleLogin() async {
     try {
-      _googleUser = await googleSignIn.signIn().onError((error, stackTrace) {
-        print(error);
-      });
+      _googleUser = await googleSignIn.signIn();
 
-      print('_googleUser : ${_googleUser != null}');
       final GoogleSignInAuthentication googleAuth =
           await _googleUser!.authentication;
 
@@ -250,6 +238,5 @@ class LoginController extends GetxController {
   }
 
   void test() {
-    print('current user : ${FirebaseAuth.instance.currentUser}');
   }
 }

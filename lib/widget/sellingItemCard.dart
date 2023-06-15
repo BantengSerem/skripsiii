@@ -17,7 +17,6 @@ class SellingItemCard extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         func();
-        print('item kepencet');
       },
       child: Container(
         height: 220,
@@ -27,7 +26,7 @@ class SellingItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               // color: Colors.yellow,
               width: 150,
               height: 130,
@@ -91,7 +90,7 @@ class SellingItemCard extends StatelessWidget {
                 ),
                 Text(
                   '${data['sellingTime'].toString().substring(0,2)}.${data['sellingTime'].toString().substring(2,4)}',
-                  style: TextStyle(),
+                  style: const TextStyle(),
                 ),
               ],
             ),

@@ -280,7 +280,7 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
               border: Border(
                 top: BorderSide(color: Colors.grey, width: 1),
               ),
-              color: const Color.fromRGBO(255, 164, 91, 1),
+              color: Color.fromRGBO(255, 164, 91, 1),
             ),
             padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -312,7 +312,7 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
                         // splashColor: Colors.redAccent,
@@ -340,7 +340,7 @@ class _FinalizeOrderPageState extends State<FinalizeOrderPage> {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: InkWell(
                         // splashColor: Colors.redAccent,
@@ -405,10 +405,10 @@ class FinalizeOrderVM extends GetxController {
   void init() async {
     isLoading.value = true;
     // List<Cart> foodList = [];
-    foodListMap.forEach((element) {
+    for (var element in foodListMap) {
       var a = Cart.fromMapData(element);
-      foodList.value.add(a);
-    });
+      foodList.add(a);
+    }
 
     for (int i = 0; i < foodList.length; i++) {
       var a = foodList[i];

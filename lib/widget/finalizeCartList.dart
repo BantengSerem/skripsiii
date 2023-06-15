@@ -62,9 +62,7 @@ class FinalizeCartList extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              child: Text('Qty : ${c.qty}'),
-            )
+            Text('Qty : ${c.qty}')
           ],
         ),
       ),

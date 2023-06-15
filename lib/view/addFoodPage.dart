@@ -89,7 +89,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                   child: Obx(
                     () {
                       if (pageVM.hasImage.value) {
-                        print("image file being shown");
                         return Image.file(
                           File(_imagePath.value),
                         );
@@ -245,7 +244,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             _image = await pageVM.foodController.pickImage();
                             _imagePath.value = _image!.path;
                             pageVM.hasImage.value = true;
-                            print('_image : ${_imagePath.value}');
                           },
                           child: const Text(
                             'Add Image',
@@ -306,7 +304,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                   }
                                 } else if (form!.validate()) {
                                   form.save();
-                                  print('valid');
                                   var uuid = const Uuid();
                                   String foodID = uuid.v4();
                                   var foodImageURL = await pageVM.foodController

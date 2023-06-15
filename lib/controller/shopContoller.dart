@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/model/addressModel.dart';
 import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/memberModel.dart';
@@ -29,16 +27,14 @@ class ShopController extends GetxController {
   late DocumentSnapshot? currDocNow;
 
   // final MemberController memberController = Get.find();
-  Future<bool> changeShopTime(int closingTime, int sellingTime) async{
-    try{
-      print(closingTime);
-      print(sellingTime);
+  Future<bool> changeShopTime(int closingTime, int sellingTime) async {
+    try {
       await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
         'closingTime': closingTime,
         'sellingTime': sellingTime,
       });
       return true;
-    }catch(e){
+    } catch (e) {
       return false;
     }
   }
@@ -61,7 +57,6 @@ class ShopController extends GetxController {
     browseSoonList.clear();
     currDocSoon = null;
     firstTimeSoon = true;
-    // print('finish cleaning ');
   }
 
   void cleanBrowseNow() {
@@ -72,35 +67,26 @@ class ShopController extends GetxController {
     browseNowList.clear();
     currDocNow = null;
     firstTimeNow = true;
-    // print('finish cleaning ');
   }
 
   Future<void> init(Member member) async {
     await getSellSoon(member);
     await getSellNow(member);
-    print('finished init');
   }
 
   Future<Address> getShopLoc(Shop shop) async {
     var res = await fireStoreInstance
         .collection('address')
         .where('userID', isEqualTo: shop.shopID)
-        // .where('userID', isEqualTo: 'O5vObIuWE9WwotA2gwkcVuXhW5z1')
         .limit(1)
         .get();
 
-    // res.docs.asMap().forEach((key, value) {
-    //   print(value.data());
-    // });
     final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
 
     return addresses[0];
-    // print(res.);
-    // Address address = Address
   }
 
   Future<void> getSellNow(Member member) async {
-    // print('call getSellSoon');
     var a = DateFormat('HHmmss').format(DateTime.now());
     var b = int.parse(a);
     var snapshot = fireStoreInstance
@@ -112,7 +98,6 @@ class ShopController extends GetxController {
         .orderBy('sellingTime')
         .snapshots()
         .listen((event) {
-      // print(event.docChanges.asMap());
       event.docChanges.asMap().forEach((key, value) async {
         switch (value.type) {
           case DocumentChangeType.added:
@@ -220,7 +205,7 @@ class ShopController extends GetxController {
       streamListNow.last.cancel();
       streamListNow.removeLast();
       getLastDocSnapshotsNow();
-    } else{
+    } else {
       firstTimeNow = true;
     }
     // print('streamList : ${streamListNow}');
@@ -231,7 +216,7 @@ class ShopController extends GetxController {
       streamListSoon.last.cancel();
       streamListSoon.removeLast();
       getLastDocSnapshotsSoon();
-    }else{
+    } else {
       firstTimeNow = true;
     }
     // print('streamList : ${streamListSoon}');
@@ -243,7 +228,7 @@ class ShopController extends GetxController {
           .collection('shop')
           .doc(browseNowList.last.shopID.toString());
       currDocNow = await query.get();
-    }else {
+    } else {
       firstTimeSoon = true;
     }
   }
@@ -254,7 +239,7 @@ class ShopController extends GetxController {
           .collection('shop')
           .doc(browseSoonList.last.shopID.toString());
       currDocSoon = await query.get();
-    }else {
+    } else {
       firstTimeSoon = true;
     }
   }
@@ -287,7 +272,9 @@ class ShopController extends GetxController {
       var index = streamListSoon.length + 1;
 
       var snapshot = query.snapshots().listen((event) {
-        if (event.size == 0 && streamListSoon.length > 1) return deleteStreamSoon();
+        if (event.size == 0 && streamListSoon.length > 1) {
+          return deleteStreamSoon();
+        }
 
         // print(event.docChanges.asMap());
         event.docChanges.asMap().forEach((key, value) async {
@@ -375,7 +362,9 @@ class ShopController extends GetxController {
       var index = streamListNow.length + 1;
 
       var snapshot = query.snapshots().listen((event) {
-        if (event.size == 0 && streamListNow.length > 1) return deleteStreamNow();
+        if (event.size == 0 && streamListNow.length > 1) {
+          return deleteStreamNow();
+        }
 
         // print(event.docChanges.asMap());
         event.docChanges.asMap().forEach((key, value) async {
@@ -435,7 +424,7 @@ class ShopController extends GetxController {
       await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
         'isOpen': 'false',
       });
-      shop.value.isOpen ='false';
+      shop.value.isOpen = 'false';
       return true;
     } catch (e) {
       return false;
@@ -447,7 +436,7 @@ class ShopController extends GetxController {
       await fireStoreInstance.collection('shop').doc(shop.value.shopID).update({
         'isOpen': 'true',
       });
-      shop.value.isOpen ='true';
+      shop.value.isOpen = 'true';
       return true;
     } catch (e) {
       return false;
@@ -475,7 +464,6 @@ class ShopController extends GetxController {
           .get();
 
       res.docs.asMap().forEach((key, value) async {
-        print(value.data()['foodName']);
         await zeroingFoodQty(value.data()['foodID']);
       });
 
@@ -494,50 +482,16 @@ class ShopController extends GetxController {
     return Food.fromMap(res.docs[0]);
   }
 
-  Future<void> test() async {
-    // calculateDistance();
-    // var a = DateFormat('HHmmss').format(DateTime.now());
-    // var b = int.parse(a);
-    // b = 223300;
-    //
-    // var m = '2300';
-    // var h = m.substring(0, 2);
-    // var h1 = m.substring(2);
-    // var h2 = "$h'.'$h1";
-
-    var a = DateFormat('HHmmss').format(DateTime.now());
-    var b = int.parse(a);
-    b = 223000;
-    var res = await fireStoreInstance
-        .collection('shop')
-        .where('time'[0], isGreaterThan: b)
-        .where('time'[1], isLessThanOrEqualTo: b)
-        // .where('sellingTime', isNotEqualTo: -1)
-        // .where('isOpen', isEqualTo: 'true')
-        // .limit(5)
-        // .orderBy('sellingTime')
-        // .where('closingTime', isGreaterThanOrEqualTo: b)
-        .get();
-
-    print(res.docs.asMap());
-    res.docs.asMap().forEach((key, value) {
-      print(value.data());
-    });
-
-    // var res = await fireStoreInstance
-    //     .collection('address')
-    //     .where('userID', isEqualTo: 'O5vObIuWE9WwotA2gwkcVuXhW5z1')
-    //     .limit(1)
-    //     .get();
-    //
-    // // res.docs.asMap().forEach((key, value) {
-    // //   print(value.data());
-    // // });
-    // final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
-    //
-    // print(addresses);
-    // return addresses.first;
-  }
+  // Future<void> test() async {
+  //   var a = DateFormat('HHmmss').format(DateTime.now());
+  //   var b = int.parse(a);
+  //   b = 223000;
+  //   var res = await fireStoreInstance
+  //       .collection('shop')
+  //       .where('time'[0], isGreaterThan: b)
+  //       .where('time'[1], isLessThanOrEqualTo: b)
+  //       .get();
+  // }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getSuggestedRestaurant(
       String query) async {

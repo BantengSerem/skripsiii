@@ -62,8 +62,7 @@ class _ShopHistoryPageState extends State<ShopHistoryPage> {
                 itemCount: pageVM.transactionController.listHistoryItem.length,
                 itemBuilder: (context, idx) {
                   return RestaurantOrderCartList(
-                    func: () async {
-                    },
+                    func: () async {},
                     t: pageVM.transactionController.listHistoryItem[idx],
                   );
                 },
@@ -72,13 +71,6 @@ class _ShopHistoryPageState extends State<ShopHistoryPage> {
           }
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     // await pageVM.transactionController
-      //     //     .test(pageVM.shopController.shop.value.shopID);
-      //     print(pageVM.transactionController.listHistoryItem);
-      //   },
-      // ),
     );
   }
 }
@@ -104,13 +96,12 @@ class ShopHistoryVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         await transactionController
             .getShopHistoryList(shopController.shop.value.shopID);
       } catch (e) {
-        print(e);
+        isLoading.value = false;
       } finally {
         isLoading.value = false;
       }

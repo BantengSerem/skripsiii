@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:skripsiii/model/foodModel.dart';
 
 class CartListCard extends StatelessWidget {
   const CartListCard(
@@ -23,72 +22,61 @@ class CartListCard extends StatelessWidget {
         border: Border.all(color: Colors.grey, width: 1),
         // color: Colors.green,
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       height: 100,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            color: Colors.red,
-            height: 80,
-            width: 80,
-            child: Image.network(
-              foodURL,
-              fit: BoxFit.cover,
+          Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(10),
+                color: Colors.red,
+                height: 80,
+                width: 80,
+                child: Image.network(
+                  foodURL,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    foodName,
+                    style: const TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Qty : ${qty.toString()}',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+            ],
+          ),
+          Text(
+            'Rp. ${NumberFormat("#,##0.00", "en_US").format(subPrice)}',
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(width: 5,),
-          Text(
-            qty.toString(),
-          ),
-          const SizedBox(width: 5,),
-          Text(
-            foodName,
-          ),
-          const SizedBox(width: 5,),
-          Text(
-            '${NumberFormat("#,##0.00", "en_US").format(subPrice)}',
-          ),
-          // Column(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     Text('${food.shopName}'),
-          //     Row(
-          //       children: [
-          //         Text('${shop.distance} km'),
-          //         const Text(' | '),
-          //         Row(
-          //           children: [
-          //             Text(
-          //               '${shop.ratingAVG}',
-          //             ),
-          //             const Icon(
-          //               Icons.star,
-          //               color: Colors.yellow,
-          //             ),
-          //           ],
-          //         ),
-          //       ],
-          //     ),
-          //     type == 'now'
-          //         ? const Text('Open')
-          //         : Row(
-          //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //       children: [
-          //         const Text(
-          //           'Open on  ',
-          //           style: TextStyle(
-          //             color: Colors.redAccent,
-          //           ),
-          //         ),
-          //         Text(
-          //           '${shop.sellingTime.toString().substring(0, 2)}.${shop.sellingTime.toString().substring(2, 4)}',
-          //           style: TextStyle(),
-          //         ),
-          //       ],
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );

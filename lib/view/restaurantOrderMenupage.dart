@@ -3,7 +3,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:path/path.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
@@ -11,7 +10,6 @@ import 'package:skripsiii/model/foodModel.dart';
 import 'package:skripsiii/model/ratingModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
-import 'package:skripsiii/view/editFoodPage.dart';
 import 'package:skripsiii/view/memberCartPage.dart';
 import 'package:skripsiii/widget/foodCustomListCard.dart';
 import 'package:uuid/uuid.dart';
@@ -34,7 +32,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
       required Food food,
       required Shop shop,
       required Function() func}) async {
-    RxInt _count = 0.obs;
+    RxInt count = 0.obs;
     // TextEditingController tc =
     //     TextEditingController(text: _count.value.toString());
     showDialog<void>(
@@ -96,8 +94,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       width: 40,
                       child: InkWell(
                         onTap: () {
-                          if (_count.value > 0) {
-                            _count.value -= 1;
+                          if (count.value > 0) {
+                            count.value -= 1;
                           }
                         },
                         child: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -118,7 +116,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       width: 55,
                       child: Obx(
                         () => Text(
-                          _count.value.toString(),
+                          count.value.toString(),
                           style: const TextStyle(
                             fontSize: 20,
                           ),
@@ -141,8 +139,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       child: InkWell(
                         onTap: () {
                           // var a = int.parse(tc.text);
-                          if (_count.value < food.qty) {
-                            _count.value += 1;
+                          if (count.value < food.qty) {
+                            count.value += 1;
                           }
                         },
                         child: const Icon(Icons.arrow_forward_ios_rounded),
@@ -160,7 +158,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                     () => ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            _count.value > 0 && _count.value <= food.qty
+                            count.value > 0 && count.value <= food.qty
                                 ? const MaterialStatePropertyAll<Color>(
                                     Colors.greenAccent,
                                   )
@@ -170,7 +168,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       ),
                       onPressed: () async {
                         await func();
-                        if (_count > 0 && _count <= food.qty) {
+                        if (count > 0 && count <= food.qty) {
                           await EasyLoading.show(
                             dismissOnTap: false,
                             maskType: EasyLoadingMaskType.black,
@@ -181,8 +179,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                                 pageVM.memberController.member.value.memberID,
                             'shopID': shop.shopID,
                             'foodID': food.foodID,
-                            'qty': _count.value,
-                            'subPrice': food.price * _count.value,
+                            'qty': count.value,
+                            'subPrice': food.price * count.value,
                           };
 
                           var isThisShopInCart =
@@ -191,16 +189,15 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                                 pageVM.memberController.member.value.memberID,
                             shopID: shop.shopID,
                           );
-                          print(isThisShopInCart);
 
                           var isMemberCartEmpty =
                               await pageVM.memberController.checkMemberCart(
                             memberID:
                                 pageVM.memberController.member.value.memberID,
                           );
-                          print(isMemberCartEmpty);
 
                           if (isMemberCartEmpty) {
+                            print('add data to cart $data');
                             await pageVM.memberController.addMemberShopToCart(
                               memberID:
                                   pageVM.memberController.member.value.memberID,
@@ -212,14 +209,14 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             if (mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(duration: Duration(seconds: 1),
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
                                       content: Text(
                                           'Successfully add item to cart')));
                             }
                           } else if (isThisShopInCart) {
                             var isFoodInCart = await pageVM.memberController
                                 .checkFoodCart(data: data);
-                            print(isFoodInCart);
                             if (isFoodInCart) {
                               await pageVM.memberController
                                   .updateDataToCart(data: data);
@@ -231,7 +228,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             if (mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(duration: Duration(seconds: 1),
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
                                       content: Text(
                                           'Successfully add item to cart')));
                             }
@@ -240,7 +238,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             if (mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(duration: Duration(seconds: 1),
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
                                       content:
                                           Text('You still unfinished cart')));
                             }
@@ -250,7 +249,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       child: Text(
                         'Submit',
                         style: TextStyle(
-                            color: _count.value > 0 && _count.value <= food.qty
+                            color: count.value > 0 && count.value <= food.qty
                                 ? Colors.black54
                                 : Colors.white),
                       ),
@@ -282,7 +281,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
   }
 
   Future<void> notRated({required BuildContext context}) async {
-    RxInt _rate = 0.obs;
+    RxInt rate = 0.obs;
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -312,8 +311,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       width: 40,
                       child: InkWell(
                         onTap: () {
-                          if (_rate.value > 0) {
-                            _rate.value -= 1;
+                          if (rate.value > 0) {
+                            rate.value -= 1;
                           }
                         },
                         child: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -334,7 +333,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       width: 55,
                       child: Obx(
                         () => Text(
-                          _rate.value.toString(),
+                          rate.value.toString(),
                           style: const TextStyle(
                             fontSize: 20,
                           ),
@@ -357,8 +356,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       child: InkWell(
                         onTap: () {
                           // var a = int.parse(tc.text);
-                          if (_rate.value < 5) {
-                            _rate.value += 1;
+                          if (rate.value < 5) {
+                            rate.value += 1;
                           }
                         },
                         child: const Icon(Icons.arrow_forward_ios_rounded),
@@ -375,7 +374,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                   child: Obx(
                     () => ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: _rate.value > 0 && _rate.value <= 5
+                        backgroundColor: rate.value > 0 && rate.value <= 5
                             ? const MaterialStatePropertyAll<Color>(
                                 Colors.greenAccent,
                               )
@@ -386,21 +385,21 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                       onPressed: () async {
                         var uuid = const Uuid();
                         String ratingID = uuid.v4();
-                        if (_rate.value > 0 && _rate.value <= 5) {
+                        if (rate.value > 0 && rate.value <= 5) {
                           var rating = Rating(
                             ratingID: ratingID,
                             shopID: pageVM.shop.shopID,
                             memberID:
                                 pageVM.memberController.member.value.memberID,
-                            rating: _rate.value,
+                            rating: rate.value,
                           );
 
-                          var res1 = await pageVM.memberController
+                          await pageVM.memberController
                               .createRating(rating: rating);
                           double avg = pageVM.memberController.calculateAVG(
                               pageVM.shop.ratingAVG,
                               pageVM.shop.totalReview,
-                              _rate.value);
+                              rate.value);
                           pageVM.shop.ratingAVG = avg;
                           pageVM.shop.totalReview += 1;
 
@@ -415,7 +414,8 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             if (mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(duration: Duration(seconds: 1),
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
                                       content: Text('Thanks for your rate')));
                             }
                           } else {
@@ -424,19 +424,18 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             if (mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(duration: Duration(seconds: 1),
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
                                       content: Text('Something went wrong')));
                             }
                           }
-                          setState(() {
-
-                          });
+                          setState(() {});
                         }
                       },
                       child: Text(
                         'Submit',
                         style: TextStyle(
-                            color: _rate.value > 0 && _rate.value <= 5
+                            color: rate.value > 0 && rate.value <= 5
                                 ? Colors.black54
                                 : Colors.white),
                       ),
@@ -564,8 +563,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                         Row(
                           children: [
                             Text(
-                              pageVM.shop.ratingAVG
-                                  .toString(),
+                              pageVM.shop.ratingAVG.toString(),
                               style: const TextStyle(fontSize: 18),
                             ),
                             const Icon(
@@ -605,11 +603,10 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                             var a = DateFormat('HHmmss').format(DateTime.now());
                             var b = int.parse(a);
 
-                            print(b);
-                            print(pageVM.shop.sellingTime);
                             if (pageVM.shop.sellingTime > b) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(duration: Duration(seconds: 1),
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
                                       content: Text('Store is not open yet')));
                             } else {
                               alert(
@@ -632,7 +629,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
         height: 60,
         child: FittedBox(
           child: FloatingActionButton(
-            backgroundColor: Color.fromRGBO(255, 218, 119, 1),
+            backgroundColor: const Color.fromRGBO(255, 218, 119, 1),
             onPressed: () async {
               Navigator.push(
                   context,
@@ -693,12 +690,11 @@ class RestaurantOrderMenuVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         await foodController.getFoodList(shop.essentialMap());
       } catch (e) {
-        print(e);
+        isLoading.value = false;
       } finally {
         isLoading.value = false;
       }

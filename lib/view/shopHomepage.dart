@@ -238,13 +238,12 @@ class ShopHomeVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         await transactionController
             .getAllDataShop(shopController.shop.value.shopID);
       } catch (e) {
-        print(e);
+        isLoading.value = false;
       } finally {
         isLoading.value = false;
       }

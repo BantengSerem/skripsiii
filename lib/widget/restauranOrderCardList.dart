@@ -12,7 +12,7 @@ class RestaurantOrderCartList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 90,
-      margin: EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.symmetric(horizontal: 15),
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(color: Colors.grey, width: 1,),

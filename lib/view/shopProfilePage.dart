@@ -84,189 +84,187 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
           )
         ],
       ),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              // color: Colors.red,
-              height: 150,
-              child: Row(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                        left: 20, top: 10, bottom: 10, right: 10),
-                    // color: Colors.yellow,
-                    height: 130,
-                    width: 130,
-                    child: Image.asset(
-                      'data/images/profileIcon.png',
-                      fit: BoxFit.cover,
-                      color: const Color.fromRGBO(56, 56, 56, 1),
-                    ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            // color: Colors.red,
+            height: 150,
+            child: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                      left: 20, top: 10, bottom: 10, right: 10),
+                  // color: Colors.yellow,
+                  height: 130,
+                  width: 130,
+                  child: Image.asset(
+                    'data/images/profileIcon.png',
+                    fit: BoxFit.cover,
+                    color: const Color.fromRGBO(56, 56, 56, 1),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(56, 56, 56, 1),
-                        ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Name',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(56, 56, 56, 1),
                       ),
-                      Obx(
-                        () => Text(
-                          pageVM.shopController.shop.value.shopName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            // fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text(
-                        'Email',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(56, 56, 56, 1),
-                        ),
-                      ),
-                      Obx(
-                        () => Text(
-                          pageVM.shopController.shop.value.email,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            // fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const Divider(
-              color: Colors.grey,
-              thickness: 1,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 20),
-              child: Obx(
-                () {
-                  return Row(
-                    children: [
-                      const Text(
-                        'Your shop is ',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        pageVM.shopController.shop.value.isOpen == 'false'
-                            ? 'CLOSE'
-                            : 'OPEN',
+                    ),
+                    Obx(
+                      () => Text(
+                        pageVM.shopController.shop.value.shopName,
                         style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const Text(
-                        ' now',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
-                children: [
-                  Container(
-                    height: 35,
-                    width: 90,
-                    child: ElevatedButton(
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          Colors.red,
+                          fontSize: 20,
+                          // fontWeight: FontWeight.bold,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
-                      child: const Text('Close'),
-                      onPressed: () async {
-                        await pageVM.shopController.closeShop();
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Text(
+                      'Email',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(56, 56, 56, 1),
+                      ),
+                    ),
+                    Obx(
+                      () => Text(
+                        pageVM.shopController.shop.value.email,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          const Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 20),
+            child: Obx(
+              () {
+                return Row(
+                  children: [
+                    const Text(
+                      'Your shop is ',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      pageVM.shopController.shop.value.isOpen == 'false'
+                          ? 'CLOSE'
+                          : 'OPEN',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      ' now',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 20),
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 35,
+                  width: 90,
+                  child: ElevatedButton(
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                        Colors.red,
+                      ),
+                    ),
+                    child: const Text('Close'),
+                    onPressed: () async {
+                      await pageVM.shopController.closeShop();
+                      // pageVM.shopController.shop.value.isOpen = 'false';
+                      await pageVM.shopController.zeroingAllFoodQty();
+                      setState(() {
                         // pageVM.shopController.shop.value.isOpen = 'false';
-                        await pageVM.shopController.zeroingAllFoodQty();
-                        setState(() {
-                          // pageVM.shopController.shop.value.isOpen = 'false';
-                        });
-                      },
-                    ),
+                      });
+                    },
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  SizedBox(
-                    height: 35,
-                    width: 90,
-                    child: ElevatedButton(
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          Colors.green,
-                        ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                SizedBox(
+                  height: 35,
+                  width: 90,
+                  child: ElevatedButton(
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                        Colors.green,
                       ),
-                      child: const Text('Open'),
-                      onPressed: () async {
-                        await pageVM.shopController.openShop();
-                        // pageVM.shopController.shop.value.isOpen = 'true';
-                        setState(() {
-                          // pageVM.shopController.shop.value.isOpen = 'true';
-                        });
-                      },
                     ),
+                    child: const Text('Open'),
+                    onPressed: () async {
+                      await pageVM.shopController.openShop();
+                      // pageVM.shopController.shop.value.isOpen = 'true';
+                      setState(() {
+                        // pageVM.shopController.shop.value.isOpen = 'true';
+                      });
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const Divider(
-              color: Colors.grey,
-              thickness: 1.5,
-              indent: 20,
-              endIndent: 20,
-            ),
-            ProfileButton(
+          ),
+          const Divider(
+            color: Colors.grey,
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 20,
+          ),
+          ProfileButton(
+            func: () async {
+              Navigator.of(context).push(
+                SlideFadeTransition(
+                  child: const RestaurantMenuPage(),
+                ),
+              );
+            },
+            title: 'Add New Menu',
+          ),
+          ProfileButton(
               func: () async {
                 Navigator.of(context).push(
                   SlideFadeTransition(
-                    child: const RestaurantMenuPage(),
+                    child: const SellingTimeSettingsPage(),
                   ),
                 );
               },
-              title: 'Add New Menu',
-            ),
-            ProfileButton(
-                func: () async {
-                  Navigator.of(context).push(
-                    SlideFadeTransition(
-                      child: const SellingTimeSettingsPage(),
-                    ),
-                  );
-                },
-                title: 'Selling Time Setting'),
-          ],
-        ),
+              title: 'Selling Time Setting'),
+        ],
       ),
     );
   }

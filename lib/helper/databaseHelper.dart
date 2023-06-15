@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:skripsiii/model/userModel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -41,15 +40,12 @@ class DatabaseHelper {
     var res = await db.rawQuery('''
     SELECT * FROM user
     ''');
-    print(res.length);
-    print(res.isNotEmpty);
     return res.isNotEmpty;
   }
 
   getUser() async {
     final db = await database;
     var res = await db.rawQuery("SELECT * FROM user");
-    print(res);
     // return res.map((e) => UserModel.fromJson(e)).toList();
   }
 

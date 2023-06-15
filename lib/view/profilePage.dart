@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
+import 'package:skripsiii/model/sharedFoodModel.dart';
 import 'package:skripsiii/view/FindFoodPage.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
 import 'package:skripsiii/view/historyPage.dart';
 import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 import 'package:skripsiii/widget/nodata.dart';
+import 'package:skripsiii/widget/profileSharedCartList.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -34,6 +37,82 @@ class _ProfilePageState extends State<ProfilePage> {
     // TODO: implement dispose
     super.dispose();
     Get.delete<ProfileVM>();
+  }
+
+  Future<void> alertCanceled(
+      {required BuildContext context, required SharedFood sf}) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            textAlign: TextAlign.center,
+            'Confirm to cancel this order',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
+              ),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
+              ),
+              child: const Text(
+                'Confirm',
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+              onPressed: () async {
+                await EasyLoading.show(
+                  dismissOnTap: false,
+                  maskType: EasyLoadingMaskType.clear,
+                );
+                var res = await pageVM.foodController.deleteSharedFoodData(sf);
+                EasyLoading.dismiss();
+                if (res) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      duration: Duration(seconds: 1),
+                      content: Text('Share food has been deleted'),
+                    ));
+                  }
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      duration: Duration(seconds: 1),
+                      content: Text('Something went wrong'),
+                    ));
+                  }
+                }
+                if (mounted) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -176,16 +255,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   controller: pageVM.scrollController,
                   itemCount: pageVM.foodController.shareMemberFoodList.length,
                   itemBuilder: (context, idx) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      height: 80,
-                      color: Colors.red,
-                      child: Text(
-                        '${pageVM.foodController.shareMemberFoodList[idx].sharedFoodName} and ${pageVM.foodController.shareMemberFoodList[idx].status}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
+                    return ProfileSharedCartList(
+                      sf: pageVM.foodController.shareMemberFoodList[idx],
+                      func: () async {
+                        await alertCanceled(
+                          context: context,
+                          sf: pageVM.foodController.shareMemberFoodList[idx],
+                        );
+                      },
                     );
                   },
                 );
@@ -196,13 +273,6 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     // print(pageVM.foodController.shareMemberFoodList.length);
-      //     await pageVM.foodController
-      //         .test(pageVM.memberController.member.value.memberID);
-      //   },
-      // ),
     );
   }
 }
@@ -233,13 +303,12 @@ class ProfileVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         await foodController
             .getMemberShareFoodList(memberController.member.value.memberID);
       } catch (e) {
-        print(e);
+        isLoading.value = false;
       } finally {
         isLoading.value = false;
       }

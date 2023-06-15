@@ -75,7 +75,6 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
 
       var userCred =
       await registerController.registerMember(_email!, _password!);
-      print('userCred : $userCred');
       if (userCred != null) {
         Member m = Member(
           email: _email!,
@@ -100,16 +99,12 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
           longitude: location.longitude,
         );
         bool a = await registerController.addMemberToFirebase(m);
-        print('a : $a');
         if (a) {
           m.latitude = x.latitude;
           m.longitude = x.longitude;
           memberController.member.value = m;
-          print(
-              'memberController.member.value : ${memberController.member.value}');
         }
         bool b = await registerController.addAddressToFirebase(x);
-        print('b : $b');
         devtools.log('Submitted');
         return a && b;
       } else {
@@ -334,9 +329,7 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
                     dismissOnTap: false,
                     maskType: EasyLoadingMaskType.clear,
                   );
-                  print('asdfasdf');
                   var a = await submitCommand();
-                  print(a);
                   if (a) {
                     if (mounted) {
                       Navigator.of(context).pushNamedAndRemoveUntil(

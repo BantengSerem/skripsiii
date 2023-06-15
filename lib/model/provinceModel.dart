@@ -9,9 +9,9 @@ class ProvinceModel {
         cities = json['kota'].cast<String>();
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['provinsi'] = this.province;
-    data['kota'] = this.cities;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['provinsi'] = province;
+    data['kota'] = cities;
     return data;
   }
 }

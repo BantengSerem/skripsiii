@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/model/transactionModel.dart';
 import 'package:skripsiii/model/transctionShareFood.dart';
 
@@ -28,19 +27,16 @@ class TransactionController extends GetxController {
       element.cancel();
     }
     streamHistoryList.clear();
-    print('streamList : ${streamHistoryList}');
     listHistoryItem.clear();
     currDocHistory = null;
     firstTimeHistory = true;
   }
 
   void resetShopHome() {
-    print('reset password');
     for (var element in streamList) {
       element.cancel();
     }
     streamList.clear();
-    print('streamList : ${streamList}');
     listItem.clear();
     currDoc = null;
     firstTime = true;
@@ -51,7 +47,6 @@ class TransactionController extends GetxController {
       element.cancel();
     }
     streamList.clear();
-    print('streamList : ${streamList}');
     listItem.clear();
     currDoc = null;
     firstTime = true;
@@ -60,7 +55,6 @@ class TransactionController extends GetxController {
       element.cancel();
     }
     streamHistoryList.clear();
-    print('streamList : ${streamHistoryList}');
     listHistoryItem.clear();
     currDocHistory = null;
     firstTimeHistory = true;
@@ -71,7 +65,6 @@ class TransactionController extends GetxController {
       element.cancel();
     }
     streamList.clear();
-    print('streamList : ${streamList}');
     listItem.clear();
     currDoc = null;
     firstTime = true;
@@ -85,7 +78,6 @@ class TransactionController extends GetxController {
     } else {
       firstTime = true;
     }
-    print('streamList : ${streamList}');
   }
 
   void getLastDocSnapshots() async {
@@ -101,7 +93,6 @@ class TransactionController extends GetxController {
 
   Future<void> getAllDataShop(String shopID) async {
     late Query query;
-    print(firstTime);
     if (firstTime) {
       query = fireStoreInstance
           .collection('transaction')
@@ -181,7 +172,6 @@ class TransactionController extends GetxController {
       firstTimeHistory = true;
     }
     firstTimeHistory = true;
-    print('streamHistoryList : ${streamHistoryList}');
   }
 
   void getLastDocSnapshotsHistory() async {
@@ -222,7 +212,9 @@ class TransactionController extends GetxController {
     var index = streamHistoryList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0 && streamHistoryList.length > 1) return deleteStreamHistory();
+      if (event.size == 0 && streamHistoryList.length > 1) {
+        return deleteStreamHistory();
+      }
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -287,7 +279,9 @@ class TransactionController extends GetxController {
     var index = streamHistoryList.length + 1;
 
     var snapshot = query.snapshots().listen((event) {
-      if (event.size == 0 && streamHistoryList.length > 1) return deleteStreamHistory();
+      if (event.size == 0 && streamHistoryList.length > 1) {
+        return deleteStreamHistory();
+      }
 
       event.docChanges.asMap().forEach((key, value) {
         switch (value.type) {
@@ -340,11 +334,8 @@ class TransactionController extends GetxController {
     List<TransactionModel> l = [];
 
     res.docs.asMap().forEach((key, value) {
-      print(value.data());
       l.add(TransactionModel.fromMap(value));
     });
-
-    print(l);
   }
 
   Future<bool> statusToCompleted(String transactionID) async {

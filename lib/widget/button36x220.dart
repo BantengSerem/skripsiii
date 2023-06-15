@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class Button36x220 extends StatelessWidget {
-  String text;
-  Function() func;
+  final String text;
+  final Function() func;
 
-  Button36x220({Key? key, required this.text, required this.func})
+  const Button36x220({Key? key, required this.text, required this.func})
       : super(key: key);
 
   @override
@@ -16,13 +14,13 @@ class Button36x220 extends StatelessWidget {
       width: 220,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(174, 230, 230, 1.0)),
+            backgroundColor: const Color.fromRGBO(174, 230, 230, 1.0)),
         onPressed: () async {
           func();
         },
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromRGBO(56, 56, 56, 1),
           ),
         ),

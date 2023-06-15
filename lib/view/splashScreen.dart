@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,10 +7,7 @@ import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/helper/location.dart';
-import 'package:skripsiii/model/memberModel.dart';
-import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/view/bottomNavigationBarPage.dart';
-import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/registerPage.dart';
 import 'package:skripsiii/view/welcomePage.dart';
 
@@ -57,14 +53,11 @@ class SplashScreenPageState extends State<SplashScreenPage> {
             var location = await LocationHelper.instance.getCurrentLocation();
             m.latitude = location.latitude;
             m.longitude = location.longitude;
-            print("this is splash for member : $m");
             memberController.member.value = m;
           } else if (data['role'] == 'shop') {
             var s = await loginController.getShopData(data['email']);
-            print("this is splash for shop : $s");
             shopController.shop.value = s;
           }
-          print('user role : ${data['role']}');
           return BottomNavigationPage(
             userType: data['role'],
           );

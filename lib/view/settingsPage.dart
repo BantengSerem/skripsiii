@@ -74,7 +74,7 @@ class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
               height: 15,
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
                   SizedBox(
@@ -107,7 +107,6 @@ class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
                                 var s =
                                     '${timeOfDay.hour}${timeOfDay.minute}00';
                                 int a = int.parse(s);
-                                print(a);
                                 pageVM.sellingTime.value =
                                     '${timeOfDay.hour}.${timeOfDay.minute}';
                                 pageVM.changeSell.value = a;
@@ -160,7 +159,6 @@ class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
                                 pageVM.closingTime.value =
                                     '${timeOfDay.hour}.${timeOfDay.minute}';
                                 pageVM.changeClose.value = a;
-                                print(a);
                                 pageVM.isChange.value = true;
                               }
                             },
@@ -208,8 +206,6 @@ class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
                               content: Text('Save Changes'),
                             ));
                           }
-                          print(pageVM.changeClose.value);
-                          print(pageVM.changeSell.value);
                         } else {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(

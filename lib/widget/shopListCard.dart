@@ -24,7 +24,7 @@ class ShopListCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              margin: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
               color: Colors.red,
               height: 80,
               width: 80,
@@ -37,7 +37,7 @@ class ShopListCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${shop.shopName}'),
+                Text(shop.shopName),
                 Row(
                   children: [
                     Text('${shop.distance} km'),
@@ -68,7 +68,7 @@ class ShopListCard extends StatelessWidget {
                           ),
                           Text(
                             '${shop.sellingTime.toString().substring(0, 2)}.${shop.sellingTime.toString().substring(2, 4)}',
-                            style: TextStyle(),
+                            style: const TextStyle(),
                           ),
                         ],
                       ),

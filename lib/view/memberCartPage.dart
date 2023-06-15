@@ -67,7 +67,7 @@ class _MemberCartPageState extends State<MemberCartPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Cart',
+          'Your Cart',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 25,
@@ -91,15 +91,22 @@ class _MemberCartPageState extends State<MemberCartPage> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Obx(
             () => pageVM.isCartEmpty.value
                 ? const SizedBox.shrink()
-                : SizedBox(
+                : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    alignment: Alignment.centerLeft,
                     height: 50,
                     child: Text(
                       pageVM.shop.shopName,
-                      style: const TextStyle(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                        color: Color.fromRGBO(56, 56, 56, 1),
+                      ),
                     ),
                   ),
           ),
@@ -161,128 +168,180 @@ class _MemberCartPageState extends State<MemberCartPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                InkWell(
-                  splashColor: Colors.redAccent,
-                  onTap: () async {
-                    await EasyLoading.show(
-                      dismissOnTap: false,
-                      maskType: EasyLoadingMaskType.black,
-                    );
-                    if (!pageVM.isCartEmpty.value) {
-                      bool isCorrect = true;
-                      pageVM.cartList.forEach((element) async {
-                        var isFalse = await pageVM.foodController
-                            .checkFoodCartList(element);
-                        if (isFalse) {
-                          isCorrect = false;
-                          await pageVM.memberController.removeCartItem(
-                            memberID:
-                                pageVM.memberController.member.value.memberID,
-                            cart: element,
-                          );
-                          pageVM.cartList
-                              .removeWhere((a) => a.foodID == element.foodID);
-                        }
-                      });
-
-                      if (pageVM.cartList.isEmpty) {
-                        await pageVM.memberController.deleteCart(
-                          memberID:
-                              pageVM.memberController.member.value.memberID,
-                        );
-                        pageVM.isCartEmpty.value = true;
-                        pageVM.foodList.clear();
-                      }
-                      if (isCorrect) {
-                        List<Map<String, dynamic>> l = [];
-                        for (var element in pageVM.cartList) {
-                          l.add({
-                            'foodID': element.foodID,
-                            'subPrice': element.subPrice,
-                            'qty': element.qty,
-                          });
-                          await pageVM.shopController
-                              .updateFoodQty(element.foodID, element.qty);
-                        }
-                        var uuid = const Uuid();
-                        String transacID = uuid.v4();
-
-                        var transaction = TransactionModel(
-                          shopID: pageVM.shop.shopID,
-                          memberID:
-                              pageVM.memberController.member.value.memberID,
-                          transactionID: transacID,
-                          foodList: l,
-                          date: DateTime.now(),
-                          status: 'ongoing',
-                          totalPrice: pageVM._totalPrice.value,
-                          memberName: pageVM.memberController.member.value.name,
-                          shopName: pageVM.shop.shopName,
-                        );
-                        await pageVM.memberController
-                            .createTransction(transaction);
-                        await pageVM.memberController.deleteCart(
-                          memberID:
-                              pageVM.memberController.member.value.memberID,
-                        );
-
-                        pageVM.isCartEmpty.value = true;
-                        pageVM.foodList.clear();
-
-                        EasyLoading.dismiss();
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(duration: Duration(seconds: 1),
-                                  content:
-                                      Text('Successfully create transaction')));
-
-                          Navigator.of(context)
-                              .popUntil((route) => route.isFirst);
-                        }
-                      } else {
-                        EasyLoading.dismiss();
-                        if (mounted) {
-                          alert(context: context);
-                        }
-                      }
-                    } else {
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(duration: Duration(seconds: 1),
-                            content: Text('Your cart is empty'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: 120,
+                      child: InkWell(
+                        splashColor: Colors.redAccent,
+                        onTap: () async {
+                          await pageVM.memberController.deleteCart(
+                              memberID: pageVM
+                                  .memberController.member.value.memberID);
+                        },
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        child: Obx(
+                          () => Container(
+                            // width: MediaQuery.of(context).size.width * 0.85,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: pageVM.isCartEmpty.value
+                                    ? Colors.grey
+                                    : Colors.red,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Clean',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: pageVM.isCartEmpty.value
+                                    ? const Color.fromRGBO(56, 56, 56, 1)
+                                    : Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                // color: Color
+                              ),
+                            ),
                           ),
-                        );
-                      }
-                    }
-                    EasyLoading.dismiss();
-                  },
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  child: Container(
-                    // width: MediaQuery.of(context).size.width * 0.85,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: pageVM.isCartEmpty.value
-                            ? Colors.grey
-                            : Colors.greenAccent,
-                        borderRadius: const BorderRadius.all(Radius.circular(10))),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Order',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: pageVM.isCartEmpty.value
-                            ? const Color.fromRGBO(56, 56, 56, 1)
-                            : Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        // color: Color
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
+                    SizedBox(
+                      height: 40,
+                      width: 120,
+                      child: InkWell(
+                        splashColor: Colors.redAccent,
+                        onTap: () async {
+                          await EasyLoading.show(
+                            dismissOnTap: false,
+                            maskType: EasyLoadingMaskType.black,
+                          );
+                          if (!pageVM.isCartEmpty.value) {
+                            bool isCorrect = true;
+                            for (var element in pageVM.cartList) {
+                              var isFoodQtyEmpty = await pageVM.foodController
+                                  .checkFoodCartList(element);
+                              if (isFoodQtyEmpty) {
+                                isCorrect = false;
+                                await pageVM.memberController.removeCartItem(
+                                  memberID: pageVM
+                                      .memberController.member.value.memberID,
+                                  cart: element,
+                                );
+                                pageVM.cartList.removeWhere(
+                                    (a) => a.foodID == element.foodID);
+                              }
+                            }
+
+                            if (pageVM.cartList.isEmpty) {
+                              await pageVM.memberController.deleteCart(
+                                memberID: pageVM
+                                    .memberController.member.value.memberID,
+                              );
+                              pageVM.isCartEmpty.value = true;
+                              pageVM.foodList.clear();
+                            }
+                            if (isCorrect) {
+                              List<Map<String, dynamic>> l = [];
+                              for (var element in pageVM.cartList) {
+                                l.add({
+                                  'foodID': element.foodID,
+                                  'subPrice': element.subPrice,
+                                  'qty': element.qty,
+                                });
+                                await pageVM.shopController
+                                    .updateFoodQty(element.foodID, element.qty);
+                              }
+                              var uuid = const Uuid();
+                              String transacID = uuid.v4();
+
+                              var transaction = TransactionModel(
+                                shopID: pageVM.shop.shopID,
+                                memberID: pageVM
+                                    .memberController.member.value.memberID,
+                                transactionID: transacID,
+                                foodList: l,
+                                date: DateTime.now(),
+                                status: 'ongoing',
+                                totalPrice: pageVM._totalPrice.value,
+                                memberName:
+                                    pageVM.memberController.member.value.name,
+                                shopName: pageVM.shop.shopName,
+                              );
+                              await pageVM.memberController
+                                  .createTransction(transaction);
+                              await pageVM.memberController.deleteCart(
+                                memberID: pageVM
+                                    .memberController.member.value.memberID,
+                              );
+
+                              pageVM.isCartEmpty.value = true;
+                              pageVM.foodList.clear();
+
+                              EasyLoading.dismiss();
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        duration: Duration(seconds: 1),
+                                        content: Text(
+                                            'Successfully create transaction')));
+
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
+                              }
+                            } else {
+                              EasyLoading.dismiss();
+                              if (mounted) {
+                                alert(context: context);
+                              }
+                            }
+                          } else {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  duration: Duration(seconds: 1),
+                                  content: Text('Your cart is empty'),
+                                ),
+                              );
+                            }
+                          }
+                          EasyLoading.dismiss();
+                        },
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        child: Obx(
+                          () => Container(
+                            // width: MediaQuery.of(context).size.width * 0.85,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: pageVM.isCartEmpty.value
+                                    ? Colors.grey
+                                    : Colors.greenAccent,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Order',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: pageVM.isCartEmpty.value
+                                    ? const Color.fromRGBO(56, 56, 56, 1)
+                                    : Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                // color: Color
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -322,10 +381,10 @@ class MemberCartVM extends GetxController {
       shop = await shopController.getShopData(sid);
       cartList = await memberController.getMemberCartList(
           memberID: memberController.member.value.memberID);
-      cartList.forEach((element) async {
+      for (var element in cartList) {
         var food = await foodController.getFoodData(element.foodID);
         foodList.add(food);
-      });
+      }
       for (var element in cartList) {
         _totalPrice.value += element.subPrice;
       }

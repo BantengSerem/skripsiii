@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:get/get.dart';
-import 'package:skripsiii/constants/route.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
-import 'package:skripsiii/view/bottomNavigationBarPage.dart';
-import 'package:skripsiii/view/homePage.dart';
 import 'package:skripsiii/view/loginPage.dart';
 import 'package:skripsiii/view/registerPage.dart';
 import 'package:skripsiii/widget/button36x220.dart';
@@ -30,26 +24,6 @@ class WelcomePage extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                // Center(
-                //   child: ShaderMask(
-                //     shaderCallback: (Rect bounds) {
-                //       return const LinearGradient(
-                //         colors: [Color.fromRGBO(255, 164, 91, 1), Colors.blue],
-                //         begin: Alignment.centerLeft,
-                //         end: Alignment.centerRight,
-                //       ).createShader(bounds);
-                //     },
-                //     child: const Text(
-                //       'GigaBites',
-                //       style: TextStyle(
-                //         fontSize: 44,
-                //         fontWeight: FontWeight.bold,
-                //         color: Color.fromRGBO(255, 164, 91, 1),
-                //       ),
-                //       textAlign: TextAlign.center,
-                //     ),
-                //   ),
-                // ),
                 Text(
                   'GigaBites',
                   style: TextStyle(
@@ -91,21 +65,6 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(
               height: 25,
             ),
-            // Button36x220(
-            //   text: 'Register',
-            //   func: () {
-            //     final a = Get.find<BottomNavController>();
-            //     final b = Get.find<HomePageVM>();
-            //     print(a.idx);
-            //     print(b.isLoadingSellingSoon);
-            //     // Navigator.push(
-            //     //   context,
-            //     //   SlideFadeTransition(
-            //     //     child: const RegisterPage(),
-            //     //   ),
-            //     // );
-            //   },
-            // ),
           ],
         ),
       ),

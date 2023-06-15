@@ -1,8 +1,6 @@
 import 'dart:async';
-// import 'dart:html';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:skripsiii/controller/foodController.dart';
@@ -13,7 +11,6 @@ import 'package:skripsiii/model/shopModel.dart';
 import 'package:skripsiii/transition/slideFadeTransition.dart';
 import 'package:skripsiii/view/browseRestaurantPage.dart';
 import 'package:skripsiii/view/restaurantOrderMenupage.dart';
-import 'package:skripsiii/view/restaurantUpdatePage.dart';
 import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
@@ -38,7 +35,7 @@ class HomePage extends StatelessWidget {
                 //   height: 20,
                 // ),
                 Container(
-                  padding: EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 20),
                   color: const Color.fromRGBO(255, 164, 91, 1),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +83,6 @@ class HomePage extends StatelessWidget {
                             // FocusScope.of(context).unfocus();
                             var a = await showSearch(
                                 context: context, delegate: SearchFood());
-                            print('result : $a');
                             pageVM.getSearch(a);
                             // pageVM.openSeachBar();
                           },
@@ -314,10 +310,9 @@ class HomePage extends StatelessWidget {
             Text(
               'Share Food',
               style: TextStyle(
-                color: Color.fromRGBO(56, 56, 56, 1),
-                fontSize: 15,
-                fontWeight: FontWeight.bold
-              ),
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -340,9 +335,7 @@ class HomePageVM extends GetxController {
     // TODO: implement onInit
     isLoadingSellingNow.value = true;
     isLoadingSellingSoon.value = true;
-    print('start laoding');
     await shopController.init(memberController.member.value);
-    print('stop loading');
     isLoadingSellingNow.value = false;
     isLoadingSellingSoon.value = false;
     super.onInit();
@@ -415,11 +408,9 @@ class SearchFood extends SearchDelegate<dynamic> {
 
   @override
   Widget buildResults(BuildContext context) {
-    print('buildResults');
     return FutureBuilder(
       future: shopController.getSuggestedRestaurant(query),
       builder: (context, snapshot) {
-        print('sdfasdfasdfadfasdfasfdasfd=========');
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
@@ -429,9 +420,7 @@ class SearchFood extends SearchDelegate<dynamic> {
             child: Text('Error: ${snapshot.error}'),
           );
         } else if (snapshot.hasData) {
-          print("has data ");
-          print('snapshot.data!.docs : ${snapshot.data!.docs}');
-          final docs = snapshot.data!.docs;
+          // final docs = snapshot.data!.docs;
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, idx) => ListTile(
@@ -455,7 +444,6 @@ class SearchFood extends SearchDelegate<dynamic> {
   Widget buildSuggestions(BuildContext context) {
     // print('buildSuggestions');
     if (query.length > 3) {
-      print('buildSuggestions');
       return FutureBuilder(
         future: shopController.getSuggestedRestaurant(query),
         builder: (context, snapshot) {
@@ -468,7 +456,7 @@ class SearchFood extends SearchDelegate<dynamic> {
               child: Text('Error: ${snapshot.error}'),
             );
           } else if (snapshot.hasData) {
-            final docs = snapshot.data!.docs;
+            // final docs = snapshot.data!.docs;
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, idx) => ListTile(
@@ -489,10 +477,5 @@ class SearchFood extends SearchDelegate<dynamic> {
       );
     }
     return const SizedBox.shrink();
-  }
-
-  @override
-  void close(BuildContext context, result) {
-    super.close(context, result);
   }
 }

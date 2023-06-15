@@ -77,7 +77,6 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                   child: Obx(
                     () {
                       if (pageVM.hasImage.value) {
-                        print("image file being shown");
                         return Image.file(
                           File(_imagePath.value),
                         );
@@ -205,7 +204,6 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                             _image = await foodController.pickImage();
                             _imagePath.value = _image!.path;
                             pageVM.hasImage.value = true;
-                            print('_image : ${_imagePath.value}');
                           },
                           child: const Text(
                             'Add Image',
@@ -259,7 +257,6 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                               Text('Please input an image')));
                                 } else if (form!.validate()) {
                                   form.save();
-                                  print('valid');
                                   var sharedFoodImageURL = await foodController
                                       .imgSharedFoodDataToStorage({
                                     'file': _image!,
@@ -283,7 +280,6 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                         memberController.member.value.name,
                                   );
 
-                                  print(sf.toMap());
 
                                   await foodController
                                       .addNewSharedFoodData(sf.toMap());

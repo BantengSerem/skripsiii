@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:skripsiii/controller/foodController.dart';
-import 'package:skripsiii/controller/loginController.dart';
 import 'package:skripsiii/controller/memberController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
@@ -13,11 +12,7 @@ import 'package:skripsiii/widget/historyListCard.dart';
 import 'package:skripsiii/widget/nodata.dart';
 
 class HistoryPage extends StatelessWidget {
-  HistoryPage({Key? key}) : super(key: key);
-
-  // final LoginController loginController = Get.find<LoginController>();
-  // final MemberController memberController = Get.find<MemberController>();
-  // final ShopController shopController = Get.find<ShopController>();
+  const HistoryPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +178,7 @@ class HistoryPage extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return  const Expanded(child: NoDataWidget());
+                  return const Expanded(child: NoDataWidget());
                 }
               }
             }
@@ -223,6 +218,7 @@ class HistoryPageVM extends GetxController {
     activeButton[i] = true;
     currButton.value = i;
     if (i == 0) {
+      transactionController.resetShopHistory();
       await transactionController
           .getMemberHistoryList(memberController.member.value.memberID);
     } else if (i == 1) {
@@ -244,6 +240,7 @@ class HistoryPageVM extends GetxController {
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
+    transactionController.resetShopHistory();
     await transactionController
         .getMemberHistoryList(memberController.member.value.memberID);
   }

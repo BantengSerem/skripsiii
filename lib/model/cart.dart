@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:skripsiii/model/foodModel.dart';
 
 class Cart {
   late final int qty;

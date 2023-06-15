@@ -47,7 +47,7 @@ class _ForgotPaswordPageState extends State<ForgotPaswordPage> {
       body: Center(
         child: Material(
           elevation: 5,
-          child: Container(
+          child: SizedBox(
             width: 250,
             height: 300,
             child: Form(
@@ -110,7 +110,7 @@ class _ForgotPaswordPageState extends State<ForgotPaswordPage> {
                         if (mounted) {
                           // Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              duration: Duration(seconds: 1),
+                              duration: const Duration(seconds: 1),
                               content: Text(e.toString())));
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);

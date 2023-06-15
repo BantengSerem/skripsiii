@@ -122,13 +122,12 @@ class FindFoodVM extends GetxController {
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
-      print("reach the bottom");
       try {
         isLoading.value = true;
         await foodController
             .getSharedFoodList(memberController.member.value.memberID);
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       } finally {
         isLoading.value = false;
       }
