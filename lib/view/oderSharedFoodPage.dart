@@ -219,7 +219,7 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                       ),
                     ),
                     Obx(
-                        ()=> Text(
+                      () => Text(
                         '${pageVM.distance.value.toStringAsFixed(2)} Km',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20),
@@ -262,11 +262,11 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: const Color.fromRGBO(
-                            173, 173, 173, 1.0)),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.greenAccent
-                      ),
+                          border: Border.all(
+                              width: 1,
+                              color: const Color.fromRGBO(173, 173, 173, 1.0)),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.greenAccent),
                       height: 35,
                       width: MediaQuery.of(context).size.width,
                       margin: const EdgeInsets.symmetric(horizontal: 20),

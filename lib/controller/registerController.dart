@@ -66,7 +66,10 @@ class RegisterController extends GetxController {
 
   Future<bool> addAddressToFirebase(Address address) async {
     try {
-      await fireStoreInstance.collection('address').doc(address.addressID).set({
+      await fireStoreInstance
+          .collection('address')
+          .doc(address.addressID)
+          .set({
         'addressID': address.addressID,
         'userID': address.userID,
         'address': address.address,

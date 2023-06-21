@@ -1,30 +1,34 @@
 import 'package:skripsiii/model/userModel.dart';
 
 class Member extends UserParent {
-  late String memberID;
-  late String username;
-  late String name;
-  late String contacts;
-  late double latitude;
-  late double longitude;
+  late String _memberID;
+  late String _username;
+  late String _name;
+  late String _contacts;
+  late double _latitude;
+  late double _longitude;
 
   Member.blank({
     String password = '',
     String email = '',
-    this.memberID = '',
-    this.username = '',
-    this.name = '',
-    this.contacts = '',
+    String memberID = '',
+    String username = '',
+    String name = '',
+    String contacts = '',
   }) : super(password: '', email: '');
 
   Member({
     required String email,
     required String password,
-    required this.memberID,
-    required this.username,
-    required this.name,
-    required this.contacts,
-  }) : super(email: email, password: password);
+    required String memberID,
+    required String username,
+    required String name,
+    required String contacts,
+  }) : _memberID = memberID,
+        _username = username,
+        _name = name,
+        _contacts = contacts,
+        super(email: email, password: password);
 
   // Member.fromMap(DocumentSnapshot<Object> data) {
   //   email = data['email'];
@@ -48,15 +52,51 @@ class Member extends UserParent {
     return {
       'email': email,
       'password': password,
-      'username': username,
-      'memberID': memberID,
-      'name': name,
-      'contacts': contacts,
+      'username': _username,
+      'memberID': _memberID,
+      'name': _name,
+      'contacts': _contacts,
     };
   }
 
   @override
   String toString() {
-    return 'Member: { email: $email, password: $password, memberID: $memberID, username: $username, name: $name, contacts: $contacts }';
+    return 'Member: { email: $email, password: $password, memberID: $_memberID, username: $_username, name: $_name, contacts: $_contacts }';
+  }
+
+  double get longitude => _longitude;
+
+  set longitude(double value) {
+    _longitude = value;
+  }
+
+  double get latitude => _latitude;
+
+  set latitude(double value) {
+    _latitude = value;
+  }
+
+  String get contacts => _contacts;
+
+  set contacts(String value) {
+    _contacts = value;
+  }
+
+  String get name => _name;
+
+  set name(String value) {
+    _name = value;
+  }
+
+  String get username => _username;
+
+  set username(String value) {
+    _username = value;
+  }
+
+  String get memberID => _memberID;
+
+  set memberID(String value) {
+    _memberID = value;
   }
 }

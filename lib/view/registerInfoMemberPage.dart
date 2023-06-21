@@ -52,7 +52,6 @@ class _RegisterInfoMemberPageState extends State<RegisterInfoMemberPage> {
     if (form!.validate()) {
       form.save();
 
-
       if (FirebaseAuth.instance.currentUser == null) {
         var userCred =
             await registerController.registerMember(_email!, _password!);
