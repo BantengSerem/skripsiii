@@ -8,22 +8,18 @@ import 'package:skripsiii/view/oderSharedFoodPage.dart';
 import 'package:skripsiii/widget/historyCard.dart';
 import 'package:skripsiii/widget/nodata.dart';
 
-// class FindFoodPage extends StatefulWidget {
-//   const FindFoodPage({Key? key,}) : super(key: key);
-//
-//   @override
-//   State<FindFoodPage> createState() => _FindFoodPageState();
-// }
-//
-// class _FindFoodPageState extends State<FindFoodPage> {
-//
-// }
-class FindFoodPage extends StatelessWidget {
-  const FindFoodPage({Key? key, required this.pageVM}) : super(key: key);
+class FindFoodPage extends StatefulWidget {
+  const FindFoodPage({Key? key,}) : super(key: key);
+
+  @override
+  State<FindFoodPage> createState() => _FindFoodPageState();
+}
+
+class _FindFoodPageState extends State<FindFoodPage> {
 
   // final FindFoodVM pageVM = Get.find<FindFoodVM>();
 
-  final FindFoodVM pageVM;
+  final FindFoodVM pageVM = Get.put(FindFoodVM());
   // @override
   // void initState() {
   //   // TODO: implement initState
@@ -92,12 +88,15 @@ class FindFoodPage extends StatelessWidget {
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () async {
       //     // print(pageVM.foodController.shareFoodList);
+      //     await pageVM.foodController
+      //         .getSharedFoodList(pageVM.memberController.member.value.memberID);
       //     print(pageVM.foodController.shareFoodList);
       //   },
       // ),
     );
   }
 }
+
 
 
 class FindFoodVM extends GetxController {
@@ -111,6 +110,7 @@ class FindFoodVM extends GetxController {
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
+    print('init pageVM');
     isLoading.value = true;
     print('init find food page');
     await foodController
@@ -119,13 +119,14 @@ class FindFoodVM extends GetxController {
     isLoading.value = false;
   }
 
-  @override
-  // TODO: implement onDelete
-  InternalFinalCallback<void> get onDelete {
-    foodController.resetShareFoodPage();
-
-    return super.onDelete;
-  }
+  // @override
+  // // TODO: implement onDelete
+  // InternalFinalCallback<void> get onDelete {
+  //   // foodController.resetShareFoodPage();
+  //   print('delete pageVM');
+  //
+  //   return super.onDelete;
+  // }
 
   void scrollListener() async {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&

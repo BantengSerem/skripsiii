@@ -16,30 +16,16 @@ import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/profileSharedCartList.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key, required this.pageVM}) : super(key: key);
-  final ProfileVM pageVM;
+  const ProfilePage({Key? key}) : super(key: key);
+
+  // final ProfileVM pageVM;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late final ProfileVM pageVM;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    pageVM = widget.pageVM;
-    // pageVM = Get.put(ProfileVM());
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    // Get.delete<ProfileVM>();
-  }
+  final ProfileVM pageVM = Get.put(ProfileVM());
 
   Future<void> alertCanceled(
       {required BuildContext context, required SharedFood sf}) async {

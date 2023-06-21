@@ -276,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
                               }
                             }
                           }
-                          // pageVM.doneLoading();
+                          pageVM.doneLoading();
                         },
                         icon: Image.asset(
                           'data/images/googleIcon.png',

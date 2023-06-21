@@ -133,6 +133,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   maskType: EasyLoadingMaskType.black,
                 );
                 var u = await googleLogin();
+                EasyLoading.dismiss();
                 if (mounted) {
                   if (u == 'error') {
                     EasyLoading.dismiss();
@@ -162,7 +163,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     // }
                   }
                 }
-                // EasyLoading.dismiss();
+                EasyLoading.dismiss();
               },
               icon: Image.asset(
                 'data/images/googleIcon.png',

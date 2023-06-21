@@ -498,6 +498,7 @@ class FoodController extends GetxController {
         'memberSellID': tsf.memberSellID,
         'date': tsf.date,
         'shareFoodID': tsf.shareFoodID,
+        'sharedFoodName': tsf.sharedFoodName,
         'status': tsf.status,
         'memberBuyName': tsf.memberBuyName,
         'memberSellName': tsf.memberSellName,

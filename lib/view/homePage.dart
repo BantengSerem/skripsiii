@@ -15,13 +15,24 @@ import 'package:skripsiii/view/shareFoodPage.dart';
 import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key,required this.pageVM}) : super(key: key);
+// class HomePage extends StatelessWidget {
+//   HomePage({Key? key}) : super(key: key);
+//
+// }
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
   final FoodController foodController = Get.find<FoodController>();
   // final HomePageVM pageVM = Get.find<HomePageVM>();
-  final HomePageVM pageVM;
+  final HomePageVM pageVM = Get.put(HomePageVM());
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +70,7 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             Obx(
-                              () => Text(
+                                  () => Text(
                                 memberController.member.value.username,
                                 style: const TextStyle(
                                   fontSize: 20,
@@ -143,7 +154,7 @@ class HomePage extends StatelessWidget {
                       SizedBox(
                         height: 220,
                         child: Obx(
-                          () {
+                              () {
                             if (pageVM.isLoadingSellingNow.value) {
                               return Shimmer.fromColors(
                                 baseColor: Colors.black38,
@@ -153,7 +164,7 @@ class HomePage extends StatelessWidget {
                                   color: Colors.white,
                                   height: 220,
                                   width:
-                                      MediaQuery.of(context).size.width * 0.8,
+                                  MediaQuery.of(context).size.width * 0.8,
                                 ),
                               );
                             } else {
@@ -175,19 +186,19 @@ class HomePage extends StatelessWidget {
                                   key: const Key('sellingNow'),
                                   scrollDirection: Axis.horizontal,
                                   itemCount:
-                                      pageVM.shopController.sellNowList.length,
+                                  pageVM.shopController.sellNowList.length,
                                   itemBuilder: (context, idx) =>
                                       SellingItemCard(
-                                    type: 'sellingNow',
-                                    data: pageVM.shopController.sellNowList[idx]
-                                        .toMap(),
-                                    func: () async {
-                                      Get.to(RestaurantOrderMenuPage(
-                                          shop: pageVM.shopController
-                                              .sellNowList[idx]));
-                                      // print(pageVM.shopController.sellNowList[idx].essentialMap());
-                                    },
-                                  ),
+                                        type: 'sellingNow',
+                                        data: pageVM.shopController.sellNowList[idx]
+                                            .toMap(),
+                                        func: () async {
+                                          Get.to(RestaurantOrderMenuPage(
+                                              shop: pageVM.shopController
+                                                  .sellNowList[idx]));
+                                          // print(pageVM.shopController.sellNowList[idx].essentialMap());
+                                        },
+                                      ),
                                 );
                               }
                             }
@@ -241,7 +252,7 @@ class HomePage extends StatelessWidget {
                       SizedBox(
                         height: 220,
                         child: Obx(
-                          () {
+                              () {
                             if (pageVM.isLoadingSellingSoon.value) {
                               return Shimmer.fromColors(
                                 baseColor: Colors.black38,
@@ -251,7 +262,7 @@ class HomePage extends StatelessWidget {
                                   color: Colors.white,
                                   height: 220,
                                   width:
-                                      MediaQuery.of(context).size.width * 0.8,
+                                  MediaQuery.of(context).size.width * 0.8,
                                 ),
                               );
                             } else {
@@ -273,19 +284,19 @@ class HomePage extends StatelessWidget {
                                   key: const Key('sellingSoon'),
                                   scrollDirection: Axis.horizontal,
                                   itemCount:
-                                      pageVM.shopController.sellSoonList.length,
+                                  pageVM.shopController.sellSoonList.length,
                                   itemBuilder: (context, idx) =>
                                       SellingItemCard(
-                                    type: 'sellingSoon',
-                                    data: pageVM
-                                        .shopController.sellSoonList[idx]
-                                        .toMap(),
-                                    func: () async {
-                                      Get.to(RestaurantOrderMenuPage(
-                                          shop: pageVM.shopController
-                                              .sellSoonList[idx]));
-                                    },
-                                  ),
+                                        type: 'sellingSoon',
+                                        data: pageVM
+                                            .shopController.sellSoonList[idx]
+                                            .toMap(),
+                                        func: () async {
+                                          Get.to(RestaurantOrderMenuPage(
+                                              shop: pageVM.shopController
+                                                  .sellSoonList[idx]));
+                                        },
+                                      ),
                                 );
                               }
                             }
@@ -321,6 +332,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 
 class HomePageVM extends GetxController {
   final TextEditingController searchBarTextController = TextEditingController();
