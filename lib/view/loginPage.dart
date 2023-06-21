@@ -88,8 +88,9 @@ class _LoginPageState extends State<LoginPage> {
 
   AlertDialog _buildExitDialog(BuildContext context) {
     return const AlertDialog(
-      title: Center(child: Text('Sorry User Not Found')),
-      content: Text('Please check your email and password'),
+      title: Center(child: Text('Please pick an account')),
+      // title: Center(child: Text('Sorry User Not Found')),
+      // content: Text('Please check your email and password'),
     );
   }
 
@@ -249,6 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () async {
                           pageVM.loading();
                           var u = await googleLogin();
+                          pageVM.doneLoading();
                           if (mounted) {
                             if (u == 'member') {
                               Navigator.of(context).pushNamedAndRemoveUntil(
@@ -269,12 +271,12 @@ class _LoginPageState extends State<LoginPage> {
                               // TODO have to complete filling data first (role)
                               await _showExitDialog(context);
                               if (mounted) {
-                                Navigator.popUntil(
-                                    context, (route) => route.isFirst);
+                                // Navigator.popUntil(
+                                //     context, (route) => route.isFirst);
                               }
                             }
                           }
-                          pageVM.doneLoading();
+                          // pageVM.doneLoading();
                         },
                         icon: Image.asset(
                           'data/images/googleIcon.png',

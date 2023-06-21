@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/model/memberModel.dart';
 import 'package:skripsiii/model/shopModel.dart';
@@ -7,8 +8,6 @@ import 'dart:developer' as devtools show log;
 import 'package:skripsiii/model/addressModel.dart';
 
 class RegisterController extends GetxController {
-  // late Shop currShop;
-  // late Member currMember;
   final fireStoreInstance = FirebaseFirestore.instance;
 
   // void createMember() {
@@ -84,22 +83,6 @@ class RegisterController extends GetxController {
     }
   }
 
-  // Future<UserCredential?> registerShop(String email, String password) async {
-  //   try {
-  //     UserCredential userCredential =
-  //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-  //     // Authentication successful, return the UserCredential object
-  //     return userCredential;
-  //   } catch (e) {
-  //     // Handle any errors that occur during authentication
-  //     devtools.log('register shop with email and password failed: $e');
-  //     return null;
-  //   }
-  // }
-
   Future<bool> addShopToFirebase(Shop s) async {
     try {
       await fireStoreInstance.collection('shop').doc(s.shopID).set({
@@ -121,6 +104,33 @@ class RegisterController extends GetxController {
     }
   }
 
+  Future<void> registerShop(Map<String, dynamic> data) async {
+    try {
+      await fireStoreInstance.collection('shop').doc(data['uid']).set({
+        'email': data['email'],
+        'shopID': data['uid'],
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<UserCredential?> registerUserToFirebase(
+      {required String email, required String password}) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Authentication successful, return the UserCredential object
+      return userCredential;
+    } catch (e) {
+      // Handle any errors that occur during authentication
+      return null;
+    }
+  }
 // Future<dynamic> addMemberToFirebase(Map<String, dynamic> data) async {
 //   var member = await fireStoreInstance
 //       .collection('member')

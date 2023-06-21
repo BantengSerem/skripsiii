@@ -223,7 +223,7 @@ class LoginController extends GetxController {
       return await getUserData(userCredential);
     } catch (e) {
       debugPrint(e.toString());
-      return null;
+      return 'error';
     }
   }
 

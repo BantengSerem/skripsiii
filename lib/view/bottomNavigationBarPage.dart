@@ -9,9 +9,17 @@ import 'package:skripsiii/view/shopHistoryPage.dart';
 import 'package:skripsiii/view/shopHomepage.dart';
 import 'package:skripsiii/view/shopProfilePage.dart';
 
-class BottomNavigationPage extends StatelessWidget {
-  BottomNavigationPage({Key? key, required this.userType}) : super(key: key);
+class BottomNavigationPage extends StatefulWidget {
+  const BottomNavigationPage({Key? key, required this.userType})
+      : super(key: key);
   final String userType;
+
+  @override
+  State<BottomNavigationPage> createState() => _BottomNavigationPageState();
+}
+
+class _BottomNavigationPageState extends State<BottomNavigationPage> {
+  // final String userType = widget.userType;
 
   final List<SalomonBottomBarItem> memberList = [
     SalomonBottomBarItem(
@@ -111,39 +119,66 @@ class BottomNavigationPage extends StatelessWidget {
   ];
 
   final List<Widget> shopPages = [
-    const ShopHomePage(
-      key: PageStorageKey<String>('ShopHomePage'),
+     ShopHomePage(
+      key: const PageStorageKey<String>('ShopHomePage'),
+      pageVM: Get.put(ShopHomeVM()),
     ),
-    const ShopHistoryPage(
-      key: PageStorageKey<String>('ShopHistoryPage'),
+     ShopHistoryPage(
+      key: const PageStorageKey<String>('ShopHistoryPage'),
+      pageVM: Get.put(ShopHistoryVM()),
     ),
-    const ShopProfilePage(
-      key: PageStorageKey<String>('ShopProfilePage'),
+     ShopProfilePage(
+      key: const PageStorageKey<String>('ShopProfilePage'),
+      pageVM: Get.put(ShopProfileVM()),
     )
   ];
 
   final List<Widget> userPages = [
     HomePage(
       key: const PageStorageKey<String>('HomePage'),
+      pageVM: Get.put(HomePageVM()),
     ),
-    const FindFoodPage(
-      key: PageStorageKey<String>('FindFoodPage'),
+    FindFoodPage(
+      key: const PageStorageKey<String>('FindFoodPage'),
+      pageVM: Get.put(FindFoodVM()),
     ),
-    const HistoryPage(
-      key: PageStorageKey<String>('HistoryPage'),
+    HistoryPage(
+      key: const PageStorageKey<String>('HistoryPage'),
+      pageVM: Get.put(HistoryPageVM()),
     ),
-    const ProfilePage(
-      key: PageStorageKey<String>('ProfilePage'),
+    ProfilePage(
+      key: const PageStorageKey<String>('ProfilePage'),
+      pageVM: Get.put(ProfileVM()),
     ),
   ];
   final PageStorageBucket bucket = PageStorageBucket();
 
+  late final List<Widget> pages;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.userType == 'member') {
+      // Get.put(HistoryPageVM());
+      // Get.put(HomePageVM());
+      // Get.put(ProfileVM());
+      // Get.put(FindFoodVM());
+      // memberPageVMInit();
+      pages = userPages;
+    } else {
+      // Get.put(ShopHomeVM());
+      // Get.put(ShopHistoryVM());
+      // Get.put(ShopProfileVM());
+      // shopPageVMInit();
+      pages = shopPages;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO change later on to shopPages
-    final List<Widget> pages = userType == 'member' ? userPages : shopPages;
     BottomNavController pageVM = Get.put(BottomNavController());
-
     return Scaffold(
       body: Obx(() {
         return PageStorage(bucket: bucket, child: pages[pageVM.idx.value]);
@@ -158,7 +193,7 @@ class BottomNavigationPage extends StatelessWidget {
               onTap: (i) {
                 pageVM.changeIdx(i);
               },
-              items: userType == 'member' ? memberList : shopList,
+              items: widget.userType == 'member' ? memberList : shopList,
             );
           },
         ),

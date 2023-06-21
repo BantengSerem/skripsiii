@@ -218,10 +218,12 @@ class _OrderedSharedFoodPageState extends State<OrderedSharedFoodPage> {
                         fontSize: 10,
                       ),
                     ),
-                    Text(
-                      '${pageVM.distance.value.toStringAsFixed(2)} Km',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20),
+                    Obx(
+                        ()=> Text(
+                        '${pageVM.distance.value.toStringAsFixed(2)} Km',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
                     ),
                     const Divider(
                       color: Color.fromRGBO(56, 56, 56, 1),
@@ -303,7 +305,7 @@ class OrderShareFoodVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
   final SharedFood sf;
-  final RxDouble distance = 5.0.obs;
+  final RxDouble distance = 0.0.obs;
 
   OrderShareFoodVM({required this.sf});
 
@@ -314,7 +316,7 @@ class OrderShareFoodVM extends GetxController {
 
   void init() async {
     var m = memberController.member.value;
-    var sfa = await memberController.getMemberAddress(m.memberID);
+    var sfa = await memberController.getMemberAddress(sf.memberID);
     distance.value = foodController.calculateDistance(
       lat1: m.latitude,
       lon1: m.longitude,

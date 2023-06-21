@@ -20,72 +20,82 @@ class ProfileSharedCartList extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.all(10),
-                color: Colors.red,
-                height: 80,
-                width: 80,
-                child: Image.network(
-                  sf.sharedFoodImageURL,
-                  fit: BoxFit.cover,
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  color: Colors.red,
+                  height: 80,
+                  width: 80,
+                  child: Image.network(
+                    sf.sharedFoodImageURL,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              // const SizedBox(
-              //   width: 5,
-              // ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    sf.sharedFoodName,
-                    style: const TextStyle(
-                      fontSize: 23,
-                      fontWeight: FontWeight.w700,
-                    ),
+                // const SizedBox(
+                //   width: 5,
+                // ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        sf.sharedFoodName,
+                        style: const TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        sf.status,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Rp. ${NumberFormat("#,##0.00", "en_US").format(sf.price)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          // fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    sf.status,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Rp. ${NumberFormat("#,##0.00", "en_US").format(sf.price)}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      // fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-            ],
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+              ],
+            ),
           ),
           sf.status == 'onsale'
-              ? ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent),
-                  onPressed: () async {
-                    await func();
-                    // await alertCanceled(context: context);
-                  },
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
+              ? Container(
+                  width: 90,
+                  // color: Colors.redAccent,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent),
+                    onPressed: () async {
+                      await func();
+                      // await alertCanceled(context: context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 )

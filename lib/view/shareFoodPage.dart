@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skripsiii/controller/foodController.dart';
@@ -229,7 +230,9 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                   Colors.redAccent,
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                              },
                               child: const Text(
                                 'Cancel',
                                 style: TextStyle(
@@ -249,6 +252,10 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                 ),
                               ),
                               onPressed: () async {
+                                await EasyLoading.show(
+                                  dismissOnTap: false,
+                                  maskType: EasyLoadingMaskType.black,
+                                );
                                 final form = _formKey.currentState;
                                 if (_image == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -284,9 +291,12 @@ class _SharedFoodPageState extends State<SharedFoodPage> {
                                   await foodController
                                       .addNewSharedFoodData(sf.toMap());
                                   if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(duration: Duration(seconds: 1),content: Text('Share food added')));
                                     Navigator.pop(context);
                                   }
                                 }
+                                EasyLoading.dismiss();
                               },
                               child: const Text(
                                 'Submit',

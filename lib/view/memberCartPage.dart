@@ -177,9 +177,17 @@ class _MemberCartPageState extends State<MemberCartPage> {
                       child: InkWell(
                         splashColor: Colors.redAccent,
                         onTap: () async {
+                          await EasyLoading.show(
+                            dismissOnTap: false,
+                            maskType: EasyLoadingMaskType.black,
+                          );
                           await pageVM.memberController.deleteCart(
                               memberID: pageVM
                                   .memberController.member.value.memberID);
+                          EasyLoading.dismiss();
+                          if(mounted) {
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          }
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),

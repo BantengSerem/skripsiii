@@ -16,14 +16,15 @@ import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/sellingItemCard.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key,required this.pageVM}) : super(key: key);
   final LoginController loginController = Get.find<LoginController>();
   final MemberController memberController = Get.find<MemberController>();
   final FoodController foodController = Get.find<FoodController>();
+  // final HomePageVM pageVM = Get.find<HomePageVM>();
+  final HomePageVM pageVM;
 
   @override
   Widget build(BuildContext context) {
-    HomePageVM pageVM = Get.put(HomePageVM());
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

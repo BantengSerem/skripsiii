@@ -12,11 +12,12 @@ import 'package:skripsiii/widget/historyListCard.dart';
 import 'package:skripsiii/widget/nodata.dart';
 
 class HistoryPage extends StatelessWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+  HistoryPage({Key? key, required this.pageVM}) : super(key: key);
+  // final HistoryPageVM pageVM = Get.find<HistoryPageVM>();
+  final HistoryPageVM pageVM;
 
   @override
   Widget build(BuildContext context) {
-    HistoryPageVM pageVM = Get.put(HistoryPageVM());
     return Scaffold(
       appBar: AppBar(
         title: const Text(

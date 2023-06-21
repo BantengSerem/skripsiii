@@ -588,15 +588,10 @@ class ShopController extends GetxController {
 
   Future<bool> updateFoodQty(String foodID, int qty) async {
     try {
-      // await fireStoreInstance
-      //     .collection('food')
-      //     .doc(foodID)
-      //     .update({'qty': qty});
       var res = await fireStoreInstance
           .collection('food')
           .where('foodID', isEqualTo: foodID)
           .get();
-      // print(res.docs[0].data()['qty']);
       await fireStoreInstance
           .collection('food')
           .doc(foodID)

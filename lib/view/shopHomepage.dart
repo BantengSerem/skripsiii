@@ -10,27 +10,28 @@ import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/restauranOrderCardList.dart';
 
 class ShopHomePage extends StatefulWidget {
-  const ShopHomePage({Key? key}) : super(key: key);
-
+  const ShopHomePage({Key? key, required this.pageVM}) : super(key: key);
+  final ShopHomeVM pageVM;
   @override
   State<ShopHomePage> createState() => _ShopHomePageState();
 }
 
 class _ShopHomePageState extends State<ShopHomePage> {
-  late ShopHomeVM pageVM;
+  late final ShopHomeVM pageVM;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pageVM = Get.put(ShopHomeVM());
+    pageVM = widget.pageVM;
+    // pageVM = Get.put(ShopHomeVM());
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    Get.delete<ShopHomeVM>();
+    // Get.delete<ShopHomeVM>();
   }
 
   @override

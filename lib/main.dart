@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       routes: {
         welcomeRoute: (context) => const WelcomePage(),
         loginRoute: (context) => const LoginPage(),
-        homeRoute: (context) => HomePage(),
+        // homeRoute: (context) => HomePage(),
         registerRoute: (context) => const RegisterPage(),
         botNavRouteMember: (context) =>
             BottomNavigationPage(userType: 'member'),

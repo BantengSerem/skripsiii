@@ -8,32 +8,38 @@ import 'package:skripsiii/view/oderSharedFoodPage.dart';
 import 'package:skripsiii/widget/historyCard.dart';
 import 'package:skripsiii/widget/nodata.dart';
 
-class FindFoodPage extends StatefulWidget {
-  const FindFoodPage({Key? key}) : super(key: key);
+// class FindFoodPage extends StatefulWidget {
+//   const FindFoodPage({Key? key,}) : super(key: key);
+//
+//   @override
+//   State<FindFoodPage> createState() => _FindFoodPageState();
+// }
+//
+// class _FindFoodPageState extends State<FindFoodPage> {
+//
+// }
+class FindFoodPage extends StatelessWidget {
+  const FindFoodPage({Key? key, required this.pageVM}) : super(key: key);
 
-  @override
-  State<FindFoodPage> createState() => _FindFoodPageState();
-}
+  // final FindFoodVM pageVM = Get.find<FindFoodVM>();
 
-class _FindFoodPageState extends State<FindFoodPage> {
-  late final FindFoodVM pageVM;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    // var a = RestaurantOrderMenuVM(shop: widget.shop);
-    pageVM = Get.put(FindFoodVM());
-
-    // pageVM.shop = widget.shop;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    Get.delete<FindFoodVM>();
-  }
+  final FindFoodVM pageVM;
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   // var a = RestaurantOrderMenuVM(shop: widget.shop);
+  //   // pageVM = Get.put(FindFoodVM());
+  //
+  //   // pageVM.shop = widget.shop;
+  //   super.initState();
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   super.dispose();
+  //   // Get.delete<FindFoodVM>();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +99,7 @@ class _FindFoodPageState extends State<FindFoodPage> {
   }
 }
 
+
 class FindFoodVM extends GetxController {
   final FoodController foodController = Get.find<FoodController>();
   final MemberController memberController = Get.find<MemberController>();
@@ -105,6 +112,7 @@ class FindFoodVM extends GetxController {
     // TODO: implement onInit
     super.onInit();
     isLoading.value = true;
+    print('init find food page');
     await foodController
         .getSharedFoodList(memberController.member.value.memberID);
     scrollController = ScrollController();

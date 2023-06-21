@@ -15,27 +15,28 @@ import 'package:skripsiii/view/welcomePage.dart';
 import 'package:skripsiii/widget/profileButton.dart';
 
 class ShopProfilePage extends StatefulWidget {
-  const ShopProfilePage({Key? key}) : super(key: key);
-
+  const ShopProfilePage({Key? key, required this.pageVM}) : super(key: key);
+  final ShopProfileVM pageVM;
   @override
   State<ShopProfilePage> createState() => _ShopProfilePageState();
 }
 
 class _ShopProfilePageState extends State<ShopProfilePage> {
-  late ShopProfileVM pageVM;
+  late final ShopProfileVM pageVM;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pageVM = Get.put(ShopProfileVM());
+    pageVM = widget.pageVM;
+    // pageVM = Get.put(ShopProfileVM());
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    Get.delete<ShopProfileVM>();
+    // Get.delete<ShopProfileVM>();
   }
 
   @override
