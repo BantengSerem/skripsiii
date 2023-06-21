@@ -325,16 +325,16 @@ class TransactionController extends GetxController {
 
   Future<void> test(String memberID) async {
     var res = await fireStoreInstance
-        .collection('transaction')
-        .where('memberID', isEqualTo: memberID)
-        .orderBy('date', descending: true)
-        .limit(10)
+        .collection('shareFoodTransaction')
+        .where('memberSellID', isEqualTo: memberID)
         .get();
 
     List<TransactionModel> l = [];
 
     res.docs.asMap().forEach((key, value) {
-      l.add(TransactionModel.fromMap(value));
+      var a = TransactionShareFoodModel.fromMap(value);
+      print(a);
+      // print(value.data());
     });
   }
 

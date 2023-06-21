@@ -7,20 +7,21 @@ import 'package:skripsiii/widget/nodata.dart';
 import 'package:skripsiii/widget/restauranOrderCardList.dart';
 
 class ShopHistoryPage extends StatefulWidget {
-  const ShopHistoryPage({Key? key, required this.pageVM}) : super(key: key);
-  final ShopHistoryVM pageVM;
+  const ShopHistoryPage({Key? key}) : super(key: key);
+  // final ShopHistoryVM pageVM;
+
   @override
   State<ShopHistoryPage> createState() => _ShopHistoryPageState();
 }
 
 class _ShopHistoryPageState extends State<ShopHistoryPage> {
-  late final ShopHistoryVM pageVM;
+   final ShopHistoryVM pageVM =Get.put(ShopHistoryVM());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pageVM = widget.pageVM;
+    // pageVM = widget.pageVM;
     // pageVM = Get.put(ShopHistoryVM());
   }
 
@@ -72,6 +73,13 @@ class _ShopHistoryPageState extends State<ShopHistoryPage> {
           }
         },
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     await pageVM.transactionController
+      //         .test(pageVM.shopController.shop.value.shopID);
+      //     print(pageVM.transactionController.listHistoryItem.length);
+      //   },
+      // ),
     );
   }
 }

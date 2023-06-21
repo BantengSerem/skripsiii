@@ -119,36 +119,36 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   ];
 
   final List<Widget> shopPages = [
-     ShopHomePage(
-      key: const PageStorageKey<String>('ShopHomePage'),
-      pageVM: Get.put(ShopHomeVM()),
+    const ShopHomePage(
+      key: PageStorageKey<String>('ShopHomePage'),
+      // pageVM: Get.put(ShopHomeVM()),
     ),
-     ShopHistoryPage(
-      key: const PageStorageKey<String>('ShopHistoryPage'),
-      pageVM: Get.put(ShopHistoryVM()),
+    const ShopHistoryPage(
+      key: PageStorageKey<String>('ShopHistoryPage'),
+      // pageVM: Get.put(ShopHistoryVM()),
     ),
-     ShopProfilePage(
-      key: const PageStorageKey<String>('ShopProfilePage'),
-      pageVM: Get.put(ShopProfileVM()),
+    const ShopProfilePage(
+      key: PageStorageKey<String>('ShopProfilePage'),
+      // pageVM: Get.put(ShopProfileVM()),
     )
   ];
 
   final List<Widget> userPages = [
-    HomePage(
-      key: const PageStorageKey<String>('HomePage'),
-      pageVM: Get.put(HomePageVM()),
+    const HomePage(
+      key: PageStorageKey<String>('HomePage'),
+      // pageVM: Get.put(HomePageVM()),
     ),
-    FindFoodPage(
-      key: const PageStorageKey<String>('FindFoodPage'),
-      pageVM: Get.put(FindFoodVM()),
+    const FindFoodPage(
+      key: PageStorageKey<String>('FindFoodPage'),
+      // pageVM: Get.put(FindFoodVM()),
     ),
-    HistoryPage(
-      key: const PageStorageKey<String>('HistoryPage'),
-      pageVM: Get.put(HistoryPageVM()),
+    const HistoryPage(
+      key: PageStorageKey<String>('HistoryPage'),
+      // pageVM: Get.put(HistoryPageVM()),
     ),
-    ProfilePage(
-      key: const PageStorageKey<String>('ProfilePage'),
-      pageVM: Get.put(ProfileVM()),
+    const ProfilePage(
+      key: PageStorageKey<String>('ProfilePage'),
+      // pageVM: Get.put(ProfileVM()),
     ),
   ];
   final PageStorageBucket bucket = PageStorageBucket();

@@ -10,11 +10,22 @@ import 'package:skripsiii/widget/historyCartListShareFoodBuy.dart';
 import 'package:skripsiii/widget/historyCartListSharedFood.dart';
 import 'package:skripsiii/widget/historyListCard.dart';
 import 'package:skripsiii/widget/nodata.dart';
+//
+// class HistoryPage extends StatelessWidget {
+//   HistoryPage({Key? key}) : super(key: key);
+//   // final HistoryPageVM pageVM = Get.find<HistoryPageVM>();
+//
+// }
 
-class HistoryPage extends StatelessWidget {
-  HistoryPage({Key? key, required this.pageVM}) : super(key: key);
-  // final HistoryPageVM pageVM = Get.find<HistoryPageVM>();
-  final HistoryPageVM pageVM;
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({Key? key}) : super(key: key);
+
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
+  final HistoryPageVM pageVM = Get.put(HistoryPageVM());
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +55,7 @@ class HistoryPage extends StatelessWidget {
                     width: 25,
                   ),
                   Obx(
-                    () => TextButton(
+                        () => TextButton(
                       onPressed: () {
                         if (pageVM.currButton.value != 0) {
                           pageVM.buttonPressed(0);
@@ -53,9 +64,9 @@ class HistoryPage extends StatelessWidget {
                       style: ButtonStyle(
                         backgroundColor: pageVM.activeButton[0]
                             ? const MaterialStatePropertyAll<Color>(
-                                Colors.black)
+                            Colors.black)
                             : const MaterialStatePropertyAll<Color>(
-                                Colors.black26),
+                            Colors.black26),
                       ),
                       child: Text(
                         'Buy',
@@ -71,7 +82,7 @@ class HistoryPage extends StatelessWidget {
                     width: 15,
                   ),
                   Obx(
-                    () => TextButton(
+                        () => TextButton(
                       onPressed: () {
                         if (pageVM.currButton.value != 1) {
                           pageVM.buttonPressed(1);
@@ -81,9 +92,9 @@ class HistoryPage extends StatelessWidget {
                       style: ButtonStyle(
                         backgroundColor: pageVM.activeButton[1]
                             ? const MaterialStatePropertyAll<Color>(
-                                Colors.black)
+                            Colors.black)
                             : const MaterialStatePropertyAll<Color>(
-                                Colors.black26),
+                            Colors.black26),
                       ),
                       child: Text(
                         'Shared Food',
@@ -99,7 +110,7 @@ class HistoryPage extends StatelessWidget {
                     width: 15,
                   ),
                   Obx(
-                    () => TextButton(
+                        () => TextButton(
                       onPressed: () {
                         if (pageVM.currButton.value != 2) {
                           pageVM.buttonPressed(2);
@@ -109,9 +120,9 @@ class HistoryPage extends StatelessWidget {
                       style: ButtonStyle(
                         backgroundColor: pageVM.activeButton[2]
                             ? const MaterialStatePropertyAll<Color>(
-                                Colors.black)
+                            Colors.black)
                             : const MaterialStatePropertyAll<Color>(
-                                Colors.black26),
+                            Colors.black26),
                       ),
                       child: Text(
                         'Buy Shared Food',
@@ -141,7 +152,7 @@ class HistoryPage extends StatelessWidget {
                   return Expanded(
                     child: ListView.builder(
                       itemCount:
-                          pageVM.transactionController.listHistoryItem.length,
+                      pageVM.transactionController.listHistoryItem.length,
                       itemBuilder: (context, idx) {
                         return HistoryListCardBuy(
                             t: pageVM
@@ -186,15 +197,16 @@ class HistoryPage extends StatelessWidget {
           }),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     pageVM.transactionController.getSellSharedFoodMember(
-      //         pageVM.memberController.member.value.memberID);
-      //   },
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          pageVM.transactionController.test(
+              pageVM.memberController.member.value.memberID);
+        },
+      ),
     );
   }
 }
+
 
 class HistoryPageVM extends GetxController {
   RxList<bool> activeButton = [true, false, false].obs;
