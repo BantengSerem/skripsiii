@@ -42,6 +42,7 @@ class TransactionModel {
     _memberName = data['memberName'];
     _totalPrice = data['totalPrice'];
     _shopName = data['shopName'];
+    _transactionID = data['transactionID'];
   }
 
   String get shopName => _shopName;

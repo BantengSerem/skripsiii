@@ -45,7 +45,7 @@ class ShopListCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          '${shop.ratingAVG}',
+                          shop.ratingAVG.toStringAsFixed(2),
                         ),
                         const Icon(
                           Icons.star,

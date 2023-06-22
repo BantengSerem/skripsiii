@@ -123,11 +123,12 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
               // pageVM.shopController.browseSoonList.forEach((element) {
               //   print(element.shopID);
               // });
-              Navigator.push(
-                  context,
-                  SlideFadeTransition(
-                    child: const MemberCartPage(),
-                  ));
+              pageVM.shopController.test();
+              // Navigator.push(
+              //     context,
+              //     SlideFadeTransition(
+              //       child: const MemberCartPage(),
+              //     ));
             },
             child: const Icon(
               Icons.shopping_cart,
@@ -155,6 +156,8 @@ class BrowseRestaurantVM extends GetxController {
     isLoading.value = true;
     if (type == 'soon') {
       await shopController.getBrowseSoon(memberController.member.value);
+      shopController.browseSoonList
+          .sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
       scrollController = ScrollController();
       scrollController.addListener(scrollListener);
     } else if (type == 'now') {

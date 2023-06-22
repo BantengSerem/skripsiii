@@ -11,6 +11,7 @@ import 'package:skripsiii/widget/restauranOrderCardList.dart';
 
 class ShopHomePage extends StatefulWidget {
   const ShopHomePage({Key? key}) : super(key: key);
+
   // final ShopHomeVM pageVM;
   @override
   State<ShopHomePage> createState() => _ShopHomePageState();
@@ -85,7 +86,9 @@ class _ShopHomePageState extends State<ShopHomePage> {
                           height: 30,
                           width: 60,
                           child: Text(
-                            pageVM.sellingTime.value,
+                            pageVM.shopController.shop.value.sellingTime != -1
+                                ? '${pageVM.shopController.shop.value.sellingTime.toString().substring(0, pageVM.shopController.shop.value.sellingTime.toString().length - 4)}.${pageVM.shopController.shop.value.sellingTime.toString().substring(pageVM.shopController.shop.value.sellingTime.toString().length - 4, pageVM.shopController.shop.value.sellingTime.toString().length - 2)}'
+                                : '-1',
                             style: const TextStyle(
                               color: Colors.black,
                             ),
@@ -116,7 +119,9 @@ class _ShopHomePageState extends State<ShopHomePage> {
                           height: 30,
                           width: 60,
                           child: Text(
-                            pageVM.closingTime.value,
+                            pageVM.shopController.shop.value.closingTime != -1
+                                ? '${pageVM.shopController.shop.value.closingTime.toString().substring(0, pageVM.shopController.shop.value.closingTime.toString().length - 4)}.${pageVM.shopController.shop.value.closingTime.toString().substring(pageVM.shopController.shop.value.closingTime.toString().length - 4, pageVM.shopController.shop.value.closingTime.toString().length - 2)}'
+                                : '-1',
                             style: const TextStyle(
                               color: Colors.black,
                             ),
@@ -217,22 +222,22 @@ class ShopHomeVM extends GetxController {
     await transactionController
         .getAllDataShop(shopController.shop.value.shopID);
     scrollController = ScrollController();
-    if (shopController.shop.value.sellingTime != -1) {
-      var s = shopController.shop.value.sellingTime.toString();
-      var slen = s.length;
-      sellingTime.value =
-          '${s.substring(0, slen - 4)}.${s.substring(slen - 4, slen - 2)}';
-    } else {
-      sellingTime.value = '-1';
-    }
-    if (shopController.shop.value.closingTime != -1) {
-      var c = shopController.shop.value.closingTime.toString();
-      var clen = c.length;
-      closingTime.value =
-          '${c.substring(0, clen - 4)}.${c.substring(clen - 4, clen - 2)}';
-    } else {
-      closingTime.value = '-1';
-    }
+    // if (shopController.shop.value.sellingTime != -1) {
+    //   // var s = shopController.shop.value.sellingTime.toString();
+    //   // var slen = s.length;
+    //   // sellingTime.value =
+    //   //     '${shopController.shop.value.sellingTime.toString().substring(0, shopController.shop.value.sellingTime.toString().length - 4)}.${shopController.shop.value.sellingTime.toString().substring(shopController.shop.value.sellingTime.toString().length - 4, shopController.shop.value.sellingTime.toString().length - 2)}';
+    // } else {
+    //   sellingTime.value = '-1';
+    // }
+    // if (shopController.shop.value.closingTime != -1) {
+    //   // var c = shopController.shop.value.closingTime.toString();
+    //   // var clen = c.length;
+    //   // closingTime.value =
+    //   //     '${c.substring(0, clen - 4)}.${c.substring(clen - 4, clen - 2)}';
+    // } else {
+    //   closingTime.value = '-1';
+    // }
     isLoading.value = false;
   }
 

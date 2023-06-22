@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skripsiii/model/addressModel.dart';
 import 'package:skripsiii/model/foodModel.dart';
@@ -83,6 +84,8 @@ class ShopController extends GetxController {
 
     final List addresses = res.docs.map((doc) => Address.fromMap(doc)).toList();
 
+    // print(' : ========= shop : ${shop.shopName}');
+    // print('address : ${addresses[0]}');
     return addresses[0];
   }
 
@@ -271,13 +274,62 @@ class ShopController extends GetxController {
     if (query != null) {
       var index = streamListSoon.length + 1;
 
-      var snapshot = query.snapshots().listen((event) {
+      var snapshot = await query.snapshots().listen((event) async {
         if (event.size == 0 && streamListSoon.length > 1) {
           return deleteStreamSoon();
         }
 
         // print(event.docChanges.asMap());
-        event.docChanges.asMap().forEach((key, value) async {
+        // event.docChanges.asMap().forEach((key, value) async {
+        //   print('${value.doc['name']} : ${value.doc['sellingTime']}');
+        //   switch (value.type) {
+        //     case DocumentChangeType.added:
+        //       var shop = Shop.fromMap(value.doc);
+        //
+        //       browseSoonList
+        //           .removeWhere((element) => element.shopID == shop.shopID);
+        //       var sl = await getShopLoc(shop);
+        //       var distance = calculateDistance(
+        //         lat1: sl.latitude,
+        //         lon1: sl.longitude,
+        //         lat2: member.latitude,
+        //         lon2: member.longitude,
+        //       );
+        //       shop.distance = double.parse(distance.toStringAsFixed(2));
+        //       // print('added item $shop');
+        //       browseSoonList.add(shop);
+        //       debugPrint("added : ${shop.shopName} - ${shop.sellingTime}");
+        //       break;
+        //     case DocumentChangeType.modified:
+        //       var shop = Shop.fromMap(value.doc);
+        //       int i = browseSoonList
+        //           .indexWhere((element) => element.shopID == shop.shopID);
+        //
+        //       var sl = await getShopLoc(shop);
+        //       var distance = calculateDistance(
+        //         lat1: sl.latitude,
+        //         lon1: sl.longitude,
+        //         lat2: member.latitude,
+        //         lon2: member.longitude,
+        //       );
+        //       shop.distance = double.parse(distance.toStringAsFixed(2));
+        //       // print('update item $shop');
+        //       browseSoonList[i] = shop;
+        //       debugPrint("modified : ${shop.shopName} - ${shop.sellingTime}");
+        //       break;
+        //     case DocumentChangeType.removed:
+        //       // if (removeData == false) removeData = true;
+        //       // print('delete item ${Shop.fromMap(value.doc)}');
+        //       browseSoonList.removeWhere((element) =>
+        //           element.shopID == Shop.fromMap(value.doc).shopID);
+        //       debugPrint("removed");
+        //       break;
+        //   }
+        // });
+
+        for (var i = 0; i < event.docChanges.length; i++) {
+          var value = event.docChanges[i];
+          // print('${value.doc['name']} : ${value.doc['sellingTime']}');
           switch (value.type) {
             case DocumentChangeType.added:
               var shop = Shop.fromMap(value.doc);
@@ -294,6 +346,7 @@ class ShopController extends GetxController {
               shop.distance = double.parse(distance.toStringAsFixed(2));
               // print('added item $shop');
               browseSoonList.add(shop);
+              // debugPrint("added : ${shop.shopName} - ${shop.sellingTime}");
               break;
             case DocumentChangeType.modified:
               var shop = Shop.fromMap(value.doc);
@@ -310,17 +363,23 @@ class ShopController extends GetxController {
               shop.distance = double.parse(distance.toStringAsFixed(2));
               // print('update item $shop');
               browseSoonList[i] = shop;
+              // debugPrint("modified : ${shop.shopName} - ${shop.sellingTime}");
               break;
             case DocumentChangeType.removed:
               // if (removeData == false) removeData = true;
               // print('delete item ${Shop.fromMap(value.doc)}');
               browseSoonList.removeWhere((element) =>
                   element.shopID == Shop.fromMap(value.doc).shopID);
+              // debugPrint("removed");
               break;
           }
-        });
 
+          // Rest of your code...
+        }
+
+        // print('sorted');
         browseSoonList.sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
+        // print('sorted done');
 
         if (index == streamListSoon.length && event.size == 10) {
           currDocSoon = event.docs.last;
@@ -361,13 +420,56 @@ class ShopController extends GetxController {
     if (query != null) {
       var index = streamListNow.length + 1;
 
-      var snapshot = query.snapshots().listen((event) {
+      var snapshot = query.snapshots().listen((event) async {
         if (event.size == 0 && streamListNow.length > 1) {
           return deleteStreamNow();
         }
 
         // print(event.docChanges.asMap());
-        event.docChanges.asMap().forEach((key, value) async {
+        // event.docChanges.asMap().forEach((key, value) async {
+        //   switch (value.type) {
+        //     case DocumentChangeType.added:
+        //       var shop = Shop.fromMap(value.doc);
+        //       browseSoonList
+        //           .removeWhere((element) => element.shopID == shop.shopID);
+        //       var sl = await getShopLoc(shop);
+        //       var distance = calculateDistance(
+        //         lat1: sl.latitude,
+        //         lon1: sl.longitude,
+        //         lat2: member.latitude,
+        //         lon2: member.longitude,
+        //       );
+        //       shop.distance = double.parse(distance.toStringAsFixed(2));
+        //       // print('added item $shop');
+        //       browseNowList.add(shop);
+        //       break;
+        //     case DocumentChangeType.modified:
+        //       var shop = Shop.fromMap(value.doc);
+        //       int i = browseNowList
+        //           .indexWhere((element) => element.shopID == shop.shopID);
+        //       var sl = await getShopLoc(shop);
+        //       var distance = calculateDistance(
+        //         lat1: sl.latitude,
+        //         lon1: sl.longitude,
+        //         lat2: member.latitude,
+        //         lon2: member.longitude,
+        //       );
+        //       shop.distance = double.parse(distance.toStringAsFixed(2));
+        //       // print('update item $shop');
+        //       browseNowList[i] = shop;
+        //       break;
+        //     case DocumentChangeType.removed:
+        //       // if (removeData == false) removeData = true;
+        //       // print('delete item ${Shop.fromMap(value.doc)}');
+        //       browseNowList.removeWhere((element) =>
+        //           element.shopID == Shop.fromMap(value.doc).shopID);
+        //       break;
+        //   }
+        // });
+
+        for (var i = 0; i < event.docChanges.length; i++) {
+          var value = event.docChanges[i];
+          // print('${value.doc['name']} : ${value.doc['sellingTime']}');
           switch (value.type) {
             case DocumentChangeType.added:
               var shop = Shop.fromMap(value.doc);
@@ -406,8 +508,11 @@ class ShopController extends GetxController {
                   element.shopID == Shop.fromMap(value.doc).shopID);
               break;
           }
-        });
-        // browseSoonList.sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
+
+          // Rest of your code...
+        }
+
+        browseSoonList.sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
 
         if (index == streamListNow.length && event.size == 10) {
           currDocNow = event.docs.last;
@@ -600,5 +705,28 @@ class ShopController extends GetxController {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<void> test() async {
+    var a = DateFormat('HHmmss').format(DateTime.now());
+    var b = int.parse(a);
+    var res = await fireStoreInstance
+        .collection('shop')
+        .where('sellingTime', isGreaterThan: b)
+        .where('sellingTime', isNotEqualTo: -1)
+        .orderBy('sellingTime', descending: false)
+        .get();
+
+    List<Shop> l = [];
+    res.docs.asMap().forEach((key, value) {
+      print('${value.data()['name']} : ${value.data()['sellingTime']}');
+      l.add(Shop.fromMap(value));
+    });
+    print('=================================');
+
+    l.sort((a, b) => a.sellingTime.compareTo(b.sellingTime));
+    l.forEach((element) {
+      print('${element.shopName} : ${element.sellingTime}');
+    });
   }
 }

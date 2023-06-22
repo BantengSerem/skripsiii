@@ -62,7 +62,7 @@ class SellingItemCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '${data['ratingAVG'] ?? ''}',
+                      '${data['ratingAVG'].toStringAsFixed(2) ?? ''}',
                     ),
                     const Icon(
                       Icons.star,

@@ -562,7 +562,7 @@ class _RestaurantOrderMenuPageState extends State<RestaurantOrderMenuPage> {
                         Row(
                           children: [
                             Text(
-                              pageVM.shop.ratingAVG.toString(),
+                              pageVM.shop.ratingAVG.toStringAsFixed(2),
                               style: const TextStyle(fontSize: 18),
                             ),
                             const Icon(
