@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:skripsiii/controller/foodController.dart';
 import 'package:skripsiii/controller/shopContoller.dart';
 import 'package:skripsiii/controller/transactionController.dart';
+import 'package:skripsiii/helper/extentions.dart';
 
 class SellingTimeSettingsPage extends StatefulWidget {
   const SellingTimeSettingsPage({Key? key}) : super(key: key);
@@ -102,13 +103,12 @@ class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
                                 initialTime: selectedTime,
                                 initialEntryMode: TimePickerEntryMode.dialOnly,
                               );
-
                               if (timeOfDay != null) {
                                 var s =
-                                    '${timeOfDay.hour}${timeOfDay.minute}00';
+                                    '${timeOfDay.hourTo24Hours()}${timeOfDay.minuteTo24Hours()}00';
                                 int a = int.parse(s);
                                 pageVM.sellingTime.value =
-                                    '${timeOfDay.hour}.${timeOfDay.minute}';
+                                    '${timeOfDay.hourTo24Hours()}.${timeOfDay.minuteTo24Hours()}';
                                 pageVM.changeSell.value = a;
                                 pageVM.isChange.value = true;
                               }
@@ -152,12 +152,15 @@ class _SellingTimeSettingsPageState extends State<SellingTimeSettingsPage> {
                                 initialEntryMode: TimePickerEntryMode.dialOnly,
                               );
 
+                              // print(
+                              //     '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}');
                               if (timeOfDay != null) {
                                 var s =
-                                    '${timeOfDay.hour}${timeOfDay.minute}00';
+                                    '${timeOfDay.hourTo24Hours()}${timeOfDay.minuteTo24Hours()}00';
+                                // print();
                                 int a = int.parse(s);
                                 pageVM.closingTime.value =
-                                    '${timeOfDay.hour}.${timeOfDay.minute}';
+                                    '${timeOfDay.hourTo24Hours()}.${timeOfDay.minuteTo24Hours()}';
                                 pageVM.changeClose.value = a;
                                 pageVM.isChange.value = true;
                               }
@@ -253,19 +256,23 @@ class SettingsPageVM extends GetxController {
         shopController.shop.value.isOpen == 'false' ? false.obs : true.obs;
 
     if (shopController.shop.value.sellingTime != -1) {
+      changeSell.value = shopController.shop.value.sellingTime;
       var s = shopController.shop.value.sellingTime.toString();
       var slen = s.length;
       sellingTime.value =
           '${s.substring(0, slen - 4)}.${s.substring(slen - 4, slen - 2)}';
     } else {
+      changeSell.value = -1;
       sellingTime.value = '-1';
     }
     if (shopController.shop.value.closingTime != -1) {
+      changeClose.value = shopController.shop.value.closingTime;
       var c = shopController.shop.value.closingTime.toString();
       var clen = c.length;
       closingTime.value =
           '${c.substring(0, clen - 4)}.${c.substring(clen - 4, clen - 2)}';
     } else {
+      changeClose.value = -1;
       closingTime.value = '-1';
     }
   }

@@ -197,12 +197,12 @@ class _HistoryPageState extends State<HistoryPage> {
           }),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          pageVM.transactionController.test(
-              pageVM.memberController.member.value.memberID);
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     pageVM.transactionController.test(
+      //         pageVM.memberController.member.value.memberID);
+      //   },
+      // ),
     );
   }
 }

@@ -40,6 +40,63 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
     // Get.delete<ShopProfileVM>();
   }
 
+  Future<void> alertClose({required BuildContext context}) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            textAlign: TextAlign.left,
+            'All food quantity will be 0 when closing the shop',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          // content: const Text('Confirm closing'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
+              ),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                side: const BorderSide(
+                  width: 1.0,
+                  color: Color.fromRGBO(56, 56, 56, 1),
+                ),
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+              onPressed: () async {
+                await pageVM.shopController.closeShop();
+                await pageVM.shopController.zeroingAllFoodQty();
+                if (mounted) {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,28 +222,27 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
           ),
           Container(
             padding: const EdgeInsets.only(left: 20),
-            child: Obx(
-              () {
-                return Row(
-                  children: [
-                    const Text(
-                      'Your shop is ',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      pageVM.shopController.shop.value.isOpen == 'false'
-                          ? 'CLOSE'
-                          : 'OPEN',
+            child: Row(
+              children: [
+                const Text(
+                  'Your shop is ',
+                  style: TextStyle(fontSize: 18),
+                ),
+                Obx(
+                  () {
+                    var s = pageVM.isOpen.value ? 'OPEN' : 'CLOSE';
+                    return Text(
+                      s,
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text(
-                      ' now',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
-                );
-              },
+                    );
+                  },
+                ),
+                const Text(
+                  ' now',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
             ),
           ),
           const SizedBox(
@@ -207,12 +263,14 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                     ),
                     child: const Text('Close'),
                     onPressed: () async {
-                      await pageVM.shopController.closeShop();
-                      // pageVM.shopController.shop.value.isOpen = 'false';
-                      await pageVM.shopController.zeroingAllFoodQty();
-                      setState(() {
-                        // pageVM.shopController.shop.value.isOpen = 'false';
-                      });
+                      pageVM.isOpen.value = false;
+                      await alertClose(context: context);
+                      // await pageVM.shopController.closeShop();
+                      // // // pageVM.shopController.shop.value.isOpen = 'false';
+                      // await pageVM.shopController.zeroingAllFoodQty();
+                      // setState(() {
+                      //   // pageVM.shopController.shop.value.isOpen = 'false';
+                      // });
                     },
                   ),
                 ),
@@ -230,11 +288,12 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                     ),
                     child: const Text('Open'),
                     onPressed: () async {
+                      pageVM.isOpen.value = true;
                       await pageVM.shopController.openShop();
-                      // pageVM.shopController.shop.value.isOpen = 'true';
-                      setState(() {
-                        // pageVM.shopController.shop.value.isOpen = 'true';
-                      });
+                      // // pageVM.shopController.shop.value.isOpen = 'true';
+                      // setState(() {
+                      //   // pageVM.shopController.shop.value.isOpen = 'true';
+                      // });
                     },
                   ),
                 ),
@@ -279,4 +338,13 @@ class ShopProfileVM extends GetxController {
   final ShopController shopController = Get.find<ShopController>();
   final TransactionController transactionController =
       Get.find<TransactionController>();
+
+  RxBool isOpen = false.obs;
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    isOpen.value = shopController.shop.value.isOpen == 'false' ? false : true;
+    super.onInit();
+  }
 }

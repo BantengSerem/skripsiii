@@ -123,12 +123,12 @@ class _BrowseRestaurantPageState extends State<BrowseRestaurantPage> {
               // pageVM.shopController.browseSoonList.forEach((element) {
               //   print(element.shopID);
               // });
-              pageVM.shopController.test();
-              // Navigator.push(
-              //     context,
-              //     SlideFadeTransition(
-              //       child: const MemberCartPage(),
-              //     ));
+              // pageVM.shopController.test();
+              Navigator.push(
+                  context,
+                  SlideFadeTransition(
+                    child: const MemberCartPage(),
+                  ));
             },
             child: const Icon(
               Icons.shopping_cart,

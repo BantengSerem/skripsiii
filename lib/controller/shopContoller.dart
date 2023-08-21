@@ -100,8 +100,10 @@ class ShopController extends GetxController {
         .limit(5)
         .orderBy('sellingTime')
         .snapshots()
-        .listen((event) {
-      event.docChanges.asMap().forEach((key, value) async {
+        .listen((event) async {
+
+      for (var i = 0; i < event.docChanges.length; i++){
+        var value = event.docChanges[i];
         switch (value.type) {
           case DocumentChangeType.added:
             var shop = Shop.fromJson(value.doc.data());
@@ -133,13 +135,53 @@ class ShopController extends GetxController {
             sellNowList[i] = shop;
             break;
           case DocumentChangeType.removed:
-            // if (removeData == false) removeData = true;
-            // print('delete item ${Shop.fromJson(value.doc.data())}');
+          // if (removeData == false) removeData = true;
+          // print('delete item ${Shop.fromJson(value.doc.data())}');
             sellNowList.removeWhere((element) =>
-                element.shopID == Shop.fromJson(value.doc.data()).shopID);
+            element.shopID == Shop.fromJson(value.doc.data()).shopID);
             break;
         }
-      });
+      }
+
+      // event.docChanges.asMap().forEach((key, value) async {
+      //   switch (value.type) {
+      //     case DocumentChangeType.added:
+      //       var shop = Shop.fromJson(value.doc.data());
+      //       var sl = await getShopLoc(shop);
+      //       var distance = calculateDistance(
+      //         lat1: sl.latitude,
+      //         lon1: sl.longitude,
+      //         lat2: member.latitude,
+      //         lon2: member.longitude,
+      //       );
+      //       shop.distance = double.parse(distance.toStringAsFixed(2));
+      //       // print('added item $shop');
+      //       sellNowList.add(shop);
+      //       break;
+      //     case DocumentChangeType.modified:
+      //       var shop = Shop.fromJson(value.doc.data());
+      //       int i = sellNowList
+      //           .indexWhere((element) => element.shopID == shop.shopID);
+      //
+      //       var sl = await getShopLoc(shop);
+      //       var distance = calculateDistance(
+      //         lat1: sl.latitude,
+      //         lon1: sl.longitude,
+      //         lat2: member.latitude,
+      //         lon2: member.longitude,
+      //       );
+      //       shop.distance = double.parse(distance.toStringAsFixed(2));
+      //       // print('update item $shop');
+      //       sellNowList[i] = shop;
+      //       break;
+      //     case DocumentChangeType.removed:
+      //       // if (removeData == false) removeData = true;
+      //       // print('delete item ${Shop.fromJson(value.doc.data())}');
+      //       sellNowList.removeWhere((element) =>
+      //           element.shopID == Shop.fromJson(value.doc.data()).shopID);
+      //       break;
+      //   }
+      // });
     });
 
     sellNowListSnapshot = snapshot;
@@ -157,9 +199,10 @@ class ShopController extends GetxController {
         .limit(5)
         // .orderBy('sellingTime')
         .snapshots()
-        .listen((event) {
-      // print(event.docChanges.asMap());
-      event.docChanges.asMap().forEach((key, value) async {
+        .listen((event) async {
+
+      for (var i = 0; i < event.docChanges.length; i++){
+        var value = event.docChanges[i];
         switch (value.type) {
           case DocumentChangeType.added:
             var shop = Shop.fromJson(value.doc.data());
@@ -191,13 +234,54 @@ class ShopController extends GetxController {
             sellSoonList[i] = shop;
             break;
           case DocumentChangeType.removed:
-            // if (removeData == false) removeData = true;
-            // print('delete item ${Shop.fromJson(value.doc.data())}');
+          // if (removeData == false) removeData = true;
+          // print('delete item ${Shop.fromJson(value.doc.data())}');
             sellSoonList.removeWhere((element) =>
-                element.shopID == Shop.fromJson(value.doc.data()).shopID);
+            element.shopID == Shop.fromJson(value.doc.data()).shopID);
             break;
         }
-      });
+      }
+
+      // print(event.docChanges.asMap());
+      // event.docChanges.asMap().forEach((key, value) async {
+      //   switch (value.type) {
+      //     case DocumentChangeType.added:
+      //       var shop = Shop.fromJson(value.doc.data());
+      //       var sl = await getShopLoc(shop);
+      //       var distance = calculateDistance(
+      //         lat1: sl.latitude,
+      //         lon1: sl.longitude,
+      //         lat2: member.latitude,
+      //         lon2: member.longitude,
+      //       );
+      //       shop.distance = double.parse(distance.toStringAsFixed(2));
+      //       // print('added item $shop');
+      //       sellSoonList.add(shop);
+      //       break;
+      //     case DocumentChangeType.modified:
+      //       var shop = Shop.fromJson(value.doc.data());
+      //       int i = sellSoonList
+      //           .indexWhere((element) => element.shopID == shop.shopID);
+      //
+      //       var sl = await getShopLoc(shop);
+      //       var distance = calculateDistance(
+      //         lat1: sl.latitude,
+      //         lon1: sl.longitude,
+      //         lat2: member.latitude,
+      //         lon2: member.longitude,
+      //       );
+      //       shop.distance = double.parse(distance.toStringAsFixed(2));
+      //       // print('update item $shop');
+      //       sellSoonList[i] = shop;
+      //       break;
+      //     case DocumentChangeType.removed:
+      //       // if (removeData == false) removeData = true;
+      //       // print('delete item ${Shop.fromJson(value.doc.data())}');
+      //       sellSoonList.removeWhere((element) =>
+      //           element.shopID == Shop.fromJson(value.doc.data()).shopID);
+      //       break;
+      //   }
+      // });
     });
 
     sellSoonListSnapshot = snapshot;
